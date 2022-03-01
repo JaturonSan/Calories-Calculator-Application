@@ -1,0 +1,16 @@
+1.https://www.lokehoon.com/app.php?q_id=calculate_bmr_tdee
+2.https://www.calculator.net/bmr-calculator.html
+
+
+void main() {
+  int age = 21;
+  int height = 167;
+  double weight = 56.2;
+  double bmr = 10*weight+6.25*height-5*age+5;
+  print("ค่า BMR = "+(bmr).toString());
+  print("ออกกำลังกายน้อยมากหรือไม่ออกเลย = "+(bmr*1.2).toString());
+  print("ออกกำลังกาย 1-3 ครั้งต่อสัปดาห์ = "+(bmr*1.375).toString());
+  print("ออกกำลังกาย 4-5 ครั้งต่อสัปดาห์ = "+(bmr*1.55).toString());
+  print("ออกกำลังกาย 6-7 ครั้งต่อสัปดาห์ = "+(bmr*1.7).toString());
+  print("ออกกำลังกายวันละ 2 ครั้งขึ้นไป = "+(bmr*1.9).toString());
+}
