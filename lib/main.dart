@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:mini_project/providers/food_provider.dart';
 import 'package:mini_project/providers/profile_provider.dart';
 import 'package:mini_project/screen/mainscreen.dart';
-import 'package:mini_project/screen/registerscree.dart';
-import 'package:path/path.dart';
+import 'package:mini_project/screen/registerscreen.dart';
 import 'package:provider/provider.dart';
 
 void main(){
@@ -18,6 +18,9 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (context) {
           return ProfileProvider();
+        }),
+        ChangeNotifierProvider(create: (context) {
+          return FoodProvider();
         }),
       ],
       child: MaterialApp(
@@ -43,9 +46,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   // ฟังก์ชั่นในการประกาศข้อมูลที่มาจากฐานข้อมูลเพื่อเตรียมแสดงผลโดยใช้ TransactionProvider
   @override
-  void initState() {
+  void initState(){
     super.initState();
-    Provider.of<ProfileProvider>(this.context, listen: false).initData();
+    Provider.of<FoodProvider>(context, listen: false).initData();
   }
   
   @override
