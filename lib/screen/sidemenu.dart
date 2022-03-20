@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:mini_project/main.dart';
+import 'package:mini_project/screen/addfoodscreen.dart';
+import 'package:mini_project/screen/addstudentscreen.dart';
+import 'package:mini_project/screen/mainscreen.dart';
 import 'package:mini_project/screen/showcalscreen.dart';
+import 'package:mini_project/screen/studentdetailscreen.dart';
 
 class SideMenu extends StatelessWidget {
   const SideMenu({ Key? key }) : super(key: key);
@@ -12,11 +17,8 @@ class SideMenu extends StatelessWidget {
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
-            DrawerHeader(
-              child: Text(
-                'เมนู',
-                style: TextStyle(fontSize: 25),
-              ),
+            const DrawerHeader(
+              child: Text(''),
               decoration: BoxDecoration(
                 color: Colors.green,
                 image: DecorationImage(
@@ -28,55 +30,80 @@ class SideMenu extends StatelessWidget {
             Card(
               color: Colors.lightGreen[800],
               child: ListTile(
-                leading: Icon(Icons.camera, color: Colors.white,),
-                title: Text('แสดงแคลลอรี่', style: TextStyle(color: Colors.white,),),
+                leading: const Icon(Icons.home, color: Colors.white,),
+                title: const Text('หน้าหลัก', style: TextStyle(color: Colors.white,),),
                 onTap: () => {
-                  Navigator.push(
+                  Navigator.pushReplacement(
                     context, 
-                    MaterialPageRoute(builder: (context) => ShowCalScreen()),
+                    MaterialPageRoute(builder: (context) => const MainScreen()),
                   ),
                 },
               ),
             ),
-            // Card(
-            //   color: Colors.lightGreen[800],
-            //   child: ListTile(
-            //     leading: Icon(Icons.map, color: Colors.white,),
-            //     title: Text('แผนที่', style: TextStyle(color: Colors.white,),),
-            //     // onTap: () => {
-            //     //   Navigator.push(
-            //     //     context,
-            //     //     MaterialPageRoute(builder: (context) => MapScreen()),
-            //     //   ),
-            //     // },
-            //   ),
-            // ),
-            // Card(
-            //   color: Colors.lightGreen[800],
-            //   child: ListTile(
-            //     leading: Icon(Icons.home, color: Colors.white,),
-            //     title: Text('หน้าหลัก', style: TextStyle(color: Colors.white,),),
-            //     // onTap: () => {
-            //     //   Navigator.push(
-            //     //     context,
-            //     //     MaterialPageRoute(builder: (context) => MainScreen()),
-            //     //   ),
-            //     // },
-            //   ),
-            // ),
-            // Card(
-            //   color: Colors.lightGreen[800],
-            //   child: ListTile(
-            //     leading: Icon(Icons.filter_vintage_outlined, color: Colors.white,),
-            //     title: Text('พันธ์ุดอกบัวในแอป', style: TextStyle(color: Colors.white,),),
-            //     // onTap: () => {
-            //     //   Navigator.push(
-            //     //     context,
-            //     //     MaterialPageRoute(builder: (context) => LotusScreen()),
-            //     //   ),
-            //     // },
-            //   ),
-            // ),
+            Card(
+              color: Colors.lightGreen[800],
+              child: ListTile(
+                leading: const Icon(Icons.incomplete_circle, color: Colors.white,),
+                title: const Text('แสดงแคลลอรี่', style: TextStyle(color: Colors.white,),),
+                onTap: () => {
+                  Navigator.pushReplacement(
+                    context, 
+                    MaterialPageRoute(builder: (context) => const ShowCalScreen()),
+                  ),
+                },
+              ),
+            ),
+            Card(
+              color: Colors.lightGreen[800],
+              child: ListTile(
+                leading: const Icon(Icons.restaurant, color: Colors.white,),
+                title: const Text('เพิ่มรายการอาหาร', style: TextStyle(color: Colors.white,),),
+                onTap: () => {
+                  Navigator.pushReplacement(
+                    context, 
+                    MaterialPageRoute(builder: (context) => AddFood()),
+                  ),
+                },
+              ),
+            ),
+            Card(
+              color: Colors.lightGreen[800],
+              child: ListTile(
+                leading: const Icon(Icons.person_add, color: Colors.white,),
+                title: const Text('เพิ่มข้อมูลนักเรียน', style: TextStyle(color: Colors.white,),),
+                onTap: () => {
+                  Navigator.pushReplacement(
+                    context, 
+                    MaterialPageRoute(builder: (context) => AddStudentScreen()),
+                  ),
+                },
+              ),
+            ),
+            Card(
+              color: Colors.lightGreen[800],
+              child: ListTile(
+                leading: const Icon(Icons.person, color: Colors.white,),
+                title: const Text('รายละเอียดนักเรียน', style: TextStyle(color: Colors.white,),),
+                onTap: () => {
+                  Navigator.pushReplacement(
+                    context, 
+                    MaterialPageRoute(builder: (context) => const DetailStuScreen()),
+                  ),
+                },
+              ),
+            ),
+            Card(
+              color: Colors.lightGreen[800],
+              child: ListTile(
+                leading: const Icon(Icons.logout, color: Colors.white,),
+                title: const Text('ออกจากระบบ', style: TextStyle(color: Colors.white,),),
+                onTap: () => {
+                  Navigator.of(context).pushReplacement( 
+                    MaterialPageRoute(builder: (BuildContext context) => const LoginScreen()),
+                  ),
+                },
+              ),
+            ),
           ],
         ),
       ),

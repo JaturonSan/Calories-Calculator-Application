@@ -53,7 +53,7 @@ class RegisterScreen extends StatelessWidget {
                       provider.addProfile(profile);
                       Navigator.pop(context);
                     }, 
-                    child: Text('ลงทะเบียน')
+                    child: const Text('ลงทะเบียน')
                   ),
                 ),
               ],

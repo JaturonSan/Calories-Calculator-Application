@@ -1,8 +1,8 @@
 /* ไฟล์นี้เป็นไฟล์ไว้ประกาศข้อมูลนักเรียน */
-class StudentDB{
+class Students{
   String? name;
   int? age;
-  double? height;
+  int? height;
   double? weight;
-  StudentDB({this.name,this.age,this.height,this.weight});
+  Students({this.name,this.age,this.height,this.weight});
 }

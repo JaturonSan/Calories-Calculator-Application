@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:mini_project/model/food.dart';
+import 'package:mini_project/screen/mainscreen.dart';
+import 'package:mini_project/screen/sidemenu.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/food_provider.dart';
@@ -16,9 +18,10 @@ class AddFood extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('เพื่มเมนูอาหาร')),
+      drawer: const SideMenu(),
+      appBar: AppBar(title: const Text('เพื่มเมนูอาหาร')),
       body: Padding(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         child: Form(
           key: keyForm,
           child: Column(
@@ -58,9 +61,15 @@ class AddFood extends StatelessWidget {
                     Foods foods = Foods(name: name,calories: cal,amount: amout);
                     var provider = Provider.of<FoodProvider>(context, listen: false);
                     provider.addFood(foods);
-                    Navigator.pop(context);
+                    
+                    // เมื่อเพิ่มข้อมูลลงฐานข้อมูลในเครื่องแล้วจะให้ Navigator ไปยังหน้าหลักเพื่อแสดงรายการอาหาร
+                    Navigator.push(
+                      context, MaterialPageRoute(
+                        builder: (context) => const MainScreen()
+                      ),
+                    );
                   }, 
-                  child: Text('ลงทะเบียน'),
+                  child: const Text('ลงทะเบียน'),
                 ),
               ),
             ],

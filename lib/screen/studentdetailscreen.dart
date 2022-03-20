@@ -1,42 +1,43 @@
 import 'package:flutter/material.dart';
-import 'package:mini_project/model/food.dart';
-import 'package:mini_project/providers/food_provider.dart';
-import 'package:mini_project/screen/addfoodscreen.dart';
+import 'package:mini_project/screen/addstudentscreen.dart';
 import 'package:mini_project/screen/sidemenu.dart';
 import 'package:provider/provider.dart';
 
-class MainScreen extends StatefulWidget {
-  const MainScreen({Key? key}) : super(key: key);
+import '../model/student_intel.dart';
+import '../providers/srudent_provider.dart';
+
+class DetailStuScreen extends StatefulWidget {
+  const DetailStuScreen({ Key? key }) : super(key: key);
 
   @override
-  _MainScreenState createState() => _MainScreenState();
+  State<DetailStuScreen> createState() => _DetailStuScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _DetailStuScreenState extends State<DetailStuScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: const SideMenu(),
       appBar: AppBar(
-        title: const Text('หน้าหลัก'),
+        title: const Text('รายละเอียดนักเรียน'),
         actions: [
           IconButton(
             onPressed: () {
               Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return AddFood();
+                return AddStudentScreen();
               }));
             },
-            icon: const Icon(Icons.restaurant),
+            icon: const Icon(Icons.person_add),
           ),
         ],
       ),
       body: Consumer(
-        builder: (context, FoodProvider provider, child) {
-          var count = provider.foods.length;
+        builder: (context, StudentProvider provider, child) {
+          var count = provider.students.length;
 
           /*  เช็ค if -> else 
           1.ถ้า count <= 0 คือไม่มีข้อมูลจะแสดงข้อความว่าไม่มีข้อมูล
-          2.ถ้าเป็นอย่างอื่นจะแสดงหน้าขึ้นมาพร้อมรายการอาหาร
+          2.ถ้าเป็นอย่างอื่นจะแสดงหน้าขึ้นมาพร้อมรายการนักเรียน
            */
           if (count <= 0) {
             return const Center(
@@ -47,9 +48,9 @@ class _MainScreenState extends State<MainScreen> {
             );
           } else {
             return ListView.builder(
-              itemCount: provider.foods.length,
+              itemCount: provider.students.length,
               itemBuilder: (context, int index) {
-                Foods data = provider.foods[index];
+                Students data = provider.students[index];
                 return Card(
                   elevation: 5,
                   margin:
@@ -57,11 +58,11 @@ class _MainScreenState extends State<MainScreen> {
                   child: ListTile(
                     leading: CircleAvatar(
                       child: FittedBox(
-                        child: Text(data.amount.toString() + " อัน"), // โชว์จำนวนอาหารกี่จาน / ชิ้น
+                        child: Text('อายุ: '+data.age.toString()), // ตรงนี้โชว์อายุในวงกลม
                       ),
                     ),
-                    title: Text(data.name!), // ชื่ออาหาร
-                    subtitle: Text(data.calories.toString() + " แคล"), // จำนวนแคลลอรี่
+                    title: Text(data.name!), // โชว์ชื่อ-นามสกุล
+                    subtitle: Text('น้ำหนัก: '+data.weight.toString()), // โชว์น้ำหนัก (ส่วนสูงยังไม่รูจะแสดงยังไง)
                   ),
                 );
               },
