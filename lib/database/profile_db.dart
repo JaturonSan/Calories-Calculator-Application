@@ -36,7 +36,7 @@ class ProfileDB{
       โดยใช้ intMapStoreFactory
     */ 
     var db = await openDatabase();
-    var store = intMapStoreFactory.store("expense");
+    var store = intMapStoreFactory.store();
   
     /* add ค่าข้อมูลต่างๆในรูปแบบ json ลงฐานข้อมูล
     close db จากนั้น return keyID ของข้อมูลกลับมา */
@@ -50,7 +50,7 @@ class ProfileDB{
 
   Future<List<Profile>> loadAllData() async {
     var db = await openDatabase();
-    var store = intMapStoreFactory.store("expense");
+    var store = intMapStoreFactory.store();
     // การใส่ finder หมายถึงการเรียงข้อมูล จากน้อยไปมากและมากไปน้อย
     var snapshot = await store.find(db, finder: Finder(sortOrders: [SortOrder(Field.key, true)]));
     List<Profile> profileList = [];

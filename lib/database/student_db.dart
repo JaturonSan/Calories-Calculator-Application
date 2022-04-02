@@ -35,7 +35,7 @@ class StudentDB{
       โดยใช้ intMapStoreFactory
     */ 
     var db = await openDatabase();
-    var store = intMapStoreFactory.store("expense");
+    var store = intMapStoreFactory.store();
   
     /* add ค่าข้อมูลต่างๆในรูปแบบ json ลงฐานข้อมูล
     close db จากนั้น return keyID ของข้อมูลกลับมา */
@@ -52,7 +52,7 @@ class StudentDB{
 
   Future<List<Students>> loadAllData() async {
     var db = await openDatabase();
-    var store = intMapStoreFactory.store("expense");
+    var store = intMapStoreFactory.store();
     // การใส่ finder หมายถึงการเรียงข้อมูล จากน้อยไปมากและมากไปน้อย
     var snapshot = await store.find(db, finder: Finder(sortOrders: [SortOrder(Field.key, true)]));
     List<Students> studentList = [];
@@ -71,10 +71,16 @@ class StudentDB{
   } 
 
   Future deleteStudent(Students statement) async {
-    final finder = Finder(filter: Filter.byKey(statement.id)); // ตัวแปรในการหาว่าจะลบตัวไหน โดยใช้ id ในการหา
-    
+    int? id = statement.id; // สร้างตัวแปร id ในการหา
     var db = await openDatabase();
-    var store = intMapStoreFactory.store("expense");
-    store.delete(db, finder: finder,); // store.delete() คำสั่งในการลบ
+    var store = intMapStoreFactory.store();
+    var record = store.record(id!); // ตัวอ้างอิงไปถึงตัวแทนในฐานข้อมูล
+    await record.delete(db); // record.delete() คำสั่งในการเฉพาะ record ที่เลือก 
+  }
+
+  Future deleteAll() async {
+    var db = await openDatabase();
+    var store = intMapStoreFactory.store();
+    await store.delete(db);
   }
 }

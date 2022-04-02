@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:mini_project/database/student_db.dart';
-import 'package:mini_project/screen/addstudentscreen.dart';
+import 'package:mini_project/database/food_db.dart';
+import 'package:mini_project/model/food.dart';
+import 'package:mini_project/providers/food_provider.dart';
+import 'package:mini_project/screen/addfoodscreen.dart';
 import 'package:mini_project/screen/sidemenu.dart';
 import 'package:provider/provider.dart';
-import '../model/student_intel.dart';
-import '../providers/srudent_provider.dart';
 
-class DetailStuScreen extends StatefulWidget {
-  const DetailStuScreen({ Key? key }) : super(key: key);
+class ShowFoodScreen extends StatefulWidget {
+  const ShowFoodScreen({Key? key}) : super(key: key);
 
   @override
-  State<DetailStuScreen> createState() => _DetailStuScreenState();
+  _ShowFoodScreenState createState() => _ShowFoodScreenState();
 }
 
-class _DetailStuScreenState extends State<DetailStuScreen> {
-  StudentDB studentdb = StudentDB(dbName: "students.db");
+class _ShowFoodScreenState extends State<ShowFoodScreen> {
+  FoodDB fooddb = FoodDB(dbName: "foods.db");
 
   // initSate เป็นฟังก์ชั่นในการเริ่มฟังก์ชั่นต่างๆก่อนสร้างหน้าขึ้น เพื่อเตียมข้อมูลที่จะแสดงผลไว้ก่อน เพื่อไม่ให้เกิดค่าว่าง หรือหน้าไม่ยอมโหลด
   @override
   void initState() {
     super.initState(); // ใช้คำสั่ง super.initState(); เพื่อเตรียมฟังก์ชั่น init แล้วเรียกฟังก์ชั่นที่ต้องการ
-    var provider = Provider.of<StudentProvider>(context, listen: false);
+    var provider = Provider.of<FoodProvider>(context, listen: false);
     provider.initData();
   }
 
@@ -29,40 +29,40 @@ class _DetailStuScreenState extends State<DetailStuScreen> {
     return Scaffold(
       drawer: const SideMenu(),
       appBar: AppBar(
-        title: const Text('รายละเอียดนักเรียน'),
+        title: const Text('รายการอาหาร'),
         actions: [
           IconButton(
-            onPressed: () async {
+            onPressed: () {
               Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return AddStudentScreen();
+                return AddFood();
               }));
             },
-            icon: const Icon(Icons.person_add),
+            icon: const Icon(Icons.fastfood),
           ),
           IconButton(
-            onPressed: () async {
-              var provider = Provider.of<StudentProvider>(context, listen: false);
+            onPressed: () {
+              var provider = Provider.of<FoodProvider>(context, listen: false);
               // เรียกฟังก์ชั่นลบข้อมูลทั้งที่อยู่ในฐานข้อมูล NoSQL
               provider.deleteAllData();
 
               // ใช้ refresh หน้านี้
               Navigator.pushAndRemoveUntil(
                 context,
-                MaterialPageRoute(builder: (context) => const DetailStuScreen()),
+                MaterialPageRoute(builder: (context) => const ShowFoodScreen()),
                 (Route<dynamic> route) => false,
               );
-            }, 
-            icon: Icon(Icons.delete),
+            },
+            icon: const Icon(Icons.delete),
           ),
         ],
       ),
       body: Consumer(
-        builder: (context, StudentProvider provider, child) {
-          var count = provider.students.length;
+        builder: (context, FoodProvider provider, child) {
+          var count = provider.foods.length;
 
           /*  เช็ค if -> else 
           1.ถ้า count <= 0 คือไม่มีข้อมูลจะแสดงข้อความว่าไม่มีข้อมูล
-          2.ถ้าเป็นอย่างอื่นจะแสดงหน้าขึ้นมาพร้อมรายการนักเรียน
+          2.ถ้าเป็นอย่างอื่นจะแสดงหน้าขึ้นมาพร้อมรายการอาหาร
            */
           if (count <= 0) {
             return const Center(
@@ -73,9 +73,9 @@ class _DetailStuScreenState extends State<DetailStuScreen> {
             );
           } else {
             return ListView.builder(
-              itemCount: provider.students.length,
+              itemCount: provider.foods.length,
               itemBuilder: (context, int index) {
-                Students data = provider.students[index];
+                Foods data = provider.foods[index];
                 return Card(
                   elevation: 5,
                   margin:
@@ -83,11 +83,11 @@ class _DetailStuScreenState extends State<DetailStuScreen> {
                   child: ListTile(
                     leading: CircleAvatar(
                       child: FittedBox(
-                        child: Text('อายุ: '+data.age.toString()), // ตรงนี้โชว์อายุในวงกลม
+                        child: Text(data.amount.toString() + " อัน"), // โชว์จำนวนอาหารกี่จาน / ชิ้น
                       ),
                     ),
-                    title: Text(data.name!), // โชว์ชื่อ-นามสกุล
-                    subtitle: Text('น้ำหนัก: '+data.weight.toString()), // โชว์น้ำหนัก (ส่วนสูงยังไม่รูจะแสดงยังไง)
+                    title: Text(data.name!), // ชื่ออาหาร
+                    subtitle: Text(data.calories.toString() + " แคล"), // จำนวนแคลลอรี่
                     trailing: Container(
                       width: 100,
                       child: Row(
@@ -102,8 +102,8 @@ class _DetailStuScreenState extends State<DetailStuScreen> {
                           IconButton(
                             onPressed: () async {
                               // ลบข้อมูลในฐานข้อมูลโดย เรียกฟังก์ชั่น DeleteFood ใน FoodDB แล้วใส่ข้อมูลตัวที่จะลบลงไป
-                              var provider = Provider.of<StudentProvider>(context, listen: false);
-                              provider.deleteStudent(data);
+                              var provider = Provider.of<FoodProvider>(context, listen: false);
+                              provider.deleteFood(data);
                             }, 
                             icon: Icon(Icons.delete)
                           ),

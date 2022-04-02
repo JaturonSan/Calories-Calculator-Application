@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:mini_project/model/food.dart';
-import 'package:mini_project/screen/mainscreen.dart';
+import 'package:mini_project/screen/showfoodscreen.dart';
 import 'package:mini_project/screen/sidemenu.dart';
 import 'package:provider/provider.dart';
 
@@ -83,7 +83,7 @@ class AddFood extends StatelessWidget {
                       // เมื่อเพิ่มข้อมูลลงฐานข้อมูลในเครื่องแล้วจะให้ Navigator ไปยังหน้าหลักเพื่อแสดงรายการอาหาร
                       Navigator.push(
                         context, MaterialPageRoute(
-                          builder: (context) => const MainScreen()
+                          builder: (context) => const ShowFoodScreen()
                         ),
                       );
                     }, 

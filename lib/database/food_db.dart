@@ -26,7 +26,7 @@ class FoodDB{
   // Future _openDatabase() async {
   //   final appDocumentDir = await getApplicationDocumentsDirectory();
 
-  //   final dbPath = join(appDocumentDir.path, 'demo.db');
+  //   final dbPath = join(appDocumentDir.path, "demo.db");
 
   //   final database = await databaseFactoryIo.openDatabase(dbPath);
   //   _dbOpenCompeter.complete(database);
@@ -61,7 +61,7 @@ class FoodDB{
       โดยใช้ intMapStoreFactory
     */ 
     var db = await openDatabase();
-    var store = intMapStoreFactory.store("expense");
+    var store = intMapStoreFactory.store();
   
     /* add ค่าข้อมูลต่างๆในรูปแบบ json ลงฐานข้อมูล
     close db จากนั้น return keyID ของข้อมูลกลับมา */
@@ -77,7 +77,7 @@ class FoodDB{
 
   Future<List<Foods>> loadAllData() async {
     var db = await openDatabase();
-    var store = intMapStoreFactory.store("expense");
+    var store = intMapStoreFactory.store();
     // การใส่ finder หมายถึงการเรียงข้อมูล จากน้อยไปมากและมากไปน้อย
     var snapshot = await store.find(db, finder: Finder(sortOrders: [SortOrder(Field.key, true)]));
     List<Foods> foodList = [];
@@ -95,10 +95,16 @@ class FoodDB{
   } 
 
   Future deleteFood(Foods statement) async {
-    final finder = Finder(filter: Filter.byKey(statement.id)); // ตัวแปรในการหาว่าจะลบตัวไหน โดยใช้ id ในการหา
-    
+    int? id = statement.id;
     var db = await openDatabase();
-    var store = intMapStoreFactory.store("expense");
-    store.delete(db, finder: finder,); // store.delete() คำสั่งในการลบ
+    var store = intMapStoreFactory.store();
+    var record = store.record(id!);
+    record.delete(db); // store.delete() คำสั่งในการลบ
+  }
+
+  Future deleteAll() async {
+    var db = await openDatabase();
+    var store = intMapStoreFactory.store();
+    await store.delete(db);
   }
 }

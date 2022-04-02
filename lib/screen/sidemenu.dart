@@ -3,9 +3,13 @@ import 'package:mini_project/main.dart';
 import 'package:mini_project/screen/addfoodscreen.dart';
 import 'package:mini_project/screen/addstudentscreen.dart';
 import 'package:mini_project/screen/mainscreen.dart';
+import 'package:mini_project/screen/showfoodscreen.dart';
 import 'package:mini_project/screen/showcalscreen.dart';
 import 'package:mini_project/screen/studentdetailscreen.dart';
 
+
+// การทำ sidemenu -- https://maffan.medium.com/how-to-create-a-side-menu-in-flutter-a2df7833fdfb
+// เอาหน้านี้ไปใส่ไว้ใน drawer ของ Scaffold 
 class SideMenu extends StatelessWidget {
   const SideMenu({ Key? key }) : super(key: key);
 
@@ -36,6 +40,19 @@ class SideMenu extends StatelessWidget {
                   Navigator.pushReplacement(
                     context, 
                     MaterialPageRoute(builder: (context) => const MainScreen()),
+                  ),
+                },
+              ),
+            ),
+            Card(
+              color: Colors.lightGreen[800],
+              child: ListTile(
+                leading: const Icon(Icons.fastfood, color: Colors.white,),
+                title: const Text('รายการอาหาร', style: TextStyle(color: Colors.white,),),
+                onTap: () => {
+                  Navigator.pushReplacement(
+                    context, 
+                    MaterialPageRoute(builder: (context) => const ShowFoodScreen()),
                   ),
                 },
               ),

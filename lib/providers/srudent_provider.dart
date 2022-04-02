@@ -40,4 +40,9 @@ class StudentProvider with ChangeNotifier {
     // เตือน Consumer
     notifyListeners();
   }
+
+  void deleteAllData() async {
+    StudentDB db = StudentDB(dbName: "students.db");
+    await db.deleteAll();
+  }
 }

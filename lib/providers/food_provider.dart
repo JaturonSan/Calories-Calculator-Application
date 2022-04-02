@@ -40,4 +40,9 @@ class FoodProvider with ChangeNotifier {
     // เตือน Consumer
     notifyListeners();
   }
+
+  void deleteAllData() async {
+    FoodDB db = FoodDB(dbName: "foods.db");
+    await db.deleteAll();
+  }
 }

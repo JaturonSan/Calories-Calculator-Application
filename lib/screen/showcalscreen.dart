@@ -28,9 +28,10 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
   int fat = 0; // ไขมัน
   double circlePercent = 0;
 
+  // initSate เป็นฟังก์ชั่นในการเริ่มฟังก์ชั่นต่างๆก่อนสร้างหน้าขึ้น เพื่อเตียมข้อมูลที่จะแสดงผลไว้ก่อน เพื่อไม่ให้เกิดค่าว่าง หรือหน้าไม่ยอมโหลด
   @override
   void initState() {
-    super.initState();
+    super.initState(); // ใช้คำสั่ง super.initState(); เพื่อเตรียมฟังก์ชั่น init แล้วเรียกฟังก์ชั่นที่ต้องการ
     getCals(weight, height, age);
     getNutrients();
     calRemain(calsNow, calNone);
@@ -175,14 +176,15 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
   void getCals(double wei, int hei, int age) {
     // https://www.lokehoon.com/app.php?q_id=calculate_bmr_tdee
     // https://www.calculator.net/bmr-calculator.html
+    // สูตรคำนวณแคลเลอรี่อยู่ในลลิ้งด้านบน
     int cal = (10 * wei + 6.25 * hei - 5 * age + 5).round();
     setState(() {
       cals = cal;
-      calNone = (cal * 1.2).round();
-      cal_1to3day = (cal * 1.375).round();
-      cal_4to5day = (cal * 1.55).round();
-      cal_6to7day = (cal * 1.7).round();
-      cal_2perday = (cal * 1.9).round();
+      calNone = (cal * 1.2).round(); // ไม่ออกกำกายเลย
+      cal_1to3day = (cal * 1.375).round(); // ออก 1-3 วัน
+      cal_4to5day = (cal * 1.55).round(); // ออก 4-5 วัน
+      cal_6to7day = (cal * 1.7).round(); // ออก 6-7 วัน
+      cal_2perday = (cal * 1.9).round(); // ออก 2 ครั้งต่อวัน
     });
   }
 
