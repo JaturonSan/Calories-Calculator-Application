@@ -30,4 +30,14 @@ class FoodProvider with ChangeNotifier {
     foods = await db.loadAllData();
     notifyListeners();
   }
+
+  void deleteFood(Foods statement) async {
+    var db =  FoodDB(dbName: "foods.db");
+    await db.deleteFood(statement);
+    // ดึงข้อมูลมาแสดงผล(Select)
+    foods = await db.loadAllData();
+
+    // เตือน Consumer
+    notifyListeners();
+  }
 }

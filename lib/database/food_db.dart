@@ -6,6 +6,32 @@ import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast_io.dart';
 
 class FoodDB{
+
+  // static final FoodDB _singleton = FoodDB._();
+
+  // static FoodDB get instance => _singleton;
+
+  // Completer<Database> _dbOpenCompeter;
+  // FoodDB.();
+
+  // Future<Database> get database async {
+  //   if(_dbOpenCompeter == null){
+  //     _dbOpenCompeter = Completer();
+  //     _openDatabase();
+  //   }
+
+  //   return _dbOpenCompeter.future;
+  // }
+
+  // Future _openDatabase() async {
+  //   final appDocumentDir = await getApplicationDocumentsDirectory();
+
+  //   final dbPath = join(appDocumentDir.path, 'demo.db');
+
+  //   final database = await databaseFactoryIo.openDatabase(dbPath);
+  //   _dbOpenCompeter.complete(database);
+  // }
+
   /* เป็นคลาสที่เอาไว้เก็บฐานข้อมูลบนเครื่องที่ใช้ package ได้แก่ 
   sembast (จัดการฐานข้อมูล) 
   path_provider (ดึงตำแหน่งฐานข้อมูลบทเครื่อง) 
@@ -40,6 +66,7 @@ class FoodDB{
     /* add ค่าข้อมูลต่างๆในรูปแบบ json ลงฐานข้อมูล
     close db จากนั้น return keyID ของข้อมูลกลับมา */
     var keyID = store.add(db, {
+      "id": statement.id,
       "name": statement.name,
       "calories": statement.calories,
       "amount": statement.amount,
@@ -57,6 +84,7 @@ class FoodDB{
     for(var record in snapshot){
       foodList.add(
         Foods(
+          id: int.parse(record["id"].toString()),
           name: record["name"].toString(),
           calories: double.parse(record["calories"].toString()),
           amount: int.parse(record["amount"].toString()),
@@ -65,4 +93,12 @@ class FoodDB{
     }
     return foodList;
   } 
+
+  Future deleteFood(Foods statement) async {
+    final finder = Finder(filter: Filter.byKey(statement.id)); // ตัวแปรในการหาว่าจะลบตัวไหน โดยใช้ id ในการหา
+    
+    var db = await openDatabase();
+    var store = intMapStoreFactory.store("expense");
+    store.delete(db, finder: finder,); // store.delete() คำสั่งในการลบ
+  }
 }

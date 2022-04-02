@@ -40,6 +40,7 @@ class StudentDB{
     /* add ค่าข้อมูลต่างๆในรูปแบบ json ลงฐานข้อมูล
     close db จากนั้น return keyID ของข้อมูลกลับมา */
     var keyID = store.add(db, {
+      "id": statement.id,
       "name": statement.name,
       "age": statement.age,
       "height": statement.height,
@@ -58,6 +59,7 @@ class StudentDB{
     for(var record in snapshot){
       studentList.add(
         Students(
+          id: int.parse(record["id"].toString()),
           name: record["name"].toString(),
           age: int.parse(record["age"].toString()),
           height: int.parse(record["height"].toString()),
@@ -67,4 +69,12 @@ class StudentDB{
     }
     return studentList;
   } 
+
+  Future deleteStudent(Students statement) async {
+    final finder = Finder(filter: Filter.byKey(statement.id)); // ตัวแปรในการหาว่าจะลบตัวไหน โดยใช้ id ในการหา
+    
+    var db = await openDatabase();
+    var store = intMapStoreFactory.store("expense");
+    store.delete(db, finder: finder,); // store.delete() คำสั่งในการลบ
+  }
 }

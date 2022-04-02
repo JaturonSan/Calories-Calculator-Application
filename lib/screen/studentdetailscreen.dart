@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mini_project/database/student_db.dart';
 import 'package:mini_project/screen/addstudentscreen.dart';
 import 'package:mini_project/screen/sidemenu.dart';
 import 'package:provider/provider.dart';
@@ -14,6 +15,8 @@ class DetailStuScreen extends StatefulWidget {
 }
 
 class _DetailStuScreenState extends State<DetailStuScreen> {
+  StudentDB studentdb = StudentDB(dbName: 'students.db');
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,6 +66,25 @@ class _DetailStuScreenState extends State<DetailStuScreen> {
                     ),
                     title: Text(data.name!), // โชว์ชื่อ-นามสกุล
                     subtitle: Text('น้ำหนัก: '+data.weight.toString()), // โชว์น้ำหนัก (ส่วนสูงยังไม่รูจะแสดงยังไง)
+                    trailing: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        IconButton(
+                          onPressed: () async {
+                            // โค้ดแก้ไขข้อมูลในฐานข้อมูล
+                          }, 
+                          icon: Icon(Icons.edit)
+                        ),
+                        IconButton(
+                          onPressed: () async {
+                            // ลบข้อมูลในฐานข้อมูลโดย เรียกฟังก์ชั่น DeleteFood ใน FoodDB แล้วใส่ข้อมูลตัวที่จะลบลงไป
+                            var provider = Provider.of<StudentProvider>(context, listen: false);
+                            provider.deleteStudent(data);
+                          }, 
+                          icon: Icon(Icons.delete)
+                        ),
+                      ],
+                    ),
                   ),
                 );
               },

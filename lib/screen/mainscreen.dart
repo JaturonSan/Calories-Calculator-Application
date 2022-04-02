@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mini_project/database/food_db.dart';
 import 'package:mini_project/model/food.dart';
 import 'package:mini_project/providers/food_provider.dart';
 import 'package:mini_project/screen/addfoodscreen.dart';
@@ -13,6 +14,8 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  FoodDB fooddb = FoodDB(dbName: 'foods.db');
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,6 +65,28 @@ class _MainScreenState extends State<MainScreen> {
                     ),
                     title: Text(data.name!), // ชื่ออาหาร
                     subtitle: Text(data.calories.toString() + " แคล"), // จำนวนแคลลอรี่
+                    trailing: Container(
+                      width: 100,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          IconButton(
+                            onPressed: () async {
+                              // โค้ดแก้ไขข้อมูลในฐานข้อมูล
+                            }, 
+                            icon: Icon(Icons.edit)
+                          ),
+                          IconButton(
+                            onPressed: () async {
+                              // ลบข้อมูลในฐานข้อมูลโดย เรียกฟังก์ชั่น DeleteFood ใน FoodDB แล้วใส่ข้อมูลตัวที่จะลบลงไป
+                              var provider = Provider.of<FoodProvider>(context, listen: false);
+                              provider.deleteFood(data);
+                            }, 
+                            icon: Icon(Icons.delete)
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 );
               },
