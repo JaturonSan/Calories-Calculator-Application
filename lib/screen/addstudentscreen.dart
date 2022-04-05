@@ -19,7 +19,7 @@ class AddStudentScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: const SideMenu(),
-      appBar: AppBar(title: const Text('เพิ่มข้อมูลเด็กนักเรียน')),
+      appBar: AppBar(title: const Text('เพิ่มข้อมูลเด็กนักเรียน'), backgroundColor: Colors.cyan[900],),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(20),
@@ -83,6 +83,7 @@ class AddStudentScreen extends StatelessWidget {
                   height: 40,
                   width: double.infinity,
                   child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(primary: Colors.cyan[900]),
                     onPressed: () {
                       var count = studentProvider.students.length;
                       var name = nameController.text;

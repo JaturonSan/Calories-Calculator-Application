@@ -59,7 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('หน้าเข้าสู่ระบบ'),),
+      appBar: AppBar(title: const Text('หน้าเข้าสู่ระบบ'), backgroundColor: Colors.cyan[900],),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: SingleChildScrollView(
@@ -68,24 +68,38 @@ class _LoginScreenState extends State<LoginScreen> {
             key: formKey,
             child: Column(
               children: [
-                Image.asset("assets/user_icon.png"),
-                const Text('ชื่อผู้ใช้'),
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Image.asset("assets/user_icon.png"),
+                ),
                 TextField(
                   keyboardType: TextInputType.name,
                   onChanged: (name){
                     username = name;
                   },
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'ชื่อผู้ใช้',
+                    labelStyle: TextStyle(fontSize: 15,),
+                  ),
                 ),
-                const Text('รหัสผ่าน'),
+                SizedBox(height: 15,),
                 TextField(
                   keyboardType: TextInputType.visiblePassword,
                   onChanged: (password){
                     userpass = password;
                   },
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'รหัสผ่าน',
+                    labelStyle: TextStyle(fontSize: 15,),
+                  ),
                 ),
+                SizedBox(height: 15,),
                 SizedBox(
                   width: double.infinity, 
                   child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(primary: Colors.cyan[900]),
                     onPressed: () {
                       Navigator.push(
                         context, MaterialPageRoute(builder: (context) {
@@ -99,6 +113,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(
                   width: double.infinity, 
                   child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(primary: Colors.cyan[900]),
                     onPressed: () {
                       // ต้องแก้ส่วนนี้ตอนล็อกอินว่าจะต้องเช็คบัญชีผู้ใช้
                       Navigator.push(

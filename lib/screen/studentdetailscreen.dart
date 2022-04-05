@@ -30,6 +30,7 @@ class _DetailStuScreenState extends State<DetailStuScreen> {
       drawer: const SideMenu(),
       appBar: AppBar(
         title: const Text('รายละเอียดนักเรียน'),
+        backgroundColor: Colors.cyan[900],
         actions: [
           IconButton(
             onPressed: () async {

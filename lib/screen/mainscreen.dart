@@ -8,7 +8,7 @@ class MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('หน้าหลัก')),
+      appBar: AppBar(title: Text('หน้าหลัก'), backgroundColor: Colors.cyan[900],),
       drawer: const SideMenu(),
       body: Padding(
         padding: EdgeInsets.all(20),

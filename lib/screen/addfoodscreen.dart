@@ -20,7 +20,7 @@ class AddFood extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: const SideMenu(),
-      appBar: AppBar(title: const Text('เพื่มเมนูอาหาร')),
+      appBar: AppBar(title: const Text('เพื่มเมนูอาหาร'), backgroundColor: Colors.cyan[900],),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(20),
@@ -71,6 +71,7 @@ class AddFood extends StatelessWidget {
                   height: 40,
                   width: double.infinity,
                   child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(primary: Colors.cyan[900]),
                     onPressed: () {
                       var count = foddProvider.foods.length;
                       var name = nameController.text;

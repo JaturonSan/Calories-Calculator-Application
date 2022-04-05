@@ -29,7 +29,8 @@ class _ShowFoodScreenState extends State<ShowFoodScreen> {
     return Scaffold(
       drawer: const SideMenu(),
       appBar: AppBar(
-        title: const Text('รายการอาหาร'),
+        title: const Text('รายการอาหาร'), 
+        backgroundColor: Colors.cyan[900],
         actions: [
           IconButton(
             onPressed: () {

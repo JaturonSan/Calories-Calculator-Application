@@ -17,7 +17,7 @@ class SideMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     return Drawer(
       child: Container(
-        color: Colors.lightGreen[100],
+        color: Colors.cyan[900],
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
@@ -32,10 +32,10 @@ class SideMenu extends StatelessWidget {
               ),
             ),
             Card(
-              color: Colors.lightGreen[800],
+              color: Colors.white54,
               child: ListTile(
-                leading: const Icon(Icons.home, color: Colors.white,),
-                title: const Text('หน้าหลัก', style: TextStyle(color: Colors.white,),),
+                leading: const Icon(Icons.home, color: Colors.black,),
+                title: const Text('หน้าหลัก', style: TextStyle(color: Colors.black,),),
                 onTap: () => {
                   Navigator.pushReplacement(
                     context, 
@@ -45,10 +45,10 @@ class SideMenu extends StatelessWidget {
               ),
             ),
             Card(
-              color: Colors.lightGreen[800],
+              color: Colors.white54,
               child: ListTile(
-                leading: const Icon(Icons.fastfood, color: Colors.white,),
-                title: const Text('รายการอาหาร', style: TextStyle(color: Colors.white,),),
+                leading: const Icon(Icons.fastfood, color: Colors.black,),
+                title: const Text('รายการอาหาร', style: TextStyle(color: Colors.black,),),
                 onTap: () => {
                   Navigator.pushReplacement(
                     context, 
@@ -58,10 +58,10 @@ class SideMenu extends StatelessWidget {
               ),
             ),
             Card(
-              color: Colors.lightGreen[800],
+              color: Colors.white54,
               child: ListTile(
-                leading: const Icon(Icons.incomplete_circle, color: Colors.white,),
-                title: const Text('แสดงแคลลอรี่', style: TextStyle(color: Colors.white,),),
+                leading: const Icon(Icons.incomplete_circle, color: Colors.black,),
+                title: const Text('แสดงแคลลอรี่', style: TextStyle(color: Colors.black,),),
                 onTap: () => {
                   Navigator.pushReplacement(
                     context, 
@@ -71,10 +71,10 @@ class SideMenu extends StatelessWidget {
               ),
             ),
             Card(
-              color: Colors.lightGreen[800],
+              color: Colors.white54,
               child: ListTile(
-                leading: const Icon(Icons.restaurant, color: Colors.white,),
-                title: const Text('เพิ่มรายการอาหาร', style: TextStyle(color: Colors.white,),),
+                leading: const Icon(Icons.restaurant, color: Colors.black,),
+                title: const Text('เพิ่มรายการอาหาร', style: TextStyle(color: Colors.black,),),
                 onTap: () => {
                   Navigator.pushReplacement(
                     context, 
@@ -84,10 +84,10 @@ class SideMenu extends StatelessWidget {
               ),
             ),
             Card(
-              color: Colors.lightGreen[800],
+              color: Colors.white54,
               child: ListTile(
-                leading: const Icon(Icons.person_add, color: Colors.white,),
-                title: const Text('เพิ่มข้อมูลนักเรียน', style: TextStyle(color: Colors.white,),),
+                leading: const Icon(Icons.person_add, color: Colors.black,),
+                title: const Text('เพิ่มข้อมูลนักเรียน', style: TextStyle(color: Colors.black,),),
                 onTap: () => {
                   Navigator.pushReplacement(
                     context, 
@@ -97,10 +97,10 @@ class SideMenu extends StatelessWidget {
               ),
             ),
             Card(
-              color: Colors.lightGreen[800],
+              color: Colors.white54,
               child: ListTile(
-                leading: const Icon(Icons.person, color: Colors.white,),
-                title: const Text('รายละเอียดนักเรียน', style: TextStyle(color: Colors.white,),),
+                leading: const Icon(Icons.person, color: Colors.black,),
+                title: const Text('รายละเอียดนักเรียน', style: TextStyle(color: Colors.black,),),
                 onTap: () => {
                   Navigator.pushReplacement(
                     context, 
@@ -110,10 +110,10 @@ class SideMenu extends StatelessWidget {
               ),
             ),
             Card(
-              color: Colors.lightGreen[800],
+              color: Colors.white54,
               child: ListTile(
-                leading: const Icon(Icons.logout, color: Colors.white,),
-                title: const Text('ออกจากระบบ', style: TextStyle(color: Colors.white,),),
+                leading: const Icon(Icons.logout, color: Colors.black,),
+                title: const Text('ออกจากระบบ', style: TextStyle(color: Colors.black,),),
                 onTap: () => {
                   Navigator.of(context).pushReplacement( 
                     MaterialPageRoute(builder: (BuildContext context) => const LoginScreen()),
