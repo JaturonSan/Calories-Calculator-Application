@@ -41,6 +41,18 @@ dependencies:
   provider: ^6.0.2
   percent_indicator: ^4.0.0
 
+  # แพ็คเก็ตไอคอน
+  flutter_launcher_icons: ^0.9.2 
+
+# ตัวนี้เป็นการกำหนดไอคอนของแอป ชื่อแพ็คเก็ต flutter_launcher_icons
+flutter_icons: 
+
+  # กำหนดให้มีการใช้แอนดรอย
+  android: true
+
+  # ที่อยู่ของไอคอน 
+  image_path: "assets/icons/logo.png" 
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

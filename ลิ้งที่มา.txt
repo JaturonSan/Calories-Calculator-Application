@@ -1,5 +1,6 @@
 1.https://www.lokehoon.com/app.php?q_id=calculate_bmr_tdee
 2.https://www.calculator.net/bmr-calculator.html
+3.sembast operations -- https://github.com/tekartik/sembast.dart/blob/master/sembast/doc/writes.md#delete-records
 
 
 void main() {
