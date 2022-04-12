@@ -74,7 +74,7 @@ class AddFood extends StatelessWidget {
                     style: ElevatedButton.styleFrom(primary: Colors.cyan[900]),
                     onPressed: () {
                       var name = nameController.text;
-                      var cal = double.parse(calController.text);
+                      var cal = int.parse(calController.text);
                       var amout = int.parse(amountController.text);
                       Foods foods = Foods(name: name,calories: cal,amount: amout);
                       var provider = Provider.of<FoodProvider>(context, listen: false);

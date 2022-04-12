@@ -1,8 +1,10 @@
 /* หน้านี้เป็นหน้าแสดงแคลลอรี่ของคนๆนี้ */
 
 import 'package:flutter/material.dart';
+import 'package:mini_project/providers/food_provider.dart';
 import 'package:mini_project/screen/sidemenu.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:provider/provider.dart';
 
 class ShowCalScreen extends StatefulWidget {
   const ShowCalScreen({Key? key}) : super(key: key);
@@ -18,8 +20,7 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
   double weight = 55.4;
   int height = 167;
   int age = 22;
-  int calsNow =
-      1800; // Kcalลอรี่ที่เหลือในวันนี้ ต้องมาจากหน้าเพิ่มอาหารในฐานข้อมูล
+  int calsNow = 0; // Kcalลอรี่ที่เหลือในวันนี้ ต้องมาจากหน้าเพิ่มอาหารในฐานข้อมูล
   int cals = 0; // Kcalเลอรี่ BMR
   int calNone = 0; // ไม่ออกกำลังกายเลย
   int cal_1to3day = 0; // Kcalเลอรี่รวมถ้าเราออกกำลังกาย 1-3 วันต่อสัปดาห์
@@ -38,6 +39,7 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
   @override
   void initState() {
     super.initState(); // ใช้คำสั่ง super.initState(); เพื่อเตรียมฟังก์ชั่น init แล้วเรียกฟังก์ชั่นที่ต้องการ
+    asyncMethod();
     getCals(weight, height, age);
     getNutrients();
     calRemain(calsNow, cals);
@@ -316,6 +318,16 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
           .round(); // คำนวณคาร์โบไฮเดตรโดยคิดเป็น 30% ในวันนี้
       pro = ((cals * 0.4) / 4).round(); // คำนวณโปรตีนโดยคิดเป็น 40% ในวันนี้
       fat = ((cals * 0.3) / 9).round(); // คำนวณไขมันโดยคิดเป็น 30% ในวันนี้
+    });
+  }
+
+  // ฟังก์ชั่นแก้ไขการเรียก async กับ await ในฟังก์ชั่น initState() ไม่ได้ 
+  void asyncMethod() async {
+    int cal = 0;
+    var provider = Provider.of<FoodProvider>(context, listen: false);
+    cal = await provider.loadCals();
+    setState(() {
+      calsNow = cal;
     });
   }
 }

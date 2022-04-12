@@ -166,7 +166,7 @@ class _ShowFoodScreenState extends State<ShowFoodScreen> {
                                       onPressed: () async { 
                                         // ค่าที่แก้ไขใน dialog จะเก็บในตัวแปรนี้
                                         var name = nameController.text;
-                                        var cal = double.parse(calController.text);
+                                        var cal = int.parse(calController.text);
                                         var amout = int.parse(amountController.text);
                                         Foods foods = Foods(name: name,calories: cal,amount: amout);
 

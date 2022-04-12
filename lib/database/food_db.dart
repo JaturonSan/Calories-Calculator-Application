@@ -84,13 +84,27 @@ class FoodDB{
       foodList.add(
         Foods(
           name: record["name"].toString(),
-          calories: double.parse(record["calories"].toString()),
+          calories: int.parse(record["calories"].toString()),
           amount: int.parse(record["amount"].toString()),
         )
       );
     }
     return foodList;
   } 
+
+  // ฟังก์ชั่นโหลดข้อมูลแคลลอรี่ในฐานข้อมูล
+  Future<int> loadCalsData() async {
+    var db = await openDatabase();
+    var store = intMapStoreFactory.store();
+    // การใส่ finder หมายถึงการเรียงข้อมูล จากน้อยไปมากและมากไปน้อย
+    var snapshot = await store.find(db, finder: Finder(sortOrders: [SortOrder(Field.key, true)]));
+    int cals = 0;
+    for(var record in snapshot){
+      // โหลดข้อมูล calories มาคูณกับจำนวนที่ใส่ในฐานข้อมูล
+      cals+=int.parse(record["calories"].toString())*int.parse(record["amount"].toString());
+    }
+    return cals;
+  }
 
   Future deleteFood(Foods statement) async {
     // int? id = statement.id;

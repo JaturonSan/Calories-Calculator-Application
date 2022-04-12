@@ -5,6 +5,7 @@ import 'package:mini_project/model/food.dart';
 class FoodProvider with ChangeNotifier {
   // 1.สร้างลิสของ Food 
   List<Foods> foods = [];
+  int cals = 0;
 
   // สร้างฟังชั่นเรียก Foods
   List<Foods> getFood(){
@@ -24,11 +25,21 @@ class FoodProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  // ฟังก์ชั่นในการโหลดข้อมูลขึ้นมาก่อนแสดงหน้าแอป
   void initData() async {
     var db = FoodDB(dbName: "foods.db");
     // ดึงข้อมูลมาแสดงผล (Select)
     foods = await db.loadAllData();
     notifyListeners();
+  }
+
+  // ฟังก์ชั่นในการดึงค่าแคลลอรี่ของอาหารจากฐานข้อมูลที่เพิ่มเข้ามา
+  Future<int> loadCals() async {
+    var db = FoodDB(dbName: "foods.db");
+    // ดึงข้อมูลมาแสดงผล (Select)
+    cals = await db.loadCalsData();
+    notifyListeners();
+    return cals;
   }
 
   // ลบข้อมูลเฉพาะที่เลือกไว้เท่านั้น
