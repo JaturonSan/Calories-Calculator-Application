@@ -163,7 +163,7 @@ class _ShowFoodScreenState extends State<ShowFoodScreen> {
                                       child: const Text('ยกเลิก'),
                                     ),
                                     TextButton(
-                                      onPressed: () { 
+                                      onPressed: () async { 
                                         // ค่าที่แก้ไขใน dialog จะเก็บในตัวแปรนี้
                                         var name = nameController.text;
                                         var cal = double.parse(calController.text);

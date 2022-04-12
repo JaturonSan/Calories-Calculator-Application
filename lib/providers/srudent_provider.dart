@@ -44,5 +44,17 @@ class StudentProvider with ChangeNotifier {
   void deleteAllData() async {
     StudentDB db = StudentDB(dbName: "students.db");
     await db.deleteAll();
+
+    // เตือน Consumer
+    notifyListeners();
+  }
+
+  // ฟังก์ชั่นในการแก้ไขข้อมูล
+  void editData(Students statement, Students newData) async {
+    var db =  StudentDB(dbName: "students.db");
+    await db.editData(statement, newData);
+
+    // เตือน Consumer
+    notifyListeners();
   }
 }

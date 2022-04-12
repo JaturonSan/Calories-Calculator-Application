@@ -40,7 +40,6 @@ class StudentDB{
     /* add ค่าข้อมูลต่างๆในรูปแบบ json ลงฐานข้อมูล
     close db จากนั้น return keyID ของข้อมูลกลับมา */
     var keyID = store.add(db, {
-      "id": statement.id,
       "name": statement.name,
       "age": statement.age,
       "height": statement.height,
@@ -59,7 +58,6 @@ class StudentDB{
     for(var record in snapshot){
       studentList.add(
         Students(
-          id: int.parse(record["id"].toString()),
           name: record["name"].toString(),
           age: int.parse(record["age"].toString()),
           height: int.parse(record["height"].toString()),
@@ -71,16 +69,43 @@ class StudentDB{
   } 
 
   Future deleteStudent(Students statement) async {
-    int? id = statement.id; // สร้างตัวแปร id ในการหา
-    var db = await openDatabase();
-    var store = intMapStoreFactory.store();
-    var record = store.record(id!); // ตัวอ้างอิงไปถึงตัวแทนในฐานข้อมูล
-    await record.delete(db); // record.delete() คำสั่งในการเฉพาะ record ที่เลือก 
+    // int? id = statement.id; // สร้างตัวแปร id ในการหา
+    // var db = await openDatabase();
+    // var store = intMapStoreFactory.store();
+    // var record = store.record(id!); // ตัวอ้างอิงไปถึงตัวแทนในฐานข้อมูล
+    // await record.delete(db); // record.delete() คำสั่งในการเฉพาะ record ที่เลือก 
   }
 
   Future deleteAll() async {
     var db = await openDatabase();
     var store = intMapStoreFactory.store();
     await store.delete(db);
+  }
+
+  Future editData(Students statement, Students newData) async {
+    // Use the main store for storing map data with an auto-generated
+    // int key
+    var db = await openDatabase();
+    var store = intMapStoreFactory.store();
+
+    // ทำเพื่อหา key ของข้อมูลที่เราจะอัพเดตข้อมูลนั้น โดยใช้ Filter เพื่อกรองเนื้อหาในฐานข้อมูลที่ต้องการ
+    var filter = Filter.and([Filter.equals("name", statement.name),]);
+    var key = await store.findKey(
+      db, 
+      finder: Finder(
+        filter: filter,
+      ),
+    );
+
+    var record = store.record(key!);
+    await record.update(
+      db, 
+      {
+        "name": newData.name,
+        "age": newData.age,
+        "height": newData.height,
+        "weight": newData.weight
+      },
+    );
   }
 }

@@ -85,13 +85,11 @@ class AddStudentScreen extends StatelessWidget {
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(primary: Colors.cyan[900]),
                     onPressed: () {
-                      var count = studentProvider.students.length;
                       var name = nameController.text;
                       var age = ageController.text;
                       var height = heightController.text;
                       var weight = weightController.text;
                       Students student = Students(
-                        id: count,
                         name: name,
                         age: int.parse(age),
                         height: int.parse(height),

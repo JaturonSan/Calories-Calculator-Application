@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:form_field_validator/form_field_validator.dart';
 import 'package:mini_project/database/student_db.dart';
 import 'package:mini_project/screen/addstudentscreen.dart';
 import 'package:mini_project/screen/sidemenu.dart';
@@ -15,6 +16,7 @@ class DetailStuScreen extends StatefulWidget {
 
 class _DetailStuScreenState extends State<DetailStuScreen> {
   StudentDB studentdb = StudentDB(dbName: "students.db");
+  final keyForm = GlobalKey<FormState>();
 
   // initSate เป็นฟังก์ชั่นในการเริ่มฟังก์ชั่นต่างๆก่อนสร้างหน้าขึ้น เพื่อเตียมข้อมูลที่จะแสดงผลไว้ก่อน เพื่อไม่ให้เกิดค่าว่าง หรือหน้าไม่ยอมโหลด
   @override
@@ -96,7 +98,106 @@ class _DetailStuScreenState extends State<DetailStuScreen> {
                         children: [
                           IconButton(
                             onPressed: () async {
-                              // โค้ดแก้ไขข้อมูลในฐานข้อมูล
+                              // pop-up ที่แสดงขึ้นมาให้แก้ไขข้อมูลได้ โดยใช้ showDialog
+                              /* ในปัญหาของการที่ TextFormField แก้ไขพร้อมกันไม่ได้กับมีข้อความแสดงแต่แรก initialValue กับ controller เราต้อง
+                                 ใส่ค่าใน TextEditingController ตั้งแต่แรกเลยแล้วค่อยไปใส่ใน TextFormField
+                              */
+                              TextEditingController nameController = TextEditingController(text: data.name);
+                              TextEditingController ageController = TextEditingController(text: (data.age).toString());
+                              TextEditingController heightController = TextEditingController(text: (data.height).toString());
+                              TextEditingController weightController = TextEditingController(text: (data.weight).toString());
+                              await showDialog<String>(
+                                context: context,
+                                builder: (BuildContext context) => AlertDialog(
+                                  title: const Text('แก้ไขข้อมูล'),
+                                  content: Form(
+                                    key: keyForm,
+                                    child: SingleChildScrollView(
+                                      child: Column(
+                                        children: [
+                                          TextFormField(
+                                            keyboardType: TextInputType.name,
+                                            controller: nameController,
+                                            validator: MultiValidator([
+                                              RequiredValidator(errorText: 'กรุณาป้อนชื่อ-นามสกุล'),
+                                            ]),
+                                            // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
+                                            decoration: InputDecoration(
+                                              border: OutlineInputBorder(),
+                                              labelText: 'ชื่อ-นามสกุล',
+                                            ),
+                                          ),
+                                          SizedBox(height: 20,),
+                                          TextFormField(
+                                            controller: ageController,
+                                            validator: MultiValidator([
+                                              RequiredValidator(errorText: 'กรุณาป้อนอายุ'),
+                                            ]),
+                                            // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
+                                            decoration: InputDecoration(
+                                              border: OutlineInputBorder(),
+                                              labelText: 'อายุ',
+                                            ),
+                                          ),
+                                          SizedBox(height: 20,),
+                                          TextFormField(
+                                            keyboardType: TextInputType.visiblePassword,
+                                            controller: weightController,
+                                            validator: MultiValidator([
+                                              RequiredValidator(errorText: 'กรุณาป้อนส่วนสูง'),
+                                            ]),
+                                            // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
+                                            decoration: InputDecoration(
+                                              border: OutlineInputBorder(),
+                                              labelText: 'ส่วนสูง',
+                                            ),
+                                          ),
+                                          SizedBox(height: 20,),
+                                          TextFormField(
+                                            keyboardType: TextInputType.visiblePassword,
+                                            controller: weightController,
+                                            validator: MultiValidator([
+                                              RequiredValidator(errorText: 'กรุณาป้อนน้ำหนัก'),
+                                            ]),
+                                            // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
+                                            decoration: InputDecoration(
+                                              border: OutlineInputBorder(),
+                                              labelText: 'น้ำหนัก',
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context, 'ยกเลิก'),
+                                      child: const Text('ยกเลิก'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () async { 
+                                        // ค่าที่แก้ไขใน dialog จะเก็บในตัวแปรนี้
+                                        var name = nameController.text;
+                                        var age = int.parse(ageController.text);
+                                        var height = int.parse(heightController.text);
+                                        var weight = double.parse(weightController.text);
+                                        Students students = Students(name: name,age: age,height: height,weight: weight);
+
+                                        // แก้ไขข้อมูลในฐานข้อมูล
+                                        var provider = Provider.of<StudentProvider>(context, listen: false);
+                                        provider.editData(data, students);
+                                        Navigator.pop(context);
+                                        Navigator.pushAndRemoveUntil(
+                                          context,
+                                          MaterialPageRoute(builder: (context) => DetailStuScreen()), // this mainpage is your page to refresh
+                                          (Route<dynamic> route) => false,
+                                        );
+                                      },
+                                      child: const Text('โอเค'),
+                                    ),
+                                  ],
+                                ),
+                              );
                             }, 
                             icon: Icon(Icons.edit)
                           ),
