@@ -66,7 +66,6 @@ class FoodDB{
     /* add ค่าข้อมูลต่างๆในรูปแบบ json ลงฐานข้อมูล
     close db จากนั้น return keyID ของข้อมูลกลับมา */
     var keyID = store.add(db, {
-      "id": statement.id,
       "name": statement.name,
       "calories": statement.calories,
       "amount": statement.amount,
@@ -84,7 +83,6 @@ class FoodDB{
     for(var record in snapshot){
       foodList.add(
         Foods(
-          id: int.parse(record["id"].toString()),
           name: record["name"].toString(),
           calories: double.parse(record["calories"].toString()),
           amount: int.parse(record["amount"].toString()),
@@ -95,16 +93,42 @@ class FoodDB{
   } 
 
   Future deleteFood(Foods statement) async {
-    int? id = statement.id;
-    var db = await openDatabase();
-    var store = intMapStoreFactory.store();
-    var record = store.record(id!);
-    record.delete(db); // store.delete() คำสั่งในการลบ
+    // int? id = statement.id;
+    // var db = await openDatabase();
+    // var store = intMapStoreFactory.store();
+    // var record = store.record(id!);
+    // record.delete(db); // store.delete() คำสั่งในการลบ
   }
 
   Future deleteAll() async {
     var db = await openDatabase();
     var store = intMapStoreFactory.store();
     await store.delete(db);
+  }
+
+  Future editData(Foods statement, Foods newData) async {
+    // Use the main store for storing map data with an auto-generated
+    // int key
+    var db = await openDatabase();
+    var store = intMapStoreFactory.store();
+
+    // ทำเพื่อหา key ของข้อมูลที่เราจะอัพเดตข้อมูลนั้น โดยใช้ Filter เพื่อกรองเนื้อหาในฐานข้อมูลที่ต้องการ
+    var filter = Filter.and([Filter.equals("name", statement.name),]);
+    var key = await store.findKey(
+      db, 
+      finder: Finder(
+        filter: filter,
+      ),
+    );
+
+    var record = store.record(key!);
+    await record.update(
+      db, 
+      {
+        "name": newData.name,
+        "calories": newData.calories,
+        "amount": newData.amount
+      },
+    );
   }
 }

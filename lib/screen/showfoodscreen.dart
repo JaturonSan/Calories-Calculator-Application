@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:form_field_validator/form_field_validator.dart';
 import 'package:mini_project/database/food_db.dart';
 import 'package:mini_project/model/food.dart';
 import 'package:mini_project/providers/food_provider.dart';
@@ -15,6 +16,7 @@ class ShowFoodScreen extends StatefulWidget {
 
 class _ShowFoodScreenState extends State<ShowFoodScreen> {
   FoodDB fooddb = FoodDB(dbName: "foods.db");
+  final keyForm = GlobalKey<FormState>();
 
   // initSate เป็นฟังก์ชั่นในการเริ่มฟังก์ชั่นต่างๆก่อนสร้างหน้าขึ้น เพื่อเตียมข้อมูลที่จะแสดงผลไว้ก่อน เพื่อไม่ให้เกิดค่าว่าง หรือหน้าไม่ยอมโหลด
   @override
@@ -96,7 +98,92 @@ class _ShowFoodScreenState extends State<ShowFoodScreen> {
                         children: [
                           IconButton(
                             onPressed: () async {
-                              // โค้ดแก้ไขข้อมูลในฐานข้อมูล
+                              // pop-up ที่แสดงขึ้นมาให้แก้ไขข้อมูลได้ โดยใช้ showDialog
+                              /* ในปัญหาของการที่ TextFormField แก้ไขพร้อมกันไม่ได้กับมีข้อความแสดงแต่แรก เราต้อง
+                                 ใส่ค่าใน TextEditingController ตั้งแต่แรกเลยแล้วค่อยไปใส่ใน TextFormField
+                              */
+                              TextEditingController nameController = TextEditingController(text: data.name);
+                              TextEditingController calController = TextEditingController(text: (data.calories).toString());
+                              TextEditingController amountController = TextEditingController(text: (data.amount).toString());
+                              await showDialog<String>(
+                                context: context,
+                                builder: (BuildContext context) => AlertDialog(
+                                  title: const Text('แก้ไขข้อมูล'),
+                                  content: Form(
+                                    key: keyForm,
+                                    child: Column(
+                                      children: [
+                                        TextFormField(
+                                          keyboardType: TextInputType.name,
+                                          controller: nameController,
+                                          validator: MultiValidator([
+                                            RequiredValidator(errorText: 'กรุณาป้อนชื่ออาหาร'),
+                                          ]),
+                                          // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
+                                          decoration: InputDecoration(
+                                            border: OutlineInputBorder(),
+                                            labelText: 'ชื่ออาหาร',
+                                          ),
+                                          //initialValue: data.name,
+                                        ),
+                                        SizedBox(height: 20,),
+                                        TextFormField(
+                                          controller: calController,
+                                          validator: MultiValidator([
+                                            RequiredValidator(errorText: 'กรุณาป้อนจำนวนแคลอรี่'),
+                                          ]),
+                                          // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
+                                          decoration: InputDecoration(
+                                            border: OutlineInputBorder(),
+                                            labelText: 'แคลอรี่',
+                                          ),
+                                          //initialValue: (data.calories).toString(),
+                                        ),
+                                        SizedBox(height: 20,),
+                                        TextFormField(
+                                          keyboardType: TextInputType.visiblePassword,
+                                          controller: amountController,
+                                          validator: MultiValidator([
+                                            RequiredValidator(errorText: 'กรุณาจำนวนอาหาร'),
+                                            MinLengthValidator(1, errorText: 'จำนวนอาหารต้องมีอย่างน้อย 1 จาน'),
+                                          ]),
+                                          // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
+                                          decoration: InputDecoration(
+                                            border: OutlineInputBorder(),
+                                            labelText: 'จำนวน',
+                                          ),
+                                          //initialValue: (data.amount).toString(),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context, 'ยกเลิก'),
+                                      child: const Text('ยกเลิก'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () { 
+                                        // ค่าที่แก้ไขใน dialog จะเก็บในตัวแปรนี้
+                                        var name = nameController.text;
+                                        var cal = double.parse(calController.text);
+                                        var amout = int.parse(amountController.text);
+                                        Foods foods = Foods(name: name,calories: cal,amount: amout);
+
+                                        // แก้ไขข้อมูลในฐานข้อมูล
+                                        var provider = Provider.of<FoodProvider>(context, listen: false);
+                                        provider.editData(data, foods);
+                                        Navigator.pushAndRemoveUntil(
+                                          context,
+                                          MaterialPageRoute(builder: (context) => ShowFoodScreen()), // this mainpage is your page to refresh
+                                          (Route<dynamic> route) => false,
+                                        );
+                                      },
+                                      child: const Text('โอเค'),
+                                    ),
+                                  ],
+                                ),
+                              );
                             }, 
                             icon: Icon(Icons.edit)
                           ),
@@ -105,6 +192,11 @@ class _ShowFoodScreenState extends State<ShowFoodScreen> {
                               // ลบข้อมูลในฐานข้อมูลโดย เรียกฟังก์ชั่น DeleteFood ใน FoodDB แล้วใส่ข้อมูลตัวที่จะลบลงไป
                               var provider = Provider.of<FoodProvider>(context, listen: false);
                               provider.deleteFood(data);
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(builder: (context) => ShowFoodScreen()), // this mainpage is your page to refresh
+                                (Route<dynamic> route) => false,
+                              );
                             }, 
                             icon: Icon(Icons.delete)
                           ),

@@ -57,8 +57,8 @@ class ProfileDB{
     for(var record in snapshot){
       profileList.add(
         Profile(
-          username: record['username'].toString(),
-          password: record['password'].toString(),
+          username: record["username"].toString(),
+          password: record["password"].toString(),
         )
       );
     }

@@ -31,6 +31,7 @@ class FoodProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  // ลบข้อมูลเฉพาะที่เลือกไว้เท่านั้น
   void deleteFood(Foods statement) async {
     var db =  FoodDB(dbName: "foods.db");
     await db.deleteFood(statement);
@@ -41,8 +42,21 @@ class FoodProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  // ฟังก์ชั่นในการลบข้อมูลทั้งหมดในฐานข้อมูล foods.db
   void deleteAllData() async {
     FoodDB db = FoodDB(dbName: "foods.db");
     await db.deleteAll();
+
+    // เตือน Consumer
+    notifyListeners();
+  }
+
+  // ฟังก์ชั่นในการแก้ไขข้อมูล
+  void editData(Foods statement, Foods newData) async {
+    var db =  FoodDB(dbName: "foods.db");
+    await db.editData(statement, newData);
+
+    // เตือน Consumer
+    notifyListeners();
   }
 }
