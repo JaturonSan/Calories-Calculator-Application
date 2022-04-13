@@ -35,24 +35,24 @@ class AddFood extends StatelessWidget {
                     RequiredValidator(errorText: 'กรุณาป้อนชื่ออาหาร'),
                   ]),
                   // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'ชื่ออาหาร',
                   ),
                 ),
-                SizedBox(height: 20,),
+                const SizedBox(height: 20,),
                 TextFormField(
                   controller: calController,
                   validator: MultiValidator([
                     RequiredValidator(errorText: 'กรุณาป้อนจำนวนแคลอรี่'),
                   ]),
                   // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'แคลอรี่',
                   ),
                 ),
-                SizedBox(height: 20,),
+                const SizedBox(height: 20,),
                 TextFormField(
                   keyboardType: TextInputType.visiblePassword,
                   controller: amountController,
@@ -61,7 +61,7 @@ class AddFood extends StatelessWidget {
                     MinLengthValidator(1, errorText: 'จำนวนอาหารต้องมีอย่างน้อย 1 จาน'),
                   ]),
                   // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'จำนวน',
                   ),

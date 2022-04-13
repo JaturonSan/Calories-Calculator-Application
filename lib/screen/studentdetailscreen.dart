@@ -55,7 +55,7 @@ class _DetailStuScreenState extends State<DetailStuScreen> {
                 (Route<dynamic> route) => false,
               );
             }, 
-            icon: Icon(Icons.delete),
+            icon: const Icon(Icons.delete),
           ),
         ],
       ),
@@ -122,24 +122,24 @@ class _DetailStuScreenState extends State<DetailStuScreen> {
                                               RequiredValidator(errorText: 'กรุณาป้อนชื่อ-นามสกุล'),
                                             ]),
                                             // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
-                                            decoration: InputDecoration(
+                                            decoration: const InputDecoration(
                                               border: OutlineInputBorder(),
                                               labelText: 'ชื่อ-นามสกุล',
                                             ),
                                           ),
-                                          SizedBox(height: 20,),
+                                          const SizedBox(height: 20,),
                                           TextFormField(
                                             controller: ageController,
                                             validator: MultiValidator([
                                               RequiredValidator(errorText: 'กรุณาป้อนอายุ'),
                                             ]),
                                             // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
-                                            decoration: InputDecoration(
+                                            decoration: const InputDecoration(
                                               border: OutlineInputBorder(),
                                               labelText: 'อายุ',
                                             ),
                                           ),
-                                          SizedBox(height: 20,),
+                                          const SizedBox(height: 20,),
                                           TextFormField(
                                             keyboardType: TextInputType.visiblePassword,
                                             controller: weightController,
@@ -147,12 +147,12 @@ class _DetailStuScreenState extends State<DetailStuScreen> {
                                               RequiredValidator(errorText: 'กรุณาป้อนส่วนสูง'),
                                             ]),
                                             // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
-                                            decoration: InputDecoration(
+                                            decoration: const InputDecoration(
                                               border: OutlineInputBorder(),
                                               labelText: 'ส่วนสูง',
                                             ),
                                           ),
-                                          SizedBox(height: 20,),
+                                          const SizedBox(height: 20,),
                                           TextFormField(
                                             keyboardType: TextInputType.visiblePassword,
                                             controller: weightController,
@@ -160,7 +160,7 @@ class _DetailStuScreenState extends State<DetailStuScreen> {
                                               RequiredValidator(errorText: 'กรุณาป้อนน้ำหนัก'),
                                             ]),
                                             // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
-                                            decoration: InputDecoration(
+                                            decoration: const InputDecoration(
                                               border: OutlineInputBorder(),
                                               labelText: 'น้ำหนัก',
                                             ),
@@ -189,7 +189,7 @@ class _DetailStuScreenState extends State<DetailStuScreen> {
                                         Navigator.pop(context);
                                         Navigator.pushAndRemoveUntil(
                                           context,
-                                          MaterialPageRoute(builder: (context) => DetailStuScreen()), // this mainpage is your page to refresh
+                                          MaterialPageRoute(builder: (context) => const DetailStuScreen()), // this mainpage is your page to refresh
                                           (Route<dynamic> route) => false,
                                         );
                                       },
@@ -199,7 +199,7 @@ class _DetailStuScreenState extends State<DetailStuScreen> {
                                 ),
                               );
                             }, 
-                            icon: Icon(Icons.edit)
+                            icon: const Icon(Icons.edit)
                           ),
                           IconButton(
                             onPressed: () async {
@@ -207,7 +207,7 @@ class _DetailStuScreenState extends State<DetailStuScreen> {
                               var provider = Provider.of<StudentProvider>(context, listen: false);
                               provider.deleteStudent(data);
                             }, 
-                            icon: Icon(Icons.delete)
+                            icon: const Icon(Icons.delete)
                           ),
                         ],
                       ),

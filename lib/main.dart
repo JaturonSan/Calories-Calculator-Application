@@ -76,25 +76,25 @@ class _LoginScreenState extends State<LoginScreen> {
                   onChanged: (name){
                     username = name;
                   },
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'ชื่อผู้ใช้',
                     labelStyle: TextStyle(fontSize: 15,),
                   ),
                 ),
-                SizedBox(height: 15,),
+                const SizedBox(height: 15,),
                 TextField(
                   keyboardType: TextInputType.visiblePassword,
                   onChanged: (password){
                     userpass = password;
                   },
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'รหัสผ่าน',
                     labelStyle: TextStyle(fontSize: 15,),
                   ),
                 ),
-                SizedBox(height: 15,),
+                const SizedBox(height: 15,),
                 SizedBox(
                   width: double.infinity, 
                   child: ElevatedButton(
@@ -123,7 +123,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     }, 
                     child: const Text('สร้างบัญชีใหม่'),
                   ),
-                ),
+                ), 
               ],
             ),
           ),

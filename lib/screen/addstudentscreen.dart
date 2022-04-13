@@ -22,7 +22,7 @@ class AddStudentScreen extends StatelessWidget {
       appBar: AppBar(title: const Text('เพิ่มข้อมูลเด็กนักเรียน'), backgroundColor: Colors.cyan[900],),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.all(20),
+          padding: const EdgeInsets.all(20),
           child: Form(
             key: formKey,
             child: Column(
@@ -34,12 +34,12 @@ class AddStudentScreen extends StatelessWidget {
                     RequiredValidator(errorText: 'กรุณาป้อนชื่อ-นามสกุล'),
                   ]),
                   // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'ชื่อ-นามสกุล',
                   ),
                 ),
-                SizedBox(height: 20,),
+                const SizedBox(height: 20,),
                 TextFormField(
                   keyboardType: TextInputType.name,
                   controller: ageController,
@@ -47,12 +47,12 @@ class AddStudentScreen extends StatelessWidget {
                     RequiredValidator(errorText: 'กรุณาป้อนอายุ'),
                   ]),
                   // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'อายุ',
                   ),
                 ),
-                SizedBox(height: 20,),
+                const SizedBox(height: 20,),
                 TextFormField(
                   keyboardType: TextInputType.name,
                   controller: heightController,
@@ -60,12 +60,12 @@ class AddStudentScreen extends StatelessWidget {
                     RequiredValidator(errorText: 'กรุณาป้อนส่วนสูง'),
                   ]),
                   // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'ส่วนสูง',
                   ),
                 ),
-                SizedBox(height: 20,),
+                const SizedBox(height: 20,),
                 TextFormField(
                   keyboardType: TextInputType.name,
                   controller: weightController,
@@ -73,12 +73,12 @@ class AddStudentScreen extends StatelessWidget {
                     RequiredValidator(errorText: 'กรุณาป้อนน้ำหนัก'),
                   ]),
                   // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'น้ำหนัก',
                   ),
                 ),
-                SizedBox(height: 30,),
+                const SizedBox(height: 30,),
                 SizedBox(
                   height: 40,
                   width: double.infinity,

@@ -57,7 +57,7 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
           padding: const EdgeInsets.all(20),
           child: Column(
             children: [
-              Align(
+              const Align(
                 alignment: Alignment.topLeft,
                 child: Text(
                   'นับแคลลอรี่',
@@ -90,9 +90,9 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
                       ),
                       Text(
                         (cals).toString() + ' Kcal',
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 15,
                       ),
                       Text(
@@ -103,7 +103,7 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
                       ),
                       Text(
                         (calsNow).toString() + ' Kcal',
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -119,21 +119,21 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
                     progressColor: Colors.cyan[600],
                     center: Column(
                       children: [
-                        SizedBox(
+                        const SizedBox(
                           height: 50,
                         ),
                         Text(
                           (cals - calsNow < 0 ? 0 : cals - calsNow)
                               .toString(),
-                          style: TextStyle(fontSize: 30),
+                          style: const TextStyle(fontSize: 30),
                         ),
-                        Text('เหลืออีก Kcal')
+                        const Text('เหลืออีก Kcal')
                       ],
                     ),
                   ),
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
 
@@ -142,7 +142,7 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
               ListTile(
                 title: Text(
                   'ไม่ออกกำลังกาย ' + (calNone).toString() + ' Kcal',
-                  style: TextStyle(color: Colors.black),
+                  style: const TextStyle(color: Colors.black),
                 ),
                 leading: Radio<SingingCharacter>(
                   value: SingingCharacter.t1,
@@ -159,7 +159,7 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
               ListTile(
                 title: Text(
                   'ออกกำลังกาย 1-3 วัน ' + (cal_1to3day).toString() + ' Kcal',
-                  style: TextStyle(color: Colors.black),
+                  style: const TextStyle(color: Colors.black),
                 ),
                 leading: Radio<SingingCharacter>(
                   value: SingingCharacter.t2,
@@ -176,7 +176,7 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
               ListTile(
                 title: Text(
                   'ออกกำลังกาย 4-5 วัน ' + (cal_4to5day).toString() + ' Kcal',
-                  style: TextStyle(color: Colors.black),
+                  style: const TextStyle(color: Colors.black),
                 ),
                 leading: Radio<SingingCharacter>(
                   value: SingingCharacter.t3,
@@ -193,7 +193,7 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
               ListTile(
                 title: Text(
                   'ออกกำลังกาย 6-7 วัน ' + (cal_6to7day).toString() + ' Kcal',
-                  style: TextStyle(color: Colors.black),
+                  style: const TextStyle(color: Colors.black),
                 ),
                 leading: Radio<SingingCharacter>(
                   value: SingingCharacter.t4,
@@ -210,7 +210,7 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
               ListTile(
                 title: Text(
                   'ออกกำลังกาย 2 ครั้งต่อวัน ' + (cal_2perday).toString() + ' Kcal',
-                  style: TextStyle(color: Colors.black),
+                  style: const TextStyle(color: Colors.black),
                 ),
                 leading: Radio<SingingCharacter>(
                   value: SingingCharacter.t5,
@@ -224,7 +224,7 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
                   },
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 15,
               ),
               SingleChildScrollView(

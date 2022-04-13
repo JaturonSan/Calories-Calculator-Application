@@ -120,26 +120,26 @@ class _ShowFoodScreenState extends State<ShowFoodScreen> {
                                             RequiredValidator(errorText: 'กรุณาป้อนชื่ออาหาร'),
                                           ]),
                                           // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
-                                          decoration: InputDecoration(
+                                          decoration: const InputDecoration(
                                             border: OutlineInputBorder(),
                                             labelText: 'ชื่ออาหาร',
                                           ),
                                           //initialValue: data.name,
                                         ),
-                                        SizedBox(height: 20,),
+                                        const SizedBox(height: 20,),
                                         TextFormField(
                                           controller: calController,
                                           validator: MultiValidator([
                                             RequiredValidator(errorText: 'กรุณาป้อนจำนวนแคลอรี่'),
                                           ]),
                                           // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
-                                          decoration: InputDecoration(
+                                          decoration: const InputDecoration(
                                             border: OutlineInputBorder(),
                                             labelText: 'แคลอรี่',
                                           ),
                                           //initialValue: (data.calories).toString(),
                                         ),
-                                        SizedBox(height: 20,),
+                                        const SizedBox(height: 20,),
                                         TextFormField(
                                           keyboardType: TextInputType.visiblePassword,
                                           controller: amountController,
@@ -148,7 +148,7 @@ class _ShowFoodScreenState extends State<ShowFoodScreen> {
                                             MinLengthValidator(1, errorText: 'จำนวนอาหารต้องมีอย่างน้อย 1 จาน'),
                                           ]),
                                           // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
-                                          decoration: InputDecoration(
+                                          decoration: const InputDecoration(
                                             border: OutlineInputBorder(),
                                             labelText: 'จำนวน',
                                           ),
@@ -175,7 +175,7 @@ class _ShowFoodScreenState extends State<ShowFoodScreen> {
                                         provider.editData(data, foods);
                                         Navigator.pushAndRemoveUntil(
                                           context,
-                                          MaterialPageRoute(builder: (context) => ShowFoodScreen()), // this mainpage is your page to refresh
+                                          MaterialPageRoute(builder: (context) => const ShowFoodScreen()), // this mainpage is your page to refresh
                                           (Route<dynamic> route) => false,
                                         );
                                       },
@@ -185,7 +185,7 @@ class _ShowFoodScreenState extends State<ShowFoodScreen> {
                                 ),
                               );
                             }, 
-                            icon: Icon(Icons.edit)
+                            icon: const Icon(Icons.edit)
                           ),
                           IconButton(
                             onPressed: () async {
@@ -194,11 +194,11 @@ class _ShowFoodScreenState extends State<ShowFoodScreen> {
                               provider.deleteFood(data);
                               Navigator.pushAndRemoveUntil(
                                 context,
-                                MaterialPageRoute(builder: (context) => ShowFoodScreen()), // this mainpage is your page to refresh
+                                MaterialPageRoute(builder: (context) => const ShowFoodScreen()), // this mainpage is your page to refresh
                                 (Route<dynamic> route) => false,
                               );
                             }, 
-                            icon: Icon(Icons.delete)
+                            icon: const Icon(Icons.delete)
                           ),
                         ],
                       ),
