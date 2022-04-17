@@ -21,6 +21,7 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
   int height = 167;
   int age = 22;
   int calsNow = 0; // Kcalลอรี่ที่เหลือในวันนี้ ต้องมาจากหน้าเพิ่มอาหารในฐานข้อมูล
+  int selecCals = 0; // แคลลอรี่ที่เลือกไว้ในที่ติ้กเลือกว่าเราใช้ชีวิตยังไง
   int cals = 0; // Kcalเลอรี่ BMR
   int calNone = 0; // ไม่ออกกำลังกายเลย
   int cal_1to3day = 0; // Kcalเลอรี่รวมถ้าเราออกกำลังกาย 1-3 วันต่อสัปดาห์
@@ -41,8 +42,8 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
     super.initState(); // ใช้คำสั่ง super.initState(); เพื่อเตรียมฟังก์ชั่น init แล้วเรียกฟังก์ชั่นที่ต้องการ
     asyncMethod();
     getCals(weight, height, age);
+    selecCals = calNone; // ใช้ selecCals มาแทน cals เพราะจะได้แทนตัวแปรที่เลือกตอนติ้กถูก แทนแคลลอรี่ที่เลือก ณ ขณะนี้
     getNutrients();
-    calRemain(calsNow, cals);
   }
 
   @override
@@ -89,7 +90,7 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
                             fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        (cals).toString() + ' Kcal',
+                        (selecCals).toString() + ' Kcal',
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(
@@ -123,7 +124,7 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
                           height: 50,
                         ),
                         Text(
-                          (cals - calsNow < 0 ? 0 : cals - calsNow)
+                          (selecCals - calsNow < 0 ? 0 : selecCals - calsNow)
                               .toString(),
                           style: const TextStyle(fontSize: 30),
                         ),
@@ -150,8 +151,8 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
                   onChanged: (SingingCharacter? value) {
                     setState(() {
                       _character = value;
-                      cals = calNone;
-                      calRemain(calsNow, cals);
+                      selecCals = calNone;
+                      calRemain(calsNow, selecCals);
                     });
                   },
                 ),
@@ -167,8 +168,8 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
                   onChanged: (SingingCharacter? value) {
                     setState(() {
                       _character = value;
-                      cals = cal_1to3day;
-                      calRemain(calsNow, cals);
+                      selecCals = cal_1to3day;
+                      calRemain(calsNow, selecCals);
                     });
                   },
                 ),
@@ -184,8 +185,8 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
                   onChanged: (SingingCharacter? value) {
                     setState(() {
                       _character = value;
-                      cals = cal_4to5day;
-                      calRemain(calsNow, cals);
+                      selecCals = cal_4to5day;
+                      calRemain(calsNow, selecCals);
                     });
                   },
                 ),
@@ -201,8 +202,8 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
                   onChanged: (SingingCharacter? value) {
                     setState(() {
                       _character = value;
-                      cals = cal_6to7day;
-                      calRemain(calsNow, cals);
+                      selecCals = cal_6to7day;
+                      calRemain(calsNow, selecCals);
                     });
                   },
                 ),
@@ -218,8 +219,8 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
                   onChanged: (SingingCharacter? value) {
                     setState(() {
                       _character = value;
-                      cals = cal_2perday;
-                      calRemain(calsNow, cals);
+                      selecCals = cal_2perday;
+                      calRemain(calsNow, selecCals);
                     });
                   },
                 ),
@@ -323,11 +324,15 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
 
   // ฟังก์ชั่นแก้ไขการเรียก async กับ await ในฟังก์ชั่น initState() ไม่ได้ 
   void asyncMethod() async {
+    /* เลือกฐานข้อมูลของอาหารที่ใส่ในหน้า addfoods มาบวกกันแล้วแสดงแคลลอรี่ปัจจุบันของเรา
+     อยู่ในไฟล์ food_provider.dart กับฟังก์ชั่นจัดการฐานข้อมูลดึงข้อมูลอาหารมาบวกกันอยู่ในไฟล์ food_db.dart
+    */
     int cal = 0;
     var provider = Provider.of<FoodProvider>(context, listen: false);
     cal = await provider.loadCals();
     setState(() {
       calsNow = cal;
+      calRemain(calsNow, selecCals);
     });
   }
 }
