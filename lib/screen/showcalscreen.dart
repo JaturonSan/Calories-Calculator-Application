@@ -49,10 +49,6 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: const SideMenu(),
-      appBar: AppBar(
-          title: const Text('หน้าแสดงแคลลอรี่'),
-          backgroundColor: Colors.cyan[900]),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(20),
