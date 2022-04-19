@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mini_project/providers/food_provider.dart';
 import 'package:mini_project/providers/profile_provider.dart';
-import 'package:mini_project/providers/srudent_provider.dart';
 import 'package:mini_project/screen/mainscreen.dart';
 import 'package:mini_project/screen/registerscreen.dart';
 import 'package:provider/provider.dart';
@@ -22,9 +21,6 @@ class MyApp extends StatelessWidget {
         }),
         ChangeNotifierProvider(create: (context) {
           return FoodProvider();
-        }),
-        ChangeNotifierProvider(create: (context) {
-          return StudentProvider();
         }),
       ],
       child: MaterialApp(

@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mini_project/main.dart';
 import 'package:mini_project/screen/addfoodscreen.dart';
-import 'package:mini_project/screen/addstudentscreen.dart';
 import 'package:mini_project/screen/mainscreen.dart';
 import 'package:mini_project/screen/showfoodscreen.dart';
 import 'package:mini_project/screen/showcalscreen.dart';
-import 'package:mini_project/screen/studentdetailscreen.dart';
 
 
 // การทำ sidemenu -- https://maffan.medium.com/how-to-create-a-side-menu-in-flutter-a2df7833fdfb
@@ -79,32 +77,6 @@ class SideMenu extends StatelessWidget {
                   Navigator.pushReplacement(
                     context, 
                     MaterialPageRoute(builder: (context) => AddFood()),
-                  ),
-                },
-              ),
-            ),
-            Card(
-              color: Colors.white54,
-              child: ListTile(
-                leading: const Icon(Icons.person_add, color: Colors.black,),
-                title: const Text('เพิ่มข้อมูลนักเรียน', style: TextStyle(color: Colors.black,),),
-                onTap: () => {
-                  Navigator.pushReplacement(
-                    context, 
-                    MaterialPageRoute(builder: (context) => AddStudentScreen()),
-                  ),
-                },
-              ),
-            ),
-            Card(
-              color: Colors.white54,
-              child: ListTile(
-                leading: const Icon(Icons.person, color: Colors.black,),
-                title: const Text('รายละเอียดนักเรียน', style: TextStyle(color: Colors.black,),),
-                onTap: () => {
-                  Navigator.pushReplacement(
-                    context, 
-                    MaterialPageRoute(builder: (context) => const DetailStuScreen()),
                   ),
                 },
               ),
