@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:mini_project/model/food.dart';
+import 'package:mini_project/screen/mainscreen.dart';
 import 'package:mini_project/screen/showfoodscreen.dart';
-import 'package:mini_project/screen/sidemenu.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/food_provider.dart';
@@ -12,15 +12,16 @@ class AddFood extends StatelessWidget {
   final keyForm = GlobalKey<FormState>();
   final nameController = TextEditingController();
   final calController = TextEditingController();
+  final proController = TextEditingController();
   final amountController = TextEditingController();
+  final gramController = TextEditingController();
+  final picController = TextEditingController();
   FoodProvider foddProvider = FoodProvider();
 
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: const SideMenu(),
-      appBar: AppBar(title: const Text('เพื่มเมนูอาหาร'), backgroundColor: Colors.cyan[900],),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(20),
@@ -49,7 +50,19 @@ class AddFood extends StatelessWidget {
                   // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
-                    labelText: 'แคลอรี่',
+                    labelText: 'แคลอรี่ (ต่อ 100 กรัม)',
+                  ),
+                ),
+                const SizedBox(height: 20,),
+                TextFormField(
+                  controller: proController,
+                  validator: MultiValidator([
+                    RequiredValidator(errorText: 'กรุณาป้อนจำนวนโปรตีน'),
+                  ]),
+                  // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'โปรตีน',
                   ),
                 ),
                 const SizedBox(height: 20,),
@@ -66,7 +79,34 @@ class AddFood extends StatelessWidget {
                     labelText: 'จำนวน',
                   ),
                 ),
-                SizedBox(height: 20,),
+                const SizedBox(height: 20,),
+                TextFormField(
+                  keyboardType: TextInputType.visiblePassword,
+                  controller: gramController,
+                  validator: MultiValidator([
+                    RequiredValidator(errorText: 'กรุณาน้ำหนักอาหาร'),
+                    MinLengthValidator(1, errorText: 'น้ำหนักอาหารต้องมีอย่างน้อย 100 กรัม'),
+                  ]),
+                  // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'กี่กรัม',
+                  ),
+                ),
+                const SizedBox(height: 20,),
+                 TextFormField( // เพิ่มฟิวเอาไว้ใส่รูป ในอนาคตจะมีการโหลดรูปจากเครื่องได้
+                  keyboardType: TextInputType.name,
+                  controller: picController,
+                  validator: MultiValidator([
+                    RequiredValidator(errorText: 'กรุณาใส่รูป'),
+                  ]),
+                  // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'รูปอาหาร',
+                  ),
+                ),
+                const SizedBox(height: 20,),
                 SizedBox(
                   height: 40,
                   width: double.infinity,
@@ -75,16 +115,18 @@ class AddFood extends StatelessWidget {
                     onPressed: () {
                       var name = nameController.text;
                       var cal = int.parse(calController.text);
+                      var pro = int.parse(proController.text);
                       var amout = int.parse(amountController.text);
-                      Foods foods = Foods(name: name,calories: cal,amount: amout);
+                      var gram = int.parse(gramController.text);
+                      var pic = picController.text;
+                      Foods foods = Foods(name: name,calories: cal,protein: pro,amount: amout,gram: gram,pic: pic);
                       var provider = Provider.of<FoodProvider>(context, listen: false);
-                      provider.addFood(foods);
-                      
-                      // เมื่อเพิ่มข้อมูลลงฐานข้อมูลในเครื่องแล้วจะให้ Navigator ไปยังหน้าหลักเพื่อแสดงรายการอาหาร
-                      Navigator.push(
-                        context, MaterialPageRoute(
-                          builder: (context) => const ShowFoodScreen()
-                        ),
+                      //provider.addFood(foods, "user_foods.db"); // เพิ่มฐานข้อมูลอาหารของ user 
+                      provider.addFood(foods, "foods.db"); // เพิ่มฐานข้อมูลอาหารของแอป ไว้ตอนเพิ่มอาหารแบบค้นหาได้เลย ไม่ต้องมานั่งพิมพ์
+
+                      Navigator.pushReplacement(
+                        context, 
+                        MaterialPageRoute(builder: (context) => const MainScreen(Text("อาหาร"), ShowFoodScreen(), 2)),
                       );
                     }, 
                     child: const Text('ลงทะเบียน'),

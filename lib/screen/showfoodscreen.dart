@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
-import 'package:mini_project/database/food_db.dart';
 import 'package:mini_project/model/food.dart';
 import 'package:mini_project/providers/food_provider.dart';
-import 'package:mini_project/screen/addfoodscreen.dart';
-import 'package:mini_project/screen/sidemenu.dart';
+import 'package:mini_project/screen/mainscreen.dart';
 import 'package:provider/provider.dart';
 
 class ShowFoodScreen extends StatefulWidget {
@@ -15,7 +13,6 @@ class ShowFoodScreen extends StatefulWidget {
 }
 
 class _ShowFoodScreenState extends State<ShowFoodScreen> {
-  FoodDB fooddb = FoodDB(dbName: "foods.db");
   final keyForm = GlobalKey<FormState>();
 
   // initSate เป็นฟังก์ชั่นในการเริ่มฟังก์ชั่นต่างๆก่อนสร้างหน้าขึ้น เพื่อเตียมข้อมูลที่จะแสดงผลไว้ก่อน เพื่อไม่ให้เกิดค่าว่าง หรือหน้าไม่ยอมโหลด
@@ -23,42 +20,12 @@ class _ShowFoodScreenState extends State<ShowFoodScreen> {
   void initState() {
     super.initState(); // ใช้คำสั่ง super.initState(); เพื่อเตรียมฟังก์ชั่น init แล้วเรียกฟังก์ชั่นที่ต้องการ
     var provider = Provider.of<FoodProvider>(context, listen: false);
-    provider.initData();
+    provider.initData("foods.db"); // init ข้อมูลอาหารของ user
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: const SideMenu(),
-      appBar: AppBar(
-        title: const Text('รายการอาหาร'), 
-        backgroundColor: Colors.cyan[900],
-        actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return AddFood();
-              }));
-            },
-            icon: const Icon(Icons.fastfood),
-          ),
-          IconButton(
-            onPressed: () {
-              var provider = Provider.of<FoodProvider>(context, listen: false);
-              // เรียกฟังก์ชั่นลบข้อมูลทั้งที่อยู่ในฐานข้อมูล NoSQL
-              provider.deleteAllData();
-
-              // ใช้ refresh หน้านี้
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => const ShowFoodScreen()),
-                (Route<dynamic> route) => false,
-              );
-            },
-            icon: const Icon(Icons.delete),
-          ),
-        ],
-      ),
       body: Consumer(
         builder: (context, FoodProvider provider, child) {
           var count = provider.foods.length;
@@ -104,7 +71,10 @@ class _ShowFoodScreenState extends State<ShowFoodScreen> {
                               */
                               TextEditingController nameController = TextEditingController(text: data.name);
                               TextEditingController calController = TextEditingController(text: (data.calories).toString());
+                              TextEditingController proController = TextEditingController(text: (data.protein).toString());
                               TextEditingController amountController = TextEditingController(text: (data.amount).toString());
+                              TextEditingController gramController = TextEditingController(text: (data.gram).toString());
+                              TextEditingController picController = TextEditingController(text: data.pic);
                               await showDialog<String>(
                                 context: context,
                                 builder: (BuildContext context) => AlertDialog(
@@ -124,7 +94,6 @@ class _ShowFoodScreenState extends State<ShowFoodScreen> {
                                             border: OutlineInputBorder(),
                                             labelText: 'ชื่ออาหาร',
                                           ),
-                                          //initialValue: data.name,
                                         ),
                                         const SizedBox(height: 20,),
                                         TextFormField(
@@ -135,16 +104,27 @@ class _ShowFoodScreenState extends State<ShowFoodScreen> {
                                           // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
                                           decoration: const InputDecoration(
                                             border: OutlineInputBorder(),
-                                            labelText: 'แคลอรี่',
+                                            labelText: 'แคลอรี่ (ต่อ 100 กรัม)',
                                           ),
-                                          //initialValue: (data.calories).toString(),
+                                        ),
+                                        const SizedBox(height: 20,),
+                                        TextFormField(
+                                          controller: proController,
+                                          validator: MultiValidator([
+                                            RequiredValidator(errorText: 'กรุณาป้อนจำนวนโปรตีน'),
+                                          ]),
+                                          // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
+                                          decoration: const InputDecoration(
+                                            border: OutlineInputBorder(),
+                                            labelText: 'โปรตีน',
+                                          ),
                                         ),
                                         const SizedBox(height: 20,),
                                         TextFormField(
                                           keyboardType: TextInputType.visiblePassword,
                                           controller: amountController,
                                           validator: MultiValidator([
-                                            RequiredValidator(errorText: 'กรุณาจำนวนอาหาร'),
+                                            RequiredValidator(errorText: 'กรุณาใส่จำนวนอาหาร'),
                                             MinLengthValidator(1, errorText: 'จำนวนอาหารต้องมีอย่างน้อย 1 จาน'),
                                           ]),
                                           // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
@@ -152,34 +132,63 @@ class _ShowFoodScreenState extends State<ShowFoodScreen> {
                                             border: OutlineInputBorder(),
                                             labelText: 'จำนวน',
                                           ),
-                                          //initialValue: (data.amount).toString(),
+                                        ),
+                                        const SizedBox(height: 20,),
+                                        TextFormField(
+                                          keyboardType: TextInputType.visiblePassword,
+                                          controller: gramController,
+                                          validator: MultiValidator([
+                                            RequiredValidator(errorText: 'กรุณาใส่น้ำหนักอาหาร'),
+                                            MinLengthValidator(1, errorText: 'น้ำหนักอาหารต้องมีอย่างน้อย 100 กรัม'),
+                                          ]),
+                                          // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
+                                          decoration: const InputDecoration(
+                                            border: OutlineInputBorder(),
+                                            labelText: 'กี่กรัม',
+                                          ),
+                                        ),
+                                        const SizedBox(height: 20,),
+                                        TextFormField( // แก้ไขที่อยู่ของรูปภาพได้นะ
+                                          keyboardType: TextInputType.name,
+                                          controller: picController,
+                                          validator: MultiValidator([
+                                            RequiredValidator(errorText: 'กรุณาใส่รูปอาหาร'),
+                                          ]),
+                                          // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
+                                          decoration: const InputDecoration(
+                                            border: OutlineInputBorder(),
+                                            labelText: 'จำนวน',
+                                          ),
                                         ),
                                       ],
                                     ),
                                   ),
                                   actions: <Widget>[
-                                    TextButton(
-                                      onPressed: () => Navigator.pop(context, 'ยกเลิก'),
-                                      child: const Text('ยกเลิก'),
-                                    ),
-                                    TextButton(
+                                    IconButton(
                                       onPressed: () async { 
                                         // ค่าที่แก้ไขใน dialog จะเก็บในตัวแปรนี้
                                         var name = nameController.text;
                                         var cal = int.parse(calController.text);
+                                        var pro = int.parse(proController.text);
                                         var amout = int.parse(amountController.text);
-                                        Foods foods = Foods(name: name,calories: cal,amount: amout);
+                                        var gram = int.parse(gramController.text);
+                                        var pic = picController.text;
+                                        Foods foods = Foods(name: name,calories: cal,protein: pro,amount: amout,gram: gram,pic: pic);
 
                                         // แก้ไขข้อมูลในฐานข้อมูล
                                         var provider = Provider.of<FoodProvider>(context, listen: false);
-                                        provider.editData(data, foods);
+                                        provider.editData(data, foods, "foods.db");
                                         Navigator.pushAndRemoveUntil(
                                           context,
-                                          MaterialPageRoute(builder: (context) => const ShowFoodScreen()), // this mainpage is your page to refresh
+                                          MaterialPageRoute(builder: (context) => const MainScreen(Text("อาหาร"), ShowFoodScreen(), 2)), // this mainpage is your page to refresh
                                           (Route<dynamic> route) => false,
                                         );
                                       },
-                                      child: const Text('โอเค'),
+                                      icon: const Icon(Icons.check),
+                                    ),
+                                    IconButton(
+                                      onPressed: () => Navigator.pop(context, 'ยกเลิก'),
+                                      icon: const Icon(Icons.close),
                                     ),
                                   ],
                                 ),
@@ -191,10 +200,10 @@ class _ShowFoodScreenState extends State<ShowFoodScreen> {
                             onPressed: () async {
                               // ลบข้อมูลในฐานข้อมูลโดย เรียกฟังก์ชั่น DeleteFood ใน FoodDB แล้วใส่ข้อมูลตัวที่จะลบลงไป
                               var provider = Provider.of<FoodProvider>(context, listen: false);
-                              provider.deleteFood(data);
+                              provider.deleteFood(data, "foods.db");
                               Navigator.pushAndRemoveUntil(
                                 context,
-                                MaterialPageRoute(builder: (context) => const ShowFoodScreen()), // this mainpage is your page to refresh
+                                MaterialPageRoute(builder: (context) => const MainScreen(Text("อาหาร"), ShowFoodScreen(), 2)), // this mainpage is your page to refresh
                                 (Route<dynamic> route) => false,
                               );
                             }, 

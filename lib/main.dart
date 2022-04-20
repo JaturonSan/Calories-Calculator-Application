@@ -48,7 +48,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState(){
     super.initState();
-    Provider.of<FoodProvider>(context, listen: false).initData();
+    Provider.of<FoodProvider>(context, listen: false).initData("foods.db");
   }
   
   @override
@@ -98,7 +98,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     onPressed: () {
                       Navigator.push(
                         context, MaterialPageRoute(builder: (context) {
-                          return const MainScreen();
+                          return const MainScreen(Text("หน้าหลัก"), MainPage(), 0);
                         },)
                       );
                     }, 

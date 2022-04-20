@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:mini_project/providers/food_provider.dart';
-import 'package:mini_project/screen/sidemenu.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
 
@@ -325,7 +324,7 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
     */
     int cal = 0;
     var provider = Provider.of<FoodProvider>(context, listen: false);
-    cal = await provider.loadCals();
+    cal = await provider.loadCals("user_foods.db"); // โชว์อาหารของ user ข้อมูลในหน้า showcalscreen 
     setState(() {
       calsNow = cal;
       calRemain(calsNow, selecCals);

@@ -13,8 +13,8 @@ class FoodProvider with ChangeNotifier {
   }
 
   // ฟังก์ชั่นเพิ่ม Food
-  void addFood(Foods statement) async {
-    var db =  FoodDB(dbName: "foods.db");
+  void addFood(Foods statement, String dbName) async {
+    var db =  FoodDB(dbName: dbName); // ฐานข้อมูลของอาหารทั้งหมด ไม่ใช้อาหารของ users
     // บันทึกข้อมูล
     await db.insertData(statement);
 
@@ -26,16 +26,16 @@ class FoodProvider with ChangeNotifier {
   }
 
   // ฟังก์ชั่นในการโหลดข้อมูลขึ้นมาก่อนแสดงหน้าแอป
-  void initData() async {
-    var db = FoodDB(dbName: "foods.db");
+  void initData(String dbName) async {
+    var db = FoodDB(dbName: dbName); // ฐานข้อมูลของอาหารทั้งหมด ไม่ใช้อาหารของ users
     // ดึงข้อมูลมาแสดงผล (Select)
     foods = await db.loadAllData();
     notifyListeners();
   }
 
   // ฟังก์ชั่นในการดึงค่าแคลลอรี่ของอาหารจากฐานข้อมูลที่เพิ่มเข้ามา
-  Future<int> loadCals() async {
-    var db = FoodDB(dbName: "foods.db");
+  Future<int> loadCals(String dbName) async {
+    var db = FoodDB(dbName: dbName); // ฐานข้อมูลของอาหารทั้งหมด ไม่ใช้อาหารของ users
     // ดึงข้อมูลมาแสดงผล (Select)
     cals = await db.loadCalsData();
     notifyListeners();
@@ -43,8 +43,8 @@ class FoodProvider with ChangeNotifier {
   }
 
   // ลบข้อมูลเฉพาะที่เลือกไว้เท่านั้น
-  void deleteFood(Foods statement) async {
-    var db =  FoodDB(dbName: "foods.db");
+  void deleteFood(Foods statement, String dbName) async {
+    var db =  FoodDB(dbName: dbName); // ฐานข้อมูลของอาหารทั้งหมด ไม่ใช้อาหารของ users
     await db.deleteFood(statement);
     // ดึงข้อมูลมาแสดงผล(Select)
     foods = await db.loadAllData();
@@ -54,8 +54,8 @@ class FoodProvider with ChangeNotifier {
   }
 
   // ฟังก์ชั่นในการลบข้อมูลทั้งหมดในฐานข้อมูล foods.db
-  void deleteAllData() async {
-    FoodDB db = FoodDB(dbName: "foods.db");
+  void deleteAllData(String dbName) async {
+    FoodDB db = FoodDB(dbName: dbName); // ฐานข้อมูลของอาหารทั้งหมด ไม่ใช้อาหารของ users
     await db.deleteAll();
 
     // เตือน Consumer
@@ -63,9 +63,9 @@ class FoodProvider with ChangeNotifier {
   }
 
   // ฟังก์ชั่นในการแก้ไขข้อมูล
-  void editData(Foods statement, Foods newData) async {
-    var db =  FoodDB(dbName: "foods.db");
-    await db.editData(statement, newData);
+  void editData(Foods statement, Foods newData, String dbName) async {
+    var db =  FoodDB(dbName: dbName); // ฐานข้อมูลของอาหารทั้งหมด ไม่ใช้อาหารของ users
+    await db.editData(statement, newData); // "foods.db"
 
     // เตือน Consumer
     notifyListeners();

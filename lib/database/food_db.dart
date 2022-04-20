@@ -6,32 +6,6 @@ import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast_io.dart';
 
 class FoodDB{
-
-  // static final FoodDB _singleton = FoodDB._();
-
-  // static FoodDB get instance => _singleton;
-
-  // Completer<Database> _dbOpenCompeter;
-  // FoodDB.();
-
-  // Future<Database> get database async {
-  //   if(_dbOpenCompeter == null){
-  //     _dbOpenCompeter = Completer();
-  //     _openDatabase();
-  //   }
-
-  //   return _dbOpenCompeter.future;
-  // }
-
-  // Future _openDatabase() async {
-  //   final appDocumentDir = await getApplicationDocumentsDirectory();
-
-  //   final dbPath = join(appDocumentDir.path, "demo.db");
-
-  //   final database = await databaseFactoryIo.openDatabase(dbPath);
-  //   _dbOpenCompeter.complete(database);
-  // }
-
   /* เป็นคลาสที่เอาไว้เก็บฐานข้อมูลบนเครื่องที่ใช้ package ได้แก่ 
   sembast (จัดการฐานข้อมูล) 
   path_provider (ดึงตำแหน่งฐานข้อมูลบทเครื่อง) 
@@ -68,7 +42,10 @@ class FoodDB{
     var keyID = store.add(db, {
       "name": statement.name,
       "calories": statement.calories,
+      "protien": statement.protein,
       "amount": statement.amount,
+      "gram": statement.gram,
+      "pic": statement.pic
     });
     db.close();
     return keyID;
@@ -85,7 +62,10 @@ class FoodDB{
         Foods(
           name: record["name"].toString(),
           calories: int.parse(record["calories"].toString()),
+          protein: int.parse(record["protien"].toString()),
           amount: int.parse(record["amount"].toString()),
+          gram: int.parse(record["gram"].toString()),
+          pic: record["pic"].toString()
         )
       );
     }
@@ -101,7 +81,7 @@ class FoodDB{
     int cals = 0;
     for(var record in snapshot){
       // โหลดข้อมูล calories มาคูณกับจำนวนที่ใส่ในฐานข้อมูล
-      cals+=int.parse(record["calories"].toString())*int.parse(record["amount"].toString());
+      cals+=((int.parse(record["calories"].toString())*(int.parse(record["gram"].toString())/100))*int.parse(record["amount"].toString())).round();
     }
     return cals;
   }
@@ -141,7 +121,10 @@ class FoodDB{
       {
         "name": newData.name,
         "calories": newData.calories,
-        "amount": newData.amount
+        "protien": newData.protein,
+        "amount": newData.amount,
+        "gram": newData.gram,
+        "pic": newData.pic
       },
     );
   }
