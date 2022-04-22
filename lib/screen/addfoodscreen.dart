@@ -1,23 +1,38 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:mini_project/model/food.dart';
 import 'package:mini_project/screen/mainscreen.dart';
 import 'package:mini_project/screen/showfoodscreen.dart';
+import 'package:mini_project/screen/showfoodscreen_2.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/food_provider.dart';
 
-class AddFood extends StatelessWidget {
-  AddFood({ Key? key }) : super(key: key);
+class AddFood extends StatefulWidget {
+  const AddFood({ Key? key }) : super(key: key);
+
+  @override
+  State<AddFood> createState() => _AddFoodState();
+}
+
+class _AddFoodState extends State<AddFood> {
+  String pic = "";
   final keyForm = GlobalKey<FormState>();
   final nameController = TextEditingController();
   final calController = TextEditingController();
   final proController = TextEditingController();
   final amountController = TextEditingController();
   final gramController = TextEditingController();
-  final picController = TextEditingController();
+  late TextEditingController picController = TextEditingController();
   FoodProvider foddProvider = FoodProvider();
 
+   @override
+  void initState() {
+    super.initState();
+    picController = TextEditingController(text: pic);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,16 +109,36 @@ class AddFood extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20,),
-                 TextFormField( // เพิ่มฟิวเอาไว้ใส่รูป ในอนาคตจะมีการโหลดรูปจากเครื่องได้
-                  keyboardType: TextInputType.name,
+                TextFormField( // เพิ่มฟิวเอาไว้ใส่รูป ในอนาคตจะมีการโหลดรูปจากเครื่องได้
+                  enabled: false,
                   controller: picController,
                   validator: MultiValidator([
                     RequiredValidator(errorText: 'กรุณาใส่รูป'),
                   ]),
                   // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    border: const OutlineInputBorder(),
                     labelText: 'รูปอาหาร',
+                    suffixIcon: Row(
+                      children: <Widget>[
+                        // ปุ่มใช้กล้องในการถ่ายรูปเข้าแอป
+                        IconButton(
+                          onPressed: (){
+                            setState(() {
+                              pic = "dd/pic1";
+                            });
+                          }, 
+                          icon: const Icon(Icons.camera)
+                        ),
+                        // ปุ่มเลือกรูปภาพจากคลังรูปภาพ
+                        IconButton(
+                          onPressed: (){
+                            pic = "dd/pic1";
+                          }, 
+                          icon: const Icon(Icons.image_rounded)
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 const SizedBox(height: 20,),
@@ -126,7 +161,7 @@ class AddFood extends StatelessWidget {
 
                       Navigator.pushReplacement(
                         context, 
-                        MaterialPageRoute(builder: (context) => const MainScreen(Text("อาหาร"), ShowFoodScreen(), 2)),
+                        MaterialPageRoute(builder: (context) => const MainScreen(Text("อาหาร"), ShowFoodScreen2(), 2)),
                       );
                     }, 
                     child: const Text('ลงทะเบียน'),

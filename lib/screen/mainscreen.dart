@@ -3,6 +3,7 @@ import 'package:mini_project/providers/food_provider.dart';
 import 'package:mini_project/screen/addfoodscreen.dart';
 import 'package:mini_project/screen/showcalscreen.dart';
 import 'package:mini_project/screen/showfoodscreen.dart';
+import 'package:mini_project/screen/showfoodscreen_2.dart';
 import 'package:mini_project/screen/sidemenu.dart';
 import 'package:provider/provider.dart';
 
@@ -28,7 +29,7 @@ class _MainScreenState extends State<MainScreen> {
   Color? backgroundcolor = Colors.cyan[900]; // ตัวแปรเก็บสีพื้นหลังของแอป
   final Widget _page1 = const MainPage(); // ตัวแปรเก็บหน้าที่ 1 (หน้าหลัก) ไว้ใชใน BottomNavigationBar
   final Widget _page2 = const ShowCalScreen(); // ตัวแปรเก็บหน้าที่ 2 (หน้าแสดงแคลลอรี่) ไว้ใชใน BottomNavigationBar
-  final Widget _page3 = const ShowFoodScreen(); // ตัวแปรเก็บหน้าที่ 3 (หน้าแสดงรายการอาหาร) ไว้ใชใน BottomNavigationBar
+  final Widget _page3 = const ShowFoodScreen2(); // ตัวแปรเก็บหน้าที่ 3 (หน้าแสดงรายการอาหาร) ไว้ใชใน BottomNavigationBar
   final Widget _page4 = AddFood(); // ตัวแปรเก็บหน้าที่ 4 (หน้าเพิ่มรายการอาหาร) ไว้ใชใน BottomNavigationBar
   late Widget _currentPage; // ตัวแปรไว้เก็บว่าหน้าปัจจุบันตอนนี้คือหน้าไหน
   late Widget _currentTitle; // ตัวแปรไว้เก็บว่า title ของ Scaffold ปัจจุบันตอนนี้คืออะไร

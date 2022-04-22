@@ -17,3 +17,7 @@ void main() {
   print("ออกกำลังกาย 6-7 ครั้งต่อสัปดาห์ = "+(bmr*1.7).toString());
   print("ออกกำลังกายวันละ 2 ครั้งขึ้นไป = "+(bmr*1.9).toString());
 }
+
+https://www.codegrepper.com/code-examples/dart/make+square+card+flutter
+https://stackoverflow.com/questions/68057459/how-to-get-this-type-of-card-with-column-and-row-combinations
+https://howtoflutter.dev/how-to-add-border-to-an-image-in-flutter/

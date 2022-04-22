@@ -20,7 +20,8 @@ class _ShowFoodScreenState extends State<ShowFoodScreen> {
   void initState() {
     super.initState(); // ใช้คำสั่ง super.initState(); เพื่อเตรียมฟังก์ชั่น init แล้วเรียกฟังก์ชั่นที่ต้องการ
     var provider = Provider.of<FoodProvider>(context, listen: false);
-    provider.initData("foods.db"); // init ข้อมูลอาหารของ user
+    //provider.initData("foods.db"); // init ข้อมูลอาหารของเรา
+    provider.initData("user_foods.db"); // init ข้อมูลอาหารของ user
   }
 
   @override
@@ -58,7 +59,7 @@ class _ShowFoodScreenState extends State<ShowFoodScreen> {
                     ),
                     title: Text(data.name!), // ชื่ออาหาร
                     subtitle: Text(data.calories.toString() + " แคล"), // จำนวนแคลลอรี่
-                    trailing: Container(
+                    trailing: SizedBox(
                       width: 100,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -81,86 +82,88 @@ class _ShowFoodScreenState extends State<ShowFoodScreen> {
                                   title: const Text('แก้ไขข้อมูล'),
                                   content: Form(
                                     key: keyForm,
-                                    child: Column(
-                                      children: [
-                                        TextFormField(
-                                          keyboardType: TextInputType.name,
-                                          controller: nameController,
-                                          validator: MultiValidator([
-                                            RequiredValidator(errorText: 'กรุณาป้อนชื่ออาหาร'),
-                                          ]),
-                                          // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
-                                          decoration: const InputDecoration(
-                                            border: OutlineInputBorder(),
-                                            labelText: 'ชื่ออาหาร',
+                                    child: SingleChildScrollView(
+                                      child: Column(
+                                        children: [
+                                          TextFormField(
+                                            keyboardType: TextInputType.name,
+                                            controller: nameController,
+                                            validator: MultiValidator([
+                                              RequiredValidator(errorText: 'กรุณาป้อนชื่ออาหาร'),
+                                            ]),
+                                            // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
+                                            decoration: const InputDecoration(
+                                              border: OutlineInputBorder(),
+                                              labelText: 'ชื่ออาหาร',
+                                            ),
                                           ),
-                                        ),
-                                        const SizedBox(height: 20,),
-                                        TextFormField(
-                                          controller: calController,
-                                          validator: MultiValidator([
-                                            RequiredValidator(errorText: 'กรุณาป้อนจำนวนแคลอรี่'),
-                                          ]),
-                                          // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
-                                          decoration: const InputDecoration(
-                                            border: OutlineInputBorder(),
-                                            labelText: 'แคลอรี่ (ต่อ 100 กรัม)',
+                                          const SizedBox(height: 20,),
+                                          TextFormField(
+                                            controller: calController,
+                                            validator: MultiValidator([
+                                              RequiredValidator(errorText: 'กรุณาป้อนจำนวนแคลอรี่'),
+                                            ]),
+                                            // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
+                                            decoration: const InputDecoration(
+                                              border: OutlineInputBorder(),
+                                              labelText: 'แคลอรี่ (ต่อ 100 กรัม)',
+                                            ),
                                           ),
-                                        ),
-                                        const SizedBox(height: 20,),
-                                        TextFormField(
-                                          controller: proController,
-                                          validator: MultiValidator([
-                                            RequiredValidator(errorText: 'กรุณาป้อนจำนวนโปรตีน'),
-                                          ]),
-                                          // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
-                                          decoration: const InputDecoration(
-                                            border: OutlineInputBorder(),
-                                            labelText: 'โปรตีน',
+                                          const SizedBox(height: 20,),
+                                          TextFormField(
+                                            controller: proController,
+                                            validator: MultiValidator([
+                                              RequiredValidator(errorText: 'กรุณาป้อนจำนวนโปรตีน'),
+                                            ]),
+                                            // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
+                                            decoration: const InputDecoration(
+                                              border: OutlineInputBorder(),
+                                              labelText: 'โปรตีน',
+                                            ),
                                           ),
-                                        ),
-                                        const SizedBox(height: 20,),
-                                        TextFormField(
-                                          keyboardType: TextInputType.visiblePassword,
-                                          controller: amountController,
-                                          validator: MultiValidator([
-                                            RequiredValidator(errorText: 'กรุณาใส่จำนวนอาหาร'),
-                                            MinLengthValidator(1, errorText: 'จำนวนอาหารต้องมีอย่างน้อย 1 จาน'),
-                                          ]),
-                                          // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
-                                          decoration: const InputDecoration(
-                                            border: OutlineInputBorder(),
-                                            labelText: 'จำนวน',
+                                          const SizedBox(height: 20,),
+                                          TextFormField(
+                                            keyboardType: TextInputType.visiblePassword,
+                                            controller: amountController,
+                                            validator: MultiValidator([
+                                              RequiredValidator(errorText: 'กรุณาใส่จำนวนอาหาร'),
+                                              MinLengthValidator(1, errorText: 'จำนวนอาหารต้องมีอย่างน้อย 1 จาน'),
+                                            ]),
+                                            // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
+                                            decoration: const InputDecoration(
+                                              border: OutlineInputBorder(),
+                                              labelText: 'จำนวน',
+                                            ),
                                           ),
-                                        ),
-                                        const SizedBox(height: 20,),
-                                        TextFormField(
-                                          keyboardType: TextInputType.visiblePassword,
-                                          controller: gramController,
-                                          validator: MultiValidator([
-                                            RequiredValidator(errorText: 'กรุณาใส่น้ำหนักอาหาร'),
-                                            MinLengthValidator(1, errorText: 'น้ำหนักอาหารต้องมีอย่างน้อย 100 กรัม'),
-                                          ]),
-                                          // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
-                                          decoration: const InputDecoration(
-                                            border: OutlineInputBorder(),
-                                            labelText: 'กี่กรัม',
+                                          const SizedBox(height: 20,),
+                                          TextFormField(
+                                            keyboardType: TextInputType.visiblePassword,
+                                            controller: gramController,
+                                            validator: MultiValidator([
+                                              RequiredValidator(errorText: 'กรุณาใส่น้ำหนักอาหาร'),
+                                              MinLengthValidator(1, errorText: 'น้ำหนักอาหารต้องมีอย่างน้อย 100 กรัม'),
+                                            ]),
+                                            // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
+                                            decoration: const InputDecoration(
+                                              border: OutlineInputBorder(),
+                                              labelText: 'กี่กรัม',
+                                            ),
                                           ),
-                                        ),
-                                        const SizedBox(height: 20,),
-                                        TextFormField( // แก้ไขที่อยู่ของรูปภาพได้นะ
-                                          keyboardType: TextInputType.name,
-                                          controller: picController,
-                                          validator: MultiValidator([
-                                            RequiredValidator(errorText: 'กรุณาใส่รูปอาหาร'),
-                                          ]),
-                                          // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
-                                          decoration: const InputDecoration(
-                                            border: OutlineInputBorder(),
-                                            labelText: 'จำนวน',
+                                          const SizedBox(height: 20,),
+                                          TextFormField( // แก้ไขที่อยู่ของรูปภาพได้นะ
+                                            keyboardType: TextInputType.name,
+                                            controller: picController,
+                                            validator: MultiValidator([
+                                              RequiredValidator(errorText: 'กรุณาใส่รูปอาหาร'),
+                                            ]),
+                                            // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
+                                            decoration: const InputDecoration(
+                                              border: OutlineInputBorder(),
+                                              labelText: 'จำนวน',
+                                            ),
                                           ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
                                   ),
                                   actions: <Widget>[
@@ -177,7 +180,8 @@ class _ShowFoodScreenState extends State<ShowFoodScreen> {
 
                                         // แก้ไขข้อมูลในฐานข้อมูล
                                         var provider = Provider.of<FoodProvider>(context, listen: false);
-                                        provider.editData(data, foods, "foods.db");
+                                        //provider.editData(data, foods, "foods.db"); // แก้ไขฐานข้อมูลของอาหารในฐานข้อมูลเรา
+                                        provider.editData(data, foods, "user_foods.db"); // แก้ไขฐานข้อมูลของ user
                                         Navigator.pushAndRemoveUntil(
                                           context,
                                           MaterialPageRoute(builder: (context) => const MainScreen(Text("อาหาร"), ShowFoodScreen(), 2)), // this mainpage is your page to refresh
@@ -200,7 +204,8 @@ class _ShowFoodScreenState extends State<ShowFoodScreen> {
                             onPressed: () async {
                               // ลบข้อมูลในฐานข้อมูลโดย เรียกฟังก์ชั่น DeleteFood ใน FoodDB แล้วใส่ข้อมูลตัวที่จะลบลงไป
                               var provider = Provider.of<FoodProvider>(context, listen: false);
-                              provider.deleteFood(data, "foods.db");
+                              //provider.deleteFood(data, "foods.db"); // ลบอาหารในฐานข้อมูลของเรา
+                              provider.deleteFood(data, "user_foods.db"); // ลบอาหารในฐานข้อมูลของ user
                               Navigator.pushAndRemoveUntil(
                                 context,
                                 MaterialPageRoute(builder: (context) => const MainScreen(Text("อาหาร"), ShowFoodScreen(), 2)), // this mainpage is your page to refresh

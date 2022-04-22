@@ -27,9 +27,10 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
   int cal_4to5day = 0; // Kcalเลอรี่รวมถ้าเราออกกำลังกาย 4-5 วันต่อสัปดาห์
   int cal_6to7day = 0; // Kcalเลอรี่รวมถ้าเราออกกำลังกาย 6-7 วันต่อสัปดาห์
   int cal_2perday = 0; // Kcalเลอรี่รวมถ้าเราออกกำลังกาย 2 ครั้งต่อวัน
-  int carb = 0; // คาร์โบไฮเดรต
-  int pro = 0; // โปรตีน
-  int fat = 0; // ไขมัน
+  int carb = 0; // คาร์โบไฮเดรตที่ usr ต้องการในแต่ละวัน
+  int pro = 0; // โปรตีนที่ usr ต้องการในแต่ละวัน
+  int userPro = 0; // ตัวแปรโปรตีนที่ user ใส่เข้ามาในหน้าเพิ่มอาหาร
+  int fat = 0; // ไขมันที่ usr ต้องการในแต่ละวัน
   double circlePercent = 0;
 
   // ตัวแปรสำหรับตัวเลือกติ้กวงกลม
@@ -249,7 +250,7 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
                           backgroundColor: Colors.redAccent,
                           radius: 40,
                         ),
-                        Text('โปรตีน: ' + pro.toString() + ' กรัม ',
+                        Text('โปรตีน: ' + userPro.toString() + '/' + pro.toString() + ' กรัม ',
                             style: const TextStyle(fontSize: 13)),
                       ],
                     ),
@@ -322,11 +323,12 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
     /* เลือกฐานข้อมูลของอาหารที่ใส่ในหน้า addfoods มาบวกกันแล้วแสดงแคลลอรี่ปัจจุบันของเรา
      อยู่ในไฟล์ food_provider.dart กับฟังก์ชั่นจัดการฐานข้อมูลดึงข้อมูลอาหารมาบวกกันอยู่ในไฟล์ food_db.dart
     */
-    int cal = 0;
+    List values = [];
     var provider = Provider.of<FoodProvider>(context, listen: false);
-    cal = await provider.loadCals("user_foods.db"); // โชว์อาหารของ user ข้อมูลในหน้า showcalscreen 
+    values = await provider.loadCals("user_foods.db"); // ส่งค่าข้อมูลมาเป็น List แยกค่า cals กับ protein ออกจากกัน
     setState(() {
-      calsNow = cal;
+      calsNow = values[0]; // แคลลอรี่ตอนนี้ในฐานข้อมูล "user_foods.db"
+      userPro = values[1]; // โปรตีนตอนนี้ในฐานข้อมูล "user_foods.db"
       calRemain(calsNow, selecCals);
     });
   }
