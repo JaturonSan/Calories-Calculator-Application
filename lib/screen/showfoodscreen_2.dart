@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:mini_project/model/food.dart';
 import 'package:mini_project/providers/food_provider.dart';
@@ -20,18 +22,19 @@ class _ShowFoodScreen2State extends State<ShowFoodScreen2> {
         Column(
           //crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Container(
-              height: 88,
-              width: 120,
-              margin: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                image: const DecorationImage(
-                  image: AssetImage('assets/pizza.jpg'),
-                  fit: BoxFit.cover,
-                ),
-                borderRadius: BorderRadius.circular(30),
-              ),
-            ),
+            // Container(
+            //   height: 88,
+            //   width: 120,
+            //   margin: const EdgeInsets.all(20),
+            //   decoration: BoxDecoration(
+            //     image: const DecorationImage(
+            //       image: AssetImage('assets/pizza.jpg'),
+            //       fit: BoxFit.cover,
+            //     ),
+            //     borderRadius: BorderRadius.circular(30),
+            //   ),
+            // ),
+            Image.file(File(data.pic.toString()), height: 110,width: 120,),
             Text(data.name.toString()),
             Text(data.calories.toString()+" แคล"),
           ],

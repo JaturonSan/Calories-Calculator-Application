@@ -1,7 +1,9 @@
-import 'dart:math';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:form_field_validator/form_field_validator.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:mini_project/model/food.dart';
 import 'package:mini_project/screen/mainscreen.dart';
 import 'package:mini_project/screen/showfoodscreen.dart';
@@ -18,7 +20,8 @@ class AddFood extends StatefulWidget {
 }
 
 class _AddFoodState extends State<AddFood> {
-  String pic = "";
+  String picLocation = ""; // ที่อยู่รูปอาหาร
+  File? image; // รูปภาพอาหารที่มาจากการถ่ายรูปหรือเลือกจากคลังรูปภาพ
   final keyForm = GlobalKey<FormState>();
   final nameController = TextEditingController();
   final calController = TextEditingController();
@@ -28,10 +31,48 @@ class _AddFoodState extends State<AddFood> {
   late TextEditingController picController = TextEditingController();
   FoodProvider foddProvider = FoodProvider();
 
+  // ฟังก์ชั่นเลือกรูปภาพจากคลังรูปภาพ
+  Future pickImageGallery() async {
+    try {
+      // ใช้ image_picker -- https://pub.dev/packages/image_picker
+      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+      
+      // ถ้ารูปเป็น null จะ return ออกไปจากฟังก์ชั่นเลย
+      if(image==null) return;
+      final imageTemporary = File(image.path);
+      setState(() {
+        this.image = imageTemporary;
+        picLocation = image.path;
+        picController = TextEditingController(text: picLocation);
+      });
+    } on PlatformException catch (e) {
+      print("Failed to pick image: $e");
+    }
+  }
+
+  // ฟังก์ชั่นถ่ายรูปจากกล้อง
+  Future pickImageCamera() async {
+    try {
+      // ใช้ image_picker -- https://pub.dev/packages/image_picker
+      final image = await ImagePicker().pickImage(source: ImageSource.camera);
+      
+      // ถ้ารูปเป็น null จะ return ออกไปจากฟังก์ชั่นเลย
+      if(image==null) return;
+      final imageTemporary = File(image.path);
+      setState(() {
+        this.image = imageTemporary;
+        picLocation = image.path;
+        picController = TextEditingController(text: picLocation);
+      });
+    } on PlatformException catch (e) {
+      print("Failed to pick image: $e");
+    }
+  }
+
    @override
   void initState() {
     super.initState();
-    picController = TextEditingController(text: pic);
+    picController = TextEditingController(text: picLocation);
   }
 
   @override
@@ -110,7 +151,9 @@ class _AddFoodState extends State<AddFood> {
                 ),
                 const SizedBox(height: 20,),
                 TextFormField( // เพิ่มฟิวเอาไว้ใส่รูป ในอนาคตจะมีการโหลดรูปจากเครื่องได้
-                  enabled: false,
+                  readOnly: true,
+                  showCursor: false,
+                  enableInteractiveSelection: false,
                   controller: picController,
                   validator: MultiValidator([
                     RequiredValidator(errorText: 'กรุณาใส่รูป'),
@@ -120,20 +163,20 @@ class _AddFoodState extends State<AddFood> {
                     border: const OutlineInputBorder(),
                     labelText: 'รูปอาหาร',
                     suffixIcon: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween, // เพิ่มบรรทัดเพื่อแก้ไขปัญหาข้อมความถูกไอคอนบัง
+                      mainAxisSize: MainAxisSize.min, // เพิ่มบรรทัดเพื่อแก้ไขปัญหาข้อมความถูกไอคอนบัง
                       children: <Widget>[
                         // ปุ่มใช้กล้องในการถ่ายรูปเข้าแอป
                         IconButton(
                           onPressed: (){
-                            setState(() {
-                              pic = "dd/pic1";
-                            });
+                            pickImageCamera();
                           }, 
                           icon: const Icon(Icons.camera)
                         ),
                         // ปุ่มเลือกรูปภาพจากคลังรูปภาพ
                         IconButton(
                           onPressed: (){
-                            pic = "dd/pic1";
+                            pickImageGallery();
                           }, 
                           icon: const Icon(Icons.image_rounded)
                         ),
@@ -141,6 +184,7 @@ class _AddFoodState extends State<AddFood> {
                     ),
                   ),
                 ),
+                image == null ? const SizedBox(height: 120,width: 120, child: Text('กรุณาเลือกรูปภาพ')) : Image.file(image!, height: 120, width: 120,),
                 const SizedBox(height: 20,),
                 SizedBox(
                   height: 40,
