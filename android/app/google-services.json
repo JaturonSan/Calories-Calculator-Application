@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "571872906055",
+    "project_id": "calorie-calculator-application",
+    "storage_bucket": "calorie-calculator-application.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:571872906055:android:3acc61701fc886101bda62",
+        "android_client_info": {
+          "package_name": "com.example.mini_project"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "571872906055-92vohi3eekttc6qj1uf0pgrr875e3nv4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-PehrqAM_XU2162ojwZ_1FbIGHYKhuiE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "571872906055-92vohi3eekttc6qj1uf0pgrr875e3nv4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

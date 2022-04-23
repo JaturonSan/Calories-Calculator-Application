@@ -1,66 +1,220 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:form_field_validator/form_field_validator.dart';
-import 'package:mini_project/model/profile.dart';
-import 'package:mini_project/providers/profile_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:mini_project/main.dart';
 
 class RegisterScreen extends StatelessWidget {
   RegisterScreen({ Key? key }) : super(key: key);
   final formKey = GlobalKey<FormState>();
-  Profile profile = Profile();
+  final emailController = TextEditingController();
+  final nameController = TextEditingController();
+  final weightController = TextEditingController();
+  final heightController = TextEditingController();
+  final ageController = TextEditingController();
+  final genderController = TextEditingController();
+  final passwordController = TextEditingController();
+  final passwordchkController = TextEditingController();
+  String pass = "";
+  String matchPass = "";
+  SizedBox box = const SizedBox(height: 20,);
+  OutlineInputBorder border = const OutlineInputBorder();
+  final Future<FirebaseApp> firebase = Firebase.initializeApp();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('หน้าสมัครบัญชี'), backgroundColor: Colors.cyan[900],),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: Form(
-            key: formKey,
-            child: Column(
-              children: [
-                const Text('ชื่อผู้ใช้'),
-                TextFormField(
-                  keyboardType: TextInputType.name,
-                  onSaved: (name){
-                    profile.username = name;
-                  },
-                  validator: MultiValidator([
-                    RequiredValidator(errorText: 'กรุณาป้อนชื่อผู้ใช้'),
-                    MinLengthValidator(4, errorText: 'ชื่อต้องมีความยาวอย่างน้อย 4 ตัว')
-                  ]),
-                ),
-                const Text('รหัสผ่าน'),
-                TextFormField(
-                  keyboardType: TextInputType.visiblePassword,
-                  onSaved: (password){
-                    profile.password = password;
-                  },
-                  validator: MultiValidator([
-                    RequiredValidator(errorText: 'กรุณาป้อนรหัสผ่าน'),
-                    MinLengthValidator(8, errorText: 'รหัสผ่านต้องมีอย่างน้อย 8 ตัว'),  
-                    PatternValidator(r'(?=.*?[#?!@$%^&*-])', errorText: 'รหัสผ่านต้องประกอบด้วยตัวอักษรพอเศษอย่างน้อย 2 ตัว')
-                  ]),
-                ),
-                SizedBox(
-                  height: 30,
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      var provider = Provider.of<ProfileProvider>(context, listen: false);
-                      provider.addProfile(profile);
-                      Navigator.pop(context);
-                    }, 
-                    child: const Text('ลงทะเบียน')
+    return FutureBuilder(
+      future: firebase,
+      builder: (context, snapshot) {
+        if(snapshot.hasError){
+          return Scaffold(
+            appBar: AppBar(title: const Text('error')),
+            body: Center(
+              child: Text(snapshot.error.toString()),
+            ),
+          );
+        }
+        if(snapshot.connectionState == ConnectionState.done){
+          return Scaffold(
+            appBar: AppBar(title: const Text('หน้าสมัครบัญชี'), backgroundColor: Colors.cyan[900],),
+            body: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        autocorrect: true,
+                        keyboardType: TextInputType.emailAddress,
+                        controller: emailController,
+                        validator: MultiValidator([
+                          RequiredValidator(errorText: 'กรุณาป้อนอีเมล'),
+                          EmailValidator(errorText: 'รูปแบบอีเมลไม่ถูกต้อง'),
+                        ]),
+                        // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
+                        decoration: InputDecoration(
+                          border: border,
+                          labelText: 'อีเมล',
+                        ),
+                      ),
+                      box, // กล่อง SizedBox ขนาดความสูง 20 พิกเซล
+                      TextFormField(
+                        autocorrect: true,
+                        keyboardType: TextInputType.name,
+                        controller: nameController,
+                        validator: MultiValidator([
+                          RequiredValidator(errorText: 'กรุณาป้อนชื่อ'),
+                        ]),
+                        // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
+                        decoration: InputDecoration(
+                          border: border,
+                          labelText: 'ชื่อ',
+                        ),
+                      ),
+                      box,
+                      TextFormField(
+                        keyboardType: TextInputType.visiblePassword,
+                        obscureText: true,
+                        controller: passwordController,
+                        validator: MultiValidator([
+                          RequiredValidator(errorText: 'กรุณาป้อนรหัสผ่าน'),
+                          MinLengthValidator(6, errorText: 'รหัสผ่านต้องมีอย่างน้อย 6 ตัว'),  
+                          PatternValidator(r'(?=.*?[#?!@$%^&*-])', errorText: 'รหัสผ่านต้องประกอบด้วยตัวอักษรพอเศษอย่างน้อย 2 ตัว'),
+                        ]),
+                        // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
+                        decoration: InputDecoration(
+                          border: border,
+                          labelText: 'ป้อนรหัส',
+                        ),
+                      ),
+                      box, // กล่อง SizedBox ขนาดความสูง 20 พิกเซล
+                      TextFormField(
+                        keyboardType: TextInputType.visiblePassword,
+                        obscureText: true,
+                        controller: passwordchkController,
+                        validator: MultiValidator([
+                          RequiredValidator(errorText: 'กรุณาป้อนรหัสผ่าน'),
+                          MinLengthValidator(6, errorText: 'รหัสผ่านต้องมีอย่างน้อย 6 ตัว'),  
+                          PatternValidator(r'(?=.*?[#?!@$%^&*-])', errorText: 'รหัสผ่านต้องประกอบด้วยตัวอักษรพอเศษอย่างน้อย 2 ตัว'),
+                        ]),
+                        // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
+                        decoration: InputDecoration(
+                          border: border,
+                          labelText: 'ป้อนรหัสอีกครั้ง',
+                        ),
+                      ),
+                      box, // กล่อง SizedBox ขนาดความสูง 20 พิกเซล
+                      TextFormField(
+                        keyboardType: TextInputType.number,
+                        controller: weightController,
+                        validator: MultiValidator([
+                          RequiredValidator(errorText: 'กรุณาป้อนน้ำหนัก'),
+                          RangeValidator(min: 20, max: 1000, errorText: 'น้ำหนักเกินช่วง'),
+                        ]),
+                        // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
+                        decoration: InputDecoration(
+                          border: border,
+                          labelText: 'น้ำหนัก',
+                        ),
+                      ),
+                      box, // กล่อง SizedBox ขนาดความสูง 20 พิกเซล
+                      TextFormField(
+                        keyboardType: TextInputType.number,
+                        controller: heightController,
+                        validator: MultiValidator([
+                          RequiredValidator(errorText: 'กรุณาป้อนความสูง'),
+                          RangeValidator(min: 59, max: 300, errorText: 'ความสูงเกินช่วง'),
+                        ]),
+                        // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
+                        decoration: InputDecoration(
+                          border: border,
+                          labelText: 'ความสูง',
+                        ),
+                      ),
+                      box, // กล่อง SizedBox ขนาดความสูง 20 พิกเซล
+                      TextFormField(
+                        keyboardType: TextInputType.number,
+                        controller: ageController,
+                        validator: MultiValidator([
+                          RequiredValidator(errorText: 'กรุณาป้อนอายุ'),
+                          RangeValidator(min: 6, max: 100, errorText: 'อายุเกินช่วง'),
+                        ]),
+                        // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
+                        decoration: InputDecoration(
+                          border: border,
+                          labelText: 'อายุ',
+                        ),
+                      ),
+                      box, // กล่อง SizedBox ขนาดความสูง 20 พิกเซล
+                      SizedBox(
+                        height: 30,
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            var email = emailController.text;
+                            var password = passwordController.text; 
+                            var passchk = passwordchkController.text;
+
+                            if(password==passchk) {
+                              try {
+                                FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password).then((value) {
+                                    // ใช้ Fluttertoast ในการแสดงผลแทน showDialog
+                                    Fluttertoast.showToast(
+                                      msg: "สมัครสำเร็จ",
+                                      toastLength: Toast.LENGTH_LONG,
+                                      gravity: ToastGravity.CENTER,
+                                      timeInSecForIosWeb: 1,
+                                      backgroundColor: Colors.red,
+                                      textColor: Colors.white,
+                                      fontSize: 16.0
+                                    );
+                                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
+                                  }
+                                );
+                              } on FirebaseAuthException catch(e) {
+                                // ใช้ Fluttertoast ในการแสดงผลแทน showDialog
+                                Fluttertoast.showToast(
+                                  msg: e.message.toString(),
+                                  toastLength: Toast.LENGTH_LONG,
+                                  gravity: ToastGravity.CENTER,
+                                  timeInSecForIosWeb: 1,
+                                  backgroundColor: Colors.red,
+                                  textColor: Colors.white,
+                                  fontSize: 16.0
+                                );
+                              }
+                            } else {
+                              // ใช้ Fluttertoast ในการแสดงผลแทน showDialog
+                              Fluttertoast.showToast(
+                                msg: "กรุณาแก้ไขรหัสผ่านให้ตรงกัน",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.CENTER,
+                                timeInSecForIosWeb: 1,
+                                backgroundColor: Colors.red,
+                                textColor: Colors.white,
+                                fontSize: 16.0
+                              );
+                            }
+                          }, 
+                          child: const Text('ลงทะเบียน')
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
+              ),
             ),
+          );
+        }
+        return Scaffold(
+          appBar: AppBar(title: const Text('หน้าสมัครบัญชี'),),
+          body: const Center(
+            child: CircularProgressIndicator(),
           ),
-        ),
-      ),
+        );
+      }
     );
   }
 }

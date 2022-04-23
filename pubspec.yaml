@@ -45,6 +45,10 @@ dependencies:
   flutter_launcher_icons: ^0.9.2 
   #แพ็คเก็ตในการเลือกรูปจากคลังรูปและถ่ายรูปได้
   image_picker: ^0.8.5 
+  firebase_core: ^1.15.0
+  cloud_firestore: ^3.1.13
+  firebase_auth: ^3.3.15
+  fluttertoast: ^8.0.9
 
 # ตัวนี้เป็นการกำหนดไอคอนของแอป ชื่อแพ็คเก็ต flutter_launcher_icons
 flutter_icons: 

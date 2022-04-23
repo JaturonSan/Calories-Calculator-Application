@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mini_project/model/food.dart';
@@ -46,7 +47,16 @@ class _AddFoodState extends State<AddFood> {
         picController = TextEditingController(text: picLocation);
       });
     } on PlatformException catch (e) {
-      print("Failed to pick image: $e");
+      // ใช้ Fluttertoast ในการแสดงผลแทน showDialog
+      Fluttertoast.showToast(
+        msg: e.message.toString(),
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0
+      );
     }
   }
 
@@ -65,7 +75,16 @@ class _AddFoodState extends State<AddFood> {
         picController = TextEditingController(text: picLocation);
       });
     } on PlatformException catch (e) {
-      print("Failed to pick image: $e");
+      // ใช้ Fluttertoast ในการแสดงผลแทน showDialog
+      Fluttertoast.showToast(
+        msg: e.message.toString(),
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0
+      );
     }
   }
 

@@ -14,6 +14,8 @@ class ShowFoodScreen extends StatefulWidget {
 
 class _ShowFoodScreenState extends State<ShowFoodScreen> {
   final keyForm = GlobalKey<FormState>();
+  OutlineInputBorder border = const OutlineInputBorder();
+  SizedBox box = const SizedBox(height: 20,);
 
   // initSate เป็นฟังก์ชั่นในการเริ่มฟังก์ชั่นต่างๆก่อนสร้างหน้าขึ้น เพื่อเตียมข้อมูลที่จะแสดงผลไว้ก่อน เพื่อไม่ให้เกิดค่าว่าง หรือหน้าไม่ยอมโหลด
   @override
@@ -92,36 +94,36 @@ class _ShowFoodScreenState extends State<ShowFoodScreen> {
                                               RequiredValidator(errorText: 'กรุณาป้อนชื่ออาหาร'),
                                             ]),
                                             // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
-                                            decoration: const InputDecoration(
-                                              border: OutlineInputBorder(),
+                                            decoration: InputDecoration(
+                                              border: border,
                                               labelText: 'ชื่ออาหาร',
                                             ),
                                           ),
-                                          const SizedBox(height: 20,),
+                                          box,
                                           TextFormField(
                                             controller: calController,
                                             validator: MultiValidator([
                                               RequiredValidator(errorText: 'กรุณาป้อนจำนวนแคลอรี่'),
                                             ]),
                                             // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
-                                            decoration: const InputDecoration(
-                                              border: OutlineInputBorder(),
+                                            decoration: InputDecoration(
+                                              border: border,
                                               labelText: 'แคลอรี่ (ต่อ 100 กรัม)',
                                             ),
                                           ),
-                                          const SizedBox(height: 20,),
+                                          box,
                                           TextFormField(
                                             controller: proController,
                                             validator: MultiValidator([
                                               RequiredValidator(errorText: 'กรุณาป้อนจำนวนโปรตีน'),
                                             ]),
                                             // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
-                                            decoration: const InputDecoration(
-                                              border: OutlineInputBorder(),
+                                            decoration: InputDecoration(
+                                              border: border,
                                               labelText: 'โปรตีน',
                                             ),
                                           ),
-                                          const SizedBox(height: 20,),
+                                          box,
                                           TextFormField(
                                             keyboardType: TextInputType.visiblePassword,
                                             controller: amountController,
@@ -130,12 +132,12 @@ class _ShowFoodScreenState extends State<ShowFoodScreen> {
                                               MinLengthValidator(1, errorText: 'จำนวนอาหารต้องมีอย่างน้อย 1 จาน'),
                                             ]),
                                             // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
-                                            decoration: const InputDecoration(
-                                              border: OutlineInputBorder(),
+                                            decoration: InputDecoration(
+                                              border: border,
                                               labelText: 'จำนวน',
                                             ),
                                           ),
-                                          const SizedBox(height: 20,),
+                                          box,
                                           TextFormField(
                                             keyboardType: TextInputType.visiblePassword,
                                             controller: gramController,
@@ -144,12 +146,12 @@ class _ShowFoodScreenState extends State<ShowFoodScreen> {
                                               MinLengthValidator(1, errorText: 'น้ำหนักอาหารต้องมีอย่างน้อย 100 กรัม'),
                                             ]),
                                             // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
-                                            decoration: const InputDecoration(
-                                              border: OutlineInputBorder(),
+                                            decoration: InputDecoration(
+                                              border: border,
                                               labelText: 'กี่กรัม',
                                             ),
                                           ),
-                                          const SizedBox(height: 20,),
+                                          box,
                                           TextFormField( // แก้ไขที่อยู่ของรูปภาพได้นะ
                                             keyboardType: TextInputType.name,
                                             controller: picController,
@@ -157,8 +159,8 @@ class _ShowFoodScreenState extends State<ShowFoodScreen> {
                                               RequiredValidator(errorText: 'กรุณาใส่รูปอาหาร'),
                                             ]),
                                             // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
-                                            decoration: const InputDecoration(
-                                              border: OutlineInputBorder(),
+                                            decoration: InputDecoration(
+                                              border: border,
                                               labelText: 'จำนวน',
                                             ),
                                           ),

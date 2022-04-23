@@ -1,5 +1,10 @@
 class Profile{
-  String? username;
+  String? email;
+  String? name;
+  double? weight;
+  int? height;
+  int? age;
+  String? gender;
   String? password;
-  Profile({this.username,this.password});
+  Profile({this.email,this.name,this.weight,this.height,this.age,this.gender,this.password});
 }
