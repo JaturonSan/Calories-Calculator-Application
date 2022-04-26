@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -5,22 +6,47 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:mini_project/main.dart';
 
-class RegisterScreen extends StatelessWidget {
-  RegisterScreen({ Key? key }) : super(key: key);
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({ Key? key }) : super(key: key);
+
+  @override
+  State<RegisterScreen> createState() => _RegisterScreenState();
+}
+
+class _RegisterScreenState extends State<RegisterScreen> {
   final formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final nameController = TextEditingController();
   final weightController = TextEditingController();
   final heightController = TextEditingController();
   final ageController = TextEditingController();
-  final genderController = TextEditingController();
+  bool _genderSelected1 = false; // ตัวแปรเช็คเพศชาย
+  bool _genderSelected2 = false; // ตัวแปรเช็คเพศชาย
   final passwordController = TextEditingController();
   final passwordchkController = TextEditingController();
+  OutlineInputBorder border = const OutlineInputBorder(); // ขอบของ TextFormField
+  final Future<FirebaseApp> firebase = Firebase.initializeApp(); // เกี่ยวกับการ login ฐานข้อมูลผู้ใช้ใน firebase 
+  final CollectionReference _userCollection = FirebaseFirestore.instance.collection('users'); // ฐานข้อมูล collection ชื่อ 'users'
+  CircleBorder circleBorder = const CircleBorder(side: BorderSide(color: Colors.blue,width: 2,)); // ขอบของ ChoiceChip
+  TextStyle whiteTxt = const TextStyle(color: Colors.white,fontSize: 15,fontWeight: FontWeight.bold); // ตัวหนังสือบน ChoiceChip
+  TextStyle blueTxt = const TextStyle(color: Colors.blue,fontSize: 15,fontWeight: FontWeight.bold); // ตัวหนังสือบน ChoiceChip
+  String gendertxt = ""; // เก็บเพศของผู้ใช้
+  SizedBox box = const SizedBox(height: 20,width: 20,);
   String pass = "";
   String matchPass = "";
-  SizedBox box = const SizedBox(height: 20,);
-  OutlineInputBorder border = const OutlineInputBorder();
-  final Future<FirebaseApp> firebase = Firebase.initializeApp();
+
+  Future<dynamic> addUser(String email,String name,double weight,int height,int age,String gender) async {
+    return 
+    // นำข้อมูลชื่อผู้ใช้ email น้ำหนัก ส่วนสูง อายุ เพศใส่ลงในฐานข้อมูล firebase
+    await _userCollection.add({
+      "email": email, 
+      "name": name,
+      "weight": weight,
+      "height": height,
+      "age": age,
+      "gender": gender 
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -148,6 +174,41 @@ class RegisterScreen extends StatelessWidget {
                         ),
                       ),
                       box, // กล่อง SizedBox ขนาดความสูง 20 พิกเซล
+                      // ตังเลือกแบบเป็นกล่อง ChoiceChip
+                      Row(
+                        children: [
+                          ChoiceChip(
+                            label: const Text('ชาย'), 
+                            selected: _genderSelected1, 
+                            onSelected: (value){
+                              setState(() {
+                                _genderSelected1 = value;
+                                _genderSelected2 = false;
+                                gendertxt = "ชาย";
+                              });
+                            },
+                            labelStyle: _genderSelected1? whiteTxt : blueTxt,
+                            selectedColor: _genderSelected1? Colors.blue : Colors.white,
+                            avatarBorder: circleBorder,
+                          ),
+                          box,
+                          ChoiceChip(
+                            label: const Text('หญิง'), 
+                            selected: _genderSelected2, 
+                            onSelected: (value){
+                              setState(() {
+                                _genderSelected1 = false;
+                                _genderSelected2 = value;
+                                gendertxt = "หญิง";
+                              });
+                            },
+                            labelStyle: _genderSelected2? whiteTxt : blueTxt,
+                            selectedColor: _genderSelected2? Colors.blue : Colors.white,
+                            avatarBorder: circleBorder,
+                          ),
+                        ],
+                      ),
+                      box, // กล่อง SizedBox ขนาดความสูง 20 พิกเซล
                       SizedBox(
                         height: 30,
                         width: double.infinity,
@@ -156,10 +217,16 @@ class RegisterScreen extends StatelessWidget {
                             var email = emailController.text;
                             var password = passwordController.text; 
                             var passchk = passwordchkController.text;
+                            var name = nameController.text;
+                            var weight = double.parse(weightController.text);
+                            var height = int.parse(heightController.text); 
+                            var age = int.parse(ageController.text);
 
-                            if(password==passchk) {
+                            if(password==passchk && gendertxt!="") {
                               try {
                                 FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password).then((value) {
+                                    addUser(email,name,weight,height,age,gendertxt);
+                                    
                                     // ใช้ Fluttertoast ในการแสดงผลแทน showDialog
                                     Fluttertoast.showToast(
                                       msg: "สมัครสำเร็จ",

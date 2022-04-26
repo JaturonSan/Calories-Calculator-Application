@@ -1,5 +1,7 @@
 /* หน้านี้เป็นหน้าแสดงแคลลอรี่ของคนๆนี้ */
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mini_project/providers/food_provider.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
@@ -16,11 +18,12 @@ class ShowCalScreen extends StatefulWidget {
 enum SingingCharacter { t1, t2, t3, t4, t5 }
 
 class _ShowCalScreenState extends State<ShowCalScreen> {
-  String name = "จาตุรนต์ แสงศิริ"; // ชื่อผู้ใช้
-  double weight = 55.4; // น้ำหนัก
-  int height = 167; // ส่วนสูง
-  int age = 22; // อายุ
-  String gender = "ชาย"; // เพศ
+  String name = ""; // ชื่อผู้ใช้
+  double weight = 0; // น้ำหนัก
+  int height = 0; // ส่วนสูง
+  int age = 0; // อายุ
+  String gender = ""; // เพศ
+
   int calsNow = 0; // Kcalลอรี่ที่เหลือในวันนี้ ต้องมาจากหน้าเพิ่มอาหารในฐานข้อมูล
   int selecCals = 0; // แคลลอรี่ที่เลือกไว้ในที่ติ้กเลือกว่าเราใช้ชีวิตยังไง
   int cals = 0; // Kcalเลอรี่ BMR
@@ -39,6 +42,8 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
   TextStyle h2 = const TextStyle(fontSize: 15, color: Color(0xFF616161), fontWeight: FontWeight.bold);
   TextStyle content1 = const TextStyle(fontSize: 15, color: Colors.black);
   TextStyle content2 = const TextStyle(fontSize: 12, color: Colors.black);
+  final user = FirebaseAuth.instance; // ข้อมูลของ user ปัจจุบัน
+  
 
   // ตัวแปรสำหรับตัวเลือกติ้กวงกลม
   late SingingCharacter? _character = SingingCharacter.t1;
@@ -59,11 +64,18 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
     }
   }
 
-  void getCals(double wei, int hei, int age) {
+  void getCals(double wei, int hei, int age,String gender) {
     // https://www.lokehoon.com/app.php?q_id=calculate_bmr_tdee
     // https://www.calculator.net/bmr-calculator.html
     // สูตรคำนวณแคลเลอรี่อยู่ในลลิ้งด้านบน
-    int cal = (10 * wei + 6.25 * hei - 5 * age + 5).round();
+    late int cal;
+
+    if(gender=="ชาย"){
+      cal = (10 * wei + 6.25 * hei - 5 * age + 5).round();
+    } else {
+      cal = (10 * wei + 6.25 * hei - 5 * age - 161).round();
+    }
+    
     setState(() {
       cals = cal;
       calNone = (cals * 1.2).round(); // ไม่ออกกำกายเลย
@@ -102,10 +114,23 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
   @override
   void initState() {
     super.initState(); // ใช้คำสั่ง super.initState(); เพื่อเตรียมฟังก์ชั่น init แล้วเรียกฟังก์ชั่นที่ต้องการ
-    asyncMethod();
-    getCals(weight, height, age);
-    selecCals = calNone; // ใช้ selecCals มาแทน cals เพราะจะได้แทนตัวแปรที่เลือกตอนติ้กถูก แทนแคลลอรี่ที่เลือก ณ ขณะนี้
-    getNutrients();
+
+    // คำสั่งในการหา user คนปัจจุบันแล้วนำข้อมูลมาแสดงบนแอป
+    FirebaseFirestore.instance.collection('users').get().then((QuerySnapshot snapshot) {
+      for(var doc in snapshot.docs) {
+        if(user.currentUser!.email.toString() == doc["email"]){
+          name = doc["name"];
+          weight = doc["weight"];
+          height = doc["height"];
+          age = doc["age"];
+          gender = doc["gender"];
+          asyncMethod();
+          getCals(weight, height, age, gender);
+          selecCals = calNone; // ใช้ selecCals มาแทน cals เพราะจะได้แทนตัวแปรที่เลือกตอนติ้กถูก แทนแคลลอรี่ที่เลือก ณ ขณะนี้
+          getNutrients();
+        }
+      }
+    });
   }
 
   @override

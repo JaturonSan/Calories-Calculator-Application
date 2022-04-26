@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mini_project/providers/food_provider.dart';
 import 'package:mini_project/screen/addfoodscreen.dart';
@@ -28,7 +27,7 @@ class _MainScreenState extends State<MainScreen> {
   _MainScreenState({required this.title,required this.page, required this.index}); // การส่งค่าระหว่าง StatefulWidget
   int _selectedBottomNavigationIndex = 0; // ตัวแปรไว้เก็บว่าตอนนี้ผู้ใช้เลือกตัวไหนของบาร์ด้านล่างอยู่
   Color? backgroundcolor = Colors.cyan[900]; // ตัวแปรเก็บสีพื้นหลังของแอป
-  final Widget _page1 = MainPage(); // ตัวแปรเก็บหน้าที่ 1 (หน้าหลัก) ไว้ใชใน BottomNavigationBar
+  final Widget _page1 = const MainPage(); // ตัวแปรเก็บหน้าที่ 1 (หน้าหลัก) ไว้ใชใน BottomNavigationBar
   final Widget _page2 = const ShowCalScreen(); // ตัวแปรเก็บหน้าที่ 2 (หน้าแสดงแคลลอรี่) ไว้ใชใน BottomNavigationBar
   final Widget _page3 = const ShowFoodScreen2(); // ตัวแปรเก็บหน้าที่ 3 (หน้าแสดงรายการอาหาร) ไว้ใชใน BottomNavigationBar
   final Widget _page4 = const AddFood(); // ตัวแปรเก็บหน้าที่ 4 (หน้าเพิ่มรายการอาหาร) ไว้ใชใน BottomNavigationBar
@@ -110,7 +109,7 @@ class _MainScreenState extends State<MainScreen> {
           ),
         ],
       ),
-      drawer: const SideMenu(),
+      drawer: SideMenu(),
       body: _currentPage,
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedBottomNavigationIndex,
@@ -146,9 +145,7 @@ class _MainScreenState extends State<MainScreen> {
 
 // แบ่งหน้าออกจาก Scaffold อย่างชิ้นเชิง เพื่อสร้าง BottomNavigationBar
 class MainPage extends StatelessWidget {
-  MainPage({Key? key}) : super(key: key);
-
-  final user = FirebaseAuth.instance;
+  const MainPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -160,19 +157,19 @@ class MainPage extends StatelessWidget {
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
-                children: [
-                  Text(user.currentUser!.email.toString()),
-                  const Image(
+                children: const [
+                  //Text(user.currentUser!.email.toString()),
+                  Image(
                     image: AssetImage('assets/children.png'),
                     width: 250,
                     height: 250,
                   ),
-                  const Image(
+                  Image(
                     image: AssetImage('assets/fastfood.png'),
                     width: 250,
                     height: 250,
                   ),
-                  const Image(
+                  Image(
                     image: AssetImage('assets/vegetable.jpg'),
                     width: 250,
                     height: 250,

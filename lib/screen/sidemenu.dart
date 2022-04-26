@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mini_project/main.dart';
 import 'package:mini_project/screen/mainscreen.dart';
@@ -6,7 +7,9 @@ import 'package:mini_project/screen/mainscreen.dart';
 // การทำ sidemenu -- https://maffan.medium.com/how-to-create-a-side-menu-in-flutter-a2df7833fdfb
 // เอาหน้านี้ไปใส่ไว้ใน drawer ของ Scaffold 
 class SideMenu extends StatelessWidget {
-  const SideMenu({ Key? key }) : super(key: key);
+  SideMenu({ Key? key }) : super(key: key);
+
+  final user = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +37,7 @@ class SideMenu extends StatelessWidget {
                 onTap: () => {
                   Navigator.pushReplacement(
                     context, 
-                    MaterialPageRoute(builder: (context) => MainScreen(const Text("หน้าหลัก"), MainPage(), 0)),
+                    MaterialPageRoute(builder: (context) => const MainScreen(Text("หน้าหลัก"), MainPage(), 0)),
                   ),
                 },
               ),
@@ -44,10 +47,13 @@ class SideMenu extends StatelessWidget {
               child: ListTile(
                 leading: const Icon(Icons.logout, color: Colors.black,),
                 title: const Text('ออกจากระบบ', style: TextStyle(color: Colors.black,),),
-                onTap: () => {
-                  Navigator.of(context).pushReplacement( 
-                    MaterialPageRoute(builder: (BuildContext context) => const LoginScreen()),
-                  ),
+                onTap: () {
+                  // เป็นส่วนของการ log out ออกสู่ระบบของ firebase
+                  user.signOut().then((value) {
+                    Navigator.of(context).pushReplacement( 
+                      MaterialPageRoute(builder: (BuildContext context) => const LoginScreen()),
+                    );
+                  });
                 },
               ),
             ),
