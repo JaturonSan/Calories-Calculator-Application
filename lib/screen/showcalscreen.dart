@@ -43,7 +43,7 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
   TextStyle content1 = const TextStyle(fontSize: 15, color: Colors.black);
   TextStyle content2 = const TextStyle(fontSize: 12, color: Colors.black);
   final user = FirebaseAuth.instance; // ข้อมูลของ user ปัจจุบัน
-  
+  BorderRadius borderCircle = BorderRadius.circular(40.0);
 
   // ตัวแปรสำหรับตัวเลือกติ้กวงกลม
   late SingingCharacter? _character = SingingCharacter.t1;
@@ -83,15 +83,15 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
       cal_4to5day = (cals * 1.55).round(); // ออก 4-5 วัน
       cal_6to7day = (cals * 1.7).round(); // ออก 6-7 วัน
       cal_2perday = (cals * 1.9).round(); // ออก 2 ครั้งต่อวัน
-    });
-  }
+      selecCals = calNone; // ใช้ selecCals มาแทน cals เพราะจะได้แทนตัวแปรที่เลือกตอนติ้กถูก แทนแคลลอรี่ที่เลือก ณ ขณะนี้
 
-  void getNutrients() {
-    // https://www.womenshealthmag.com/uk/food/weight-loss/a706111/counting-calculate-macros/#:~:text=To%20work%20out%20how%20many%20grams%20of%20each%20you%20need,grams%20of%20each%20to%20eat.
-    setState(() {
+      // https://www.womenshealthmag.com/uk/food/weight-loss/a706111/counting-calculate-macros/#:~:text=To%20work%20out%20how%20many%20grams%20of%20each%20you%20need,grams%20of%20each%20to%20eat.
+      // ส่วนคำนวณโปรตีน คาร์โบไฮเดรต ไขมันที่ผู้ใช้ต้องการต่อวัน
       carb = ((cals * 0.3) / 4).round(); // คำนวณคาร์โบไฮเดตรโดยคิดเป็น 30% ในวันนี้
       pro = ((cals * 0.4) / 4).round(); // คำนวณโปรตีนโดยคิดเป็น 40% ในวันนี้
       fat = ((cals * 0.3) / 9).round(); // คำนวณไขมันโดยคิดเป็น 30% ในวันนี้
+
+      calRemain(calsNow, selecCals);
     });
   }
 
@@ -106,8 +106,34 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
     setState(() {
       calsNow = values[0]; // แคลลอรี่ตอนนี้ในฐานข้อมูล "user_foods.db"
       userPro = values[1]; // โปรตีนตอนนี้ในฐานข้อมูล "user_foods.db"
-      calRemain(calsNow, selecCals);
     });
+  }
+
+  Future<void> _getUserDetails() async {
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+    DocumentSnapshot doc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+
+    // .exists เป็นฟังก์ชั้นตรวจสอบว่าข้อมูลมีไหม
+    if(doc.exists){
+      setState(() {
+        name = doc["name"].toString();
+        weight = double.parse(doc["weight"].toString());
+        height = int.parse(doc["height"].toString());
+        age = int.parse(doc["age"].toString());
+        gender = doc["gender"].toString();
+        getCals(weight, height, age, gender);
+        asyncMethod();
+      });
+    } else {
+      setState(() {
+        name = "null";
+        weight = 0.0;
+        height = 0;
+        age = 0;
+        gender = "null";
+        getCals(0, 0, 0, "");
+      });
+    }
   }
 
   // initSate เป็นฟังก์ชั่นในการเริ่มฟังก์ชั่นต่างๆก่อนสร้างหน้าขึ้น เพื่อเตียมข้อมูลที่จะแสดงผลไว้ก่อน เพื่อไม่ให้เกิดค่าว่าง หรือหน้าไม่ยอมโหลด
@@ -115,22 +141,7 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
   void initState() {
     super.initState(); // ใช้คำสั่ง super.initState(); เพื่อเตรียมฟังก์ชั่น init แล้วเรียกฟังก์ชั่นที่ต้องการ
 
-    // คำสั่งในการหา user คนปัจจุบันแล้วนำข้อมูลมาแสดงบนแอป
-    FirebaseFirestore.instance.collection('users').get().then((QuerySnapshot snapshot) {
-      for(var doc in snapshot.docs) {
-        if(user.currentUser!.email.toString() == doc["email"]){
-          name = doc["name"];
-          weight = doc["weight"];
-          height = doc["height"];
-          age = doc["age"];
-          gender = doc["gender"];
-          asyncMethod();
-          getCals(weight, height, age, gender);
-          selecCals = calNone; // ใช้ selecCals มาแทน cals เพราะจะได้แทนตัวแปรที่เลือกตอนติ้กถูก แทนแคลลอรี่ที่เลือก ณ ขณะนี้
-          getNutrients();
-        }
-      }
-    });
+    _getUserDetails();
   }
 
   @override
@@ -323,8 +334,11 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
                   children: [
                     Column(
                       children: [
-                        const CircleAvatar(
-                          backgroundImage: NetworkImage('https://img.lovepik.com/free-png/20210924/lovepik-cartoon-avocado-png-image_401366645_wh1200.png'),
+                        CircleAvatar(
+                          child: ClipRRect(
+                            child: Image.asset('assets/fat.jpg'),
+                            borderRadius: borderCircle,
+                          ),
                           radius: 40,
                         ),
                         Text('ไขมัน: ' + fat.toString() + ' กรัม ', style: content2,),
@@ -333,8 +347,11 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
                     box, // ตัวแปร SizedBox ที่ตั้งไว้
                     Column(
                       children: [
-                        const CircleAvatar(
-                          backgroundImage: NetworkImage('https://www.clipartmax.com/png/middle/99-993803_cartoon-steak-background-beef-cartoon-meat-protein-cartoon-beef.png'),
+                        CircleAvatar(
+                          child: ClipRRect(
+                            child: Image.asset('assets/protein.jpg'),
+                            borderRadius: borderCircle,
+                          ),
                           radius: 40,
                         ),
                         Text('โปรตีน: ' + userPro.toString() + '/' + pro.toString() + ' กรัม ',style: content2),
@@ -343,8 +360,11 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
                     box, // ตัวแปร SizedBox ที่ตั้งไว้
                     Column(
                       children: [
-                        const CircleAvatar(
-                          backgroundImage: NetworkImage('https://flyclipart.com/thumb2/carbohydrates-clipart-free-clip-art-images-197710.png'),
+                        CircleAvatar(
+                          child: ClipRRect(
+                            child: Image.asset('assets/carb.jpg'),
+                            borderRadius: borderCircle,
+                          ),
                           radius: 40,
                         ),
                         Text('คาร์โบไฮเดตร: ' + carb.toString() + ' กรัม ', style: content2),

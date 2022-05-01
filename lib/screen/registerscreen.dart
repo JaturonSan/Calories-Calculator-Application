@@ -37,8 +37,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Future<dynamic> addUser(String email,String name,double weight,int height,int age,String gender) async {
     return 
-    // นำข้อมูลชื่อผู้ใช้ email น้ำหนัก ส่วนสูง อายุ เพศใส่ลงในฐานข้อมูล firebase
-    await _userCollection.add({
+    // นำข้อมูลชื่อผู้ใช้ email น้ำหนัก ส่วนสูง อายุ เพศใส่ลงในฐานข้อมูล firebase โดยใช้ userid
+    await _userCollection.doc(FirebaseAuth.instance.currentUser!.uid).set({
       "email": email, 
       "name": name,
       "weight": weight,

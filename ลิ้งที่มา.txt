@@ -21,3 +21,9 @@ void main() {
 https://www.codegrepper.com/code-examples/dart/make+square+card+flutter
 https://stackoverflow.com/questions/68057459/how-to-get-this-type-of-card-with-column-and-row-combinations
 https://howtoflutter.dev/how-to-add-border-to-an-image-in-flutter/
+
+-ลิ้งล่าสุด
+https://firebase.google.com/docs/firestore/security/get-started?authuser=1&hl=en
+https://stackoverflow.com/questions/63567447/how-to-i-use-cloud-firestore-to-store-private-user-data-that-only-they-can-read
+https://productiveprogrammer.io/firestore-saving-user-data/#:%7E:text=Save%20User%20Related%20Data&text=Once%20you%20have%20an%20authenticated,information%20about%20this%20user%2Flogin.
+https://firebase.flutter.dev/docs/firestore/usage/
