@@ -213,18 +213,18 @@ class _AddFoodState extends State<AddFood> {
                     onPressed: () {
                       var name = nameController.text;
                       var cal = int.parse(calController.text);
-                      var pro = int.parse(proController.text);
+                      var pro = double.parse(proController.text);
                       var amout = int.parse(amountController.text);
                       var gram = int.parse(gramController.text);
                       var pic = picController.text;
                       Foods foods = Foods(name: name,calories: cal,protein: pro,amount: amout,gram: gram,pic: pic);
                       var provider = Provider.of<FoodProvider>(context, listen: false);
-                      //provider.addFood(foods, "user_foods.db"); // เพิ่มฐานข้อมูลอาหารของ user 
-                      provider.addFood(foods, "foods.db"); // เพิ่มฐานข้อมูลอาหารของแอป ไว้ตอนเพิ่มอาหารแบบค้นหาได้เลย ไม่ต้องมานั่งพิมพ์
+                      provider.addFood(foods, "user_foods.db"); // เพิ่มฐานข้อมูลอาหารของ user 
+                      //provider.addFood(foods, "foods.db"); // เพิ่มฐานข้อมูลอาหารของแอป ไว้ตอนเพิ่มอาหารแบบค้นหาได้เลย ไม่ต้องมานั่งพิมพ์
 
                       Navigator.pushReplacement(
                         context, 
-                        MaterialPageRoute(builder: (context) => const MainScreen(Text("อาหาร"), ShowFoodScreen2(), 2)),
+                        MaterialPageRoute(builder: (context) => const MainScreen(Text("อาหาร"), ShowFoodScreen(), 2)),
                       );
                     }, 
                     child: const Text('ลงทะเบียน'),

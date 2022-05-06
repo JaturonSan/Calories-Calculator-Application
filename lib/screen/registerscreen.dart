@@ -21,7 +21,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final heightController = TextEditingController();
   final ageController = TextEditingController();
   bool _genderSelected1 = false; // ตัวแปรเช็คเพศชาย
-  bool _genderSelected2 = false; // ตัวแปรเช็คเพศชาย
+  bool _genderSelected2 = false; // ตัวแปรเช็คเพศหญิง
   final passwordController = TextEditingController();
   final passwordchkController = TextEditingController();
   OutlineInputBorder border = const OutlineInputBorder(); // ขอบของ TextFormField

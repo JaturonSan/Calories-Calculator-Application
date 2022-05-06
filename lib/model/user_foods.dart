@@ -1,7 +1,7 @@
 class UserFoods{
   String? name;
   int? calories;
-  int? protien;
+  double? protien;
   int? amount;
   int? gram;
   String? pic;

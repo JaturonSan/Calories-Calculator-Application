@@ -138,7 +138,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               );
                               // เมื่อเข้าสู่ระบบสำเร็จจะแสดงข้อความ "เข้าสู่ระบบสำเร็จ" ผ่าน Fluttertoast แล้วเข้าสู่หน้าหลัก MainPage
                               Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
-                                    return const MainScreen(Text("หน้าหลัก"), MainPage(), 0);
+                                    return MainScreen(const Text("หน้าหลัก"), MainPage(), 0);
                                   },
                                 )
                               );

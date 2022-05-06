@@ -51,8 +51,7 @@ class _ShowFoodScreenState extends State<ShowFoodScreen> {
                 Foods data = provider.foods[index];
                 return Card(
                   elevation: 5,
-                  margin:
-                      const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+                  margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
                   child: ListTile(
                     leading: CircleAvatar(
                       child: FittedBox(
@@ -174,7 +173,7 @@ class _ShowFoodScreenState extends State<ShowFoodScreen> {
                                         // ค่าที่แก้ไขใน dialog จะเก็บในตัวแปรนี้
                                         var name = nameController.text;
                                         var cal = int.parse(calController.text);
-                                        var pro = int.parse(proController.text);
+                                        var pro = double.parse(proController.text);
                                         var amout = int.parse(amountController.text);
                                         var gram = int.parse(gramController.text);
                                         var pic = picController.text;

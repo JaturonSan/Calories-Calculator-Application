@@ -27,9 +27,9 @@ class _MainScreenState extends State<MainScreen> {
   _MainScreenState({required this.title,required this.page, required this.index}); // การส่งค่าระหว่าง StatefulWidget
   int _selectedBottomNavigationIndex = 0; // ตัวแปรไว้เก็บว่าตอนนี้ผู้ใช้เลือกตัวไหนของบาร์ด้านล่างอยู่
   Color? backgroundcolor = Colors.cyan[900]; // ตัวแปรเก็บสีพื้นหลังของแอป
-  final Widget _page1 = const MainPage(); // ตัวแปรเก็บหน้าที่ 1 (หน้าหลัก) ไว้ใชใน BottomNavigationBar
+  final Widget _page1 = MainPage(); // ตัวแปรเก็บหน้าที่ 1 (หน้าหลัก) ไว้ใชใน BottomNavigationBar
   final Widget _page2 = const ShowCalScreen(); // ตัวแปรเก็บหน้าที่ 2 (หน้าแสดงแคลลอรี่) ไว้ใชใน BottomNavigationBar
-  final Widget _page3 = const ShowFoodScreen2(); // ตัวแปรเก็บหน้าที่ 3 (หน้าแสดงรายการอาหาร) ไว้ใชใน BottomNavigationBar
+  final Widget _page3 = const ShowFoodScreen(); // ตัวแปรเก็บหน้าที่ 3 (หน้าแสดงรายการอาหาร) ไว้ใชใน BottomNavigationBar
   final Widget _page4 = const AddFood(); // ตัวแปรเก็บหน้าที่ 4 (หน้าเพิ่มรายการอาหาร) ไว้ใชใน BottomNavigationBar
   late Widget _currentPage; // ตัวแปรไว้เก็บว่าหน้าปัจจุบันตอนนี้คือหน้าไหน
   late Widget _currentTitle; // ตัวแปรไว้เก็บว่า title ของ Scaffold ปัจจุบันตอนนี้คืออะไร
@@ -85,14 +85,11 @@ class _MainScreenState extends State<MainScreen> {
                       onPressed: () {
                         var provider = Provider.of<FoodProvider>(context, listen: false);
                         // เรียกฟังก์ชั่นลบข้อมูลทั้งที่อยู่ในฐานข้อมูล NoSQL
-                        provider.deleteAllData("foods.db");
+                        provider.deleteAllData("user_foods.db"); // ฐานข้อมูลอาหารที่ผู้ใช้ใส่เข้ามา
+                        //provider.deleteAllData("foods.db"); // ฐานข้อมูลอาหารในแอป ไว้ตอนค้นหาอาหารเข้ารายการอาหาร
 
                         // ใช้ refresh หน้านี้
-                        setState(() {
-                          _selectedBottomNavigationIndex = 2;
-                          _currentPage = _pages[2];
-                          _currentTitle = _titlePage[2];
-                        });
+                        _onItemTapped(2);
                         Navigator.pop(context, 'ตกลง');
                       },
                       icon: const Icon(Icons.check),
@@ -145,7 +142,8 @@ class _MainScreenState extends State<MainScreen> {
 
 // แบ่งหน้าออกจาก Scaffold อย่างชิ้นเชิง เพื่อสร้าง BottomNavigationBar
 class MainPage extends StatelessWidget {
-  const MainPage({Key? key}) : super(key: key);
+  MainPage({Key? key}) : super(key: key);
+  SizedBox box = const SizedBox(height: 20,width: 20,); 
 
   @override
   Widget build(BuildContext context) {
@@ -154,27 +152,66 @@ class MainPage extends StatelessWidget {
       child: SingleChildScrollView(
         child: Column(
           children: [
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: const [
-                  //Text(user.currentUser!.email.toString()),
-                  Image(
-                    image: AssetImage('assets/children.png'),
-                    width: 250,
-                    height: 250,
-                  ),
-                  Image(
-                    image: AssetImage('assets/fastfood.png'),
-                    width: 250,
-                    height: 250,
-                  ),
-                  Image(
-                    image: AssetImage('assets/vegetable.jpg'),
-                    width: 250,
-                    height: 250,
-                  ),
-                ],
+            Card(
+              color: Colors.cyan[100],
+              child: ListTile(
+                hoverColor: Colors.cyan,
+                title: const Text('กินอาหาร'),
+                subtitle: Text('มนุษย์เราต้องการพลังงานในการใช้ชีวิต เพิ่มอาหารที่คุณกินในชีวิตประจำวัน', style: TextStyle(color: Colors.black.withOpacity(0.6)),),
+                leading: const Icon(Icons.restaurant),
+                trailing: const Image(
+                  image: AssetImage('assets/fastfood.png'),
+                  // width: 250,
+                  // height: 250,
+                ),
+                onTap: () {
+                  Navigator.pushReplacement(
+                    context, 
+                    MaterialPageRoute(builder: (context) => const MainScreen(Text("เพิ่มอาหาร"), AddFood(), 3)),
+                  ); 
+                },
+              ),
+            ),
+            box,
+            Card(
+              color: Colors.cyan[100],
+              child: ListTile(
+                hoverColor: Colors.cyan,
+                title: const Text('รายการอาหาร'),
+                subtitle: Text('อาหารที่เรากินในแต่ละวัน', style: TextStyle(color: Colors.black.withOpacity(0.6)),),
+                leading: const Icon(Icons.fastfood),
+                trailing: const Image(
+                  image: AssetImage('assets/vegetable.jpg'),
+                  // width: 250,
+                  // height: 250,
+                ),
+                onTap: () {
+                  Navigator.pushReplacement(
+                    context, 
+                    MaterialPageRoute(builder: (context) => const MainScreen(Text("อาหาร"), ShowFoodScreen(), 2)),
+                  ); 
+                },
+              ),
+            ),
+            box,
+            Card(
+              color: Colors.cyan[100],
+              child: ListTile(
+                hoverColor: Colors.cyan,
+                title: const Text('แคลลอรี่'),
+                subtitle: Text('เมื่อเรากินอาหารเข้าไป อาหารเหล่านั้นจะเพิ่มพลังงานเป็นหน่วยแคลลอรี่ เราไม่ควรกินเกินตามความต้องการของร่างกาย', style: TextStyle(color: Colors.black.withOpacity(0.6)),),
+                leading: const Icon(Icons.fastfood),
+                trailing: const Image(
+                  image: AssetImage('assets/children.png'),
+                  // width: 250,
+                  // height: 250,
+                ),
+                onTap: () {
+                  Navigator.pushReplacement(
+                    context, 
+                    MaterialPageRoute(builder: (context) => const MainScreen(Text("แคลลอรี่"), ShowCalScreen(), 1)),
+                  ); 
+                },
               ),
             ),
           ],
