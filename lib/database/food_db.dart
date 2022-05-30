@@ -83,17 +83,27 @@ class FoodDB{
     for(var record in snapshot){
       // โหลดข้อมูล calories มาคูณกับจำนวนที่ใส่ในฐานข้อมูล 
       cals+=((int.parse(record["gram"].toString())*(int.parse(record["calories"].toString())/100))*int.parse(record["amount"].toString())).round();
-      pros+=double.parse(record["protien"].toString())*int.parse(record["amount"].toString());
+      pros+=(int.parse(record["gram"].toString())*double.parse(record["protien"].toString())/100)*int.parse(record["amount"].toString());
     }
     return [cals,pros];
   }
 
   Future deleteFood(Foods statement) async {
-    // int? id = statement.id;
-    // var db = await openDatabase();
-    // var store = intMapStoreFactory.store();
-    // var record = store.record(id!);
-    // record.delete(db); // store.delete() คำสั่งในการลบ
+    // เพิ่มการลบข้อมูลเดี่ยวบน record 
+    var db = await openDatabase();
+    var store = intMapStoreFactory.store();
+    await store.delete(
+      db, 
+      finder: Finder(
+        filter: Filter.and([
+          Filter.equals("name", statement.name),
+          Filter.equals("calories", statement.calories),
+          Filter.equals("protien", statement.protein),
+          Filter.equals("amount", statement.amount),
+          Filter.equals("gram", statement.gram),
+        ]),
+      )
+    ); // store.delete() คำสั่งในการลบโดยใช้ finder ในการหา record ที่ต้องการลบ
   }
 
   Future deleteAll() async {

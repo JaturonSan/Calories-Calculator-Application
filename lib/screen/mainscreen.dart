@@ -89,8 +89,12 @@ class _MainScreenState extends State<MainScreen> {
                         //provider.deleteAllData("foods.db"); // ฐานข้อมูลอาหารในแอป ไว้ตอนค้นหาอาหารเข้ารายการอาหาร
 
                         // ใช้ refresh หน้านี้
-                        _onItemTapped(2);
-                        Navigator.pop(context, 'ตกลง');
+                        Navigator.pop(context);
+                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
+                              return const MainScreen(Text("อาหาร"), ShowFoodScreen(), 2);
+                            },
+                          )
+                        );
                       },
                       icon: const Icon(Icons.check),
                     ),
