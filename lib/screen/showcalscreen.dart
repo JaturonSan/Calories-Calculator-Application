@@ -1,5 +1,7 @@
 /* หน้านี้เป็นหน้าแสดงแคลลอรี่ของคนๆนี้ */
 
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -214,7 +216,7 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
                         child: IconButton(
                           icon: const Icon(Icons.create_rounded),
                           onPressed: () async {
-                            // pop-up ที่แสดงขึ้นมาให้แก้ไขข้อมูลได้ โดยใช้ showDialog
+                              // pop-up ที่แสดงขึ้นมาให้แก้ไขข้อมูลได้ โดยใช้ showDialog
                               /* ในปัญหาของการที่ TextFormField แก้ไขพร้อมกันไม่ได้กับมีข้อความแสดงแต่แรก เราต้อง
                                  ใส่ค่าใน TextEditingController ตั้งแต่แรกเลยแล้วค่อยไปใส่ใน TextFormField
                               */
@@ -222,136 +224,167 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
                               TextEditingController weightController = TextEditingController(text: weight.toString());
                               TextEditingController heightController = TextEditingController(text: height.toString());
                               TextEditingController ageController = TextEditingController(text: age.toString());
-                              await showDialog<String>(
+                              await showDialog<String>( 
+                                /* ตอนที่เลือกเพศมันมีปัญหากับ showDialog ตรงที่ว่ามันไม่ยอมขึ้น seleted สีฟ้า
+                                   เราได้แก้ปัญหาโดยใช้ StreamBuilder ในการเช็คว่ามีการส่ง stream มาไหม
+                                   จะได้เปลี่ยนแปลง UI 
+                                   -- https://stackoverflow.com/questions/53123244/change-alertdialog-title-dynamically-showdialog
+                                */
                                 context: context,
-                                builder: (BuildContext context) => AlertDialog(
-                                  title: const Text('แก้ไขข้อมูล'),
-                                  content: Form(
-                                    key: keyForm,
-                                    child: SingleChildScrollView(
-                                      child: Column(
-                                        children: [
-                                          TextFormField(
-                                            autocorrect: true,
-                                            keyboardType: TextInputType.name,
-                                            controller: nameController,
-                                            validator: RequiredValidator(errorText: 'กรุณาป้อนชื่อ'),
-                                            onSaved: (value) {
-                                              name = value!;
-                                            },
-                                            // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
-                                            decoration: InputDecoration(
-                                              border: border,
-                                              labelText: 'ชื่อ',
+                                builder: (context) {
+                                  StreamController<String> controller = StreamController<String>.broadcast();
+                                  return AlertDialog(
+                                    title: const Text('แก้ไขข้อมูล'),
+                                    content: StreamBuilder(
+                                      stream: controller.stream,
+                                      builder: (BuildContext context, AsyncSnapshot<String> snapshot){
+                                        return Form(
+                                          key: keyForm,
+                                          child: SingleChildScrollView(
+                                            child: Column(
+                                              children: [
+                                                TextFormField(
+                                                  autocorrect: true,
+                                                  keyboardType: TextInputType.name,
+                                                  controller: nameController,
+                                                  validator: RequiredValidator(errorText: 'กรุณาป้อนชื่อ'),
+                                                  onSaved: (value) {
+                                                    name = value!;
+                                                  },
+                                                  // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
+                                                  decoration: InputDecoration(
+                                                    border: border,
+                                                    labelText: 'ชื่อ',
+                                                  ),
+                                                ),
+                                                box,
+                                                TextFormField(
+                                                  keyboardType: TextInputType.number,
+                                                  controller: weightController,
+                                                  validator: MultiValidator([
+                                                    RequiredValidator(errorText: 'กรุณาป้อนน้ำหนัก'),
+                                                    RangeValidator(min: 20, max: 1000, errorText: 'น้ำหนักเกินช่วง'),
+                                                  ]),
+                                                  onSaved: (value) {
+                                                    weight = double.parse(value!);
+                                                  },
+                                                  // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
+                                                  decoration: InputDecoration(
+                                                    border: border,
+                                                    labelText: 'น้ำหนัก',
+                                                  ),
+                                                ),
+                                                box,
+                                                TextFormField(
+                                                  keyboardType: TextInputType.number,
+                                                  controller: heightController,
+                                                  validator: MultiValidator([
+                                                    RequiredValidator(errorText: 'กรุณาป้อนความสูง'),
+                                                    RangeValidator(min: 59, max: 300, errorText: 'ความสูงเกินช่วง'),
+                                                  ]),
+                                                  onSaved: (value) {
+                                                    height = int.parse(value!);
+                                                  },
+                                                  // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
+                                                  decoration: InputDecoration(
+                                                    border: border,
+                                                    labelText: 'ความสูง',
+                                                  ),
+                                                ),
+                                                box,
+                                                TextFormField(
+                                                  keyboardType: TextInputType.number,
+                                                  controller: ageController,
+                                                  validator: MultiValidator([
+                                                    RequiredValidator(errorText: 'กรุณาป้อนอายุ'),
+                                                    RangeValidator(min: 6, max: 100, errorText: 'อายุเกินช่วง'),
+                                                  ]),
+                                                  onSaved: (value) {
+                                                    age = int.parse(value!);
+                                                  },
+                                                  // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
+                                                  decoration: InputDecoration(
+                                                    border: border,
+                                                    labelText: 'อายุ',
+                                                  ),
+                                                ),
+                                                box,
+                                                // ตังเลือกแบบเป็นกล่อง ChoiceChip
+                                                Row(
+                                                  children: [
+                                                    ChoiceChip(
+                                                      label: const Text('ชาย'), 
+                                                      selected: _genderSelected1, 
+                                                      onSelected: (value){
+                                                        setState(() {
+                                                          _genderSelected1 = value;
+                                                          _genderSelected2 = false;
+                                                          gender = "ชาย";
+                                                          controller.add("ชาย");
+                                                        });
+                                                      },
+                                                      labelStyle: snapshot.data.toString()=="ชาย"||gender=="ชาย"? whiteTxt : blueTxt,
+                                                      selectedColor: snapshot.data.toString()=="ชาย"||gender=="ชาย"? Colors.blue : Colors.white,
+                                                      avatarBorder: circleBorder,
+                                                    ),
+                                                    box,
+                                                    ChoiceChip(
+                                                      label: const Text('หญิง'), 
+                                                      selected: _genderSelected2, 
+                                                      onSelected: (value){
+                                                        setState(() {
+                                                          _genderSelected1 = false;
+                                                          _genderSelected2 = value;
+                                                          gender = "หญิง";
+                                                          controller.add("หญิง");
+                                                        });
+                                                      },
+                                                      labelStyle: snapshot.data.toString()=="หญิง"||gender=="หญิง"? whiteTxt : blueTxt,
+                                                      selectedColor: snapshot.data.toString()=="หญิง"||gender=="หญิง"? Colors.blue : Colors.white,
+                                                      avatarBorder: circleBorder,
+                                                    ),
+                                                  ],
+                                                ),
+                                                box, // กล่อง SizedBox ขนาดความสูง 20 พิกเซล
+                                              ],
                                             ),
                                           ),
-                                          box,
-                                          TextFormField(
-                                            keyboardType: TextInputType.number,
-                                            controller: weightController,
-                                            validator: MultiValidator([
-                                              RequiredValidator(errorText: 'กรุณาป้อนน้ำหนัก'),
-                                              RangeValidator(min: 20, max: 1000, errorText: 'น้ำหนักเกินช่วง'),
-                                            ]),
-                                            onSaved: (value) {
-                                              weight = double.parse(value!);
-                                            },
-                                            // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
-                                            decoration: InputDecoration(
-                                              border: border,
-                                              labelText: 'น้ำหนัก',
-                                            ),
-                                          ),
-                                          box,
-                                          TextFormField(
-                                            keyboardType: TextInputType.number,
-                                            controller: heightController,
-                                            validator: MultiValidator([
-                                              RequiredValidator(errorText: 'กรุณาป้อนความสูง'),
-                                              RangeValidator(min: 59, max: 300, errorText: 'ความสูงเกินช่วง'),
-                                            ]),
-                                            onSaved: (value) {
-                                              height = int.parse(value!);
-                                            },
-                                            // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
-                                            decoration: InputDecoration(
-                                              border: border,
-                                              labelText: 'ความสูง',
-                                            ),
-                                          ),
-                                          box,
-                                          TextFormField(
-                                            keyboardType: TextInputType.number,
-                                            controller: ageController,
-                                            validator: MultiValidator([
-                                              RequiredValidator(errorText: 'กรุณาป้อนอายุ'),
-                                              RangeValidator(min: 6, max: 100, errorText: 'อายุเกินช่วง'),
-                                            ]),
-                                            onSaved: (value) {
-                                              age = int.parse(value!);
-                                            },
-                                            // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
-                                            decoration: InputDecoration(
-                                              border: border,
-                                              labelText: 'อายุ',
-                                            ),
-                                          ),
-                                          box,
-                                          // ตังเลือกแบบเป็นกล่อง ChoiceChip
-                                          Row(
-                                            children: [
-                                              ChoiceChip(
-                                                label: const Text('ชาย'), 
-                                                selected: _genderSelected1, 
-                                                onSelected: (value){
-                                                  setState(() {
-                                                    _genderSelected1 = value;
-                                                    _genderSelected2 = false;
-                                                    gender = "ชาย";
-                                                  });
-                                                },
-                                                labelStyle: _genderSelected1? whiteTxt : blueTxt,
-                                                selectedColor: _genderSelected1? Colors.blue : Colors.white,
-                                                avatarBorder: circleBorder,
-                                              ),
-                                              box,
-                                              ChoiceChip(
-                                                label: const Text('หญิง'), 
-                                                selected: _genderSelected2, 
-                                                onSelected: (value){
-                                                  setState(() {
-                                                    _genderSelected1 = false;
-                                                    _genderSelected2 = value;
-                                                    gender = "หญิง";
-                                                  });
-                                                },
-                                                labelStyle: _genderSelected2? whiteTxt : blueTxt,
-                                                selectedColor: _genderSelected2? Colors.blue : Colors.white,
-                                                avatarBorder: circleBorder,
-                                              ),
-                                            ],
-                                          ),
-                                          box, // กล่อง SizedBox ขนาดความสูง 20 พิกเซล
-                                        ],
-                                      ),
+                                        );
+                                      }
                                     ),
-                                  ),
-                                  actions: <Widget>[
-                                    IconButton(
-                                      onPressed: () async { 
-                                        if(keyForm.currentState!.validate()){
-                                          // อัพเดตข้อมูลส่วนตัวบน firebase
-                                          // https://firebase.flutter.dev/docs/firestore/usage/
-                                          _userCollection.doc(user.currentUser!.uid).update({
-                                            'name':name,
-                                            'weight':weight,
-                                            'height':height,
-                                            'age':age,
-                                            'gender':gender
-                                          }).then((value) {
+                                    actions: <Widget>[
+                                      IconButton(
+                                        onPressed: () async { 
+                                          if(keyForm.currentState!.validate()){
+                                            // อัพเดตข้อมูลส่วนตัวบน firebase
+                                            // https://firebase.flutter.dev/docs/firestore/usage/
+                                            _userCollection.doc(user.currentUser!.uid).update({
+                                              'name':name,
+                                              'weight':weight,
+                                              'height':height,
+                                              'age':age,
+                                              'gender':gender
+                                            }).then((value) {
+                                                // ใช้ Fluttertoast ในการแสดงผลแทน showDialog
+                                                Fluttertoast.showToast(
+                                                  msg: 'ข้อมูลอัพเดตแล้ว',
+                                                  toastLength: Toast.LENGTH_LONG,
+                                                  gravity: ToastGravity.CENTER,
+                                                  timeInSecForIosWeb: 1,
+                                                  backgroundColor: Colors.red,
+                                                  textColor: Colors.white,
+                                                  fontSize: 16.0
+                                                );
+                                                Navigator.pushAndRemoveUntil(
+                                                  context,
+                                                  MaterialPageRoute(builder: (context) => const MainScreen(Text("แคลลอรี่"), ShowCalScreen(), 1)), // this mainpage is your page to refresh
+                                                  (Route<dynamic> route) => false,
+                                                );
+                                              }
+                                            ).catchError((error) {
                                               // ใช้ Fluttertoast ในการแสดงผลแทน showDialog
                                               Fluttertoast.showToast(
-                                                msg: 'ข้อมูลอัพเดตแล้ว',
+                                                msg: error,
                                                 toastLength: Toast.LENGTH_LONG,
                                                 gravity: ToastGravity.CENTER,
                                                 timeInSecForIosWeb: 1,
@@ -359,34 +392,18 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
                                                 textColor: Colors.white,
                                                 fontSize: 16.0
                                               );
-                                              Navigator.pushAndRemoveUntil(
-                                                context,
-                                                MaterialPageRoute(builder: (context) => const MainScreen(Text("แคลลอรี่"), ShowCalScreen(), 1)), // this mainpage is your page to refresh
-                                                (Route<dynamic> route) => false,
-                                              );
-                                            }
-                                          ).catchError((error) {
-                                            // ใช้ Fluttertoast ในการแสดงผลแทน showDialog
-                                            Fluttertoast.showToast(
-                                              msg: error,
-                                              toastLength: Toast.LENGTH_LONG,
-                                              gravity: ToastGravity.CENTER,
-                                              timeInSecForIosWeb: 1,
-                                              backgroundColor: Colors.red,
-                                              textColor: Colors.white,
-                                              fontSize: 16.0
-                                            );
-                                          });
-                                        }
-                                      },
-                                      icon: const Icon(Icons.check),
-                                    ),
-                                    IconButton(
-                                      onPressed: () => Navigator.pop(context, 'ยกเลิก'),
-                                      icon: const Icon(Icons.close),
-                                    ),
-                                  ],
-                                ),
+                                            });
+                                          }
+                                        },
+                                        icon: const Icon(Icons.check),
+                                      ),
+                                      IconButton(
+                                        onPressed: () => Navigator.pop(context, 'ยกเลิก'),
+                                        icon: const Icon(Icons.close),
+                                      ),
+                                    ],
+                                  );
+                                }
                               );
                           },
                         ),
