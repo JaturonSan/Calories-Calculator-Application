@@ -235,9 +235,10 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
                                             autocorrect: true,
                                             keyboardType: TextInputType.name,
                                             controller: nameController,
-                                            validator: MultiValidator([
-                                              RequiredValidator(errorText: 'กรุณาป้อนชื่อ'),
-                                            ]),
+                                            validator: RequiredValidator(errorText: 'กรุณาป้อนชื่อ'),
+                                            onSaved: (value) {
+                                              name = value!;
+                                            },
                                             // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
                                             decoration: InputDecoration(
                                               border: border,
@@ -252,6 +253,9 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
                                               RequiredValidator(errorText: 'กรุณาป้อนน้ำหนัก'),
                                               RangeValidator(min: 20, max: 1000, errorText: 'น้ำหนักเกินช่วง'),
                                             ]),
+                                            onSaved: (value) {
+                                              weight = double.parse(value!);
+                                            },
                                             // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
                                             decoration: InputDecoration(
                                               border: border,
@@ -266,6 +270,9 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
                                               RequiredValidator(errorText: 'กรุณาป้อนความสูง'),
                                               RangeValidator(min: 59, max: 300, errorText: 'ความสูงเกินช่วง'),
                                             ]),
+                                            onSaved: (value) {
+                                              height = int.parse(value!);
+                                            },
                                             // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
                                             decoration: InputDecoration(
                                               border: border,
@@ -280,6 +287,9 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
                                               RequiredValidator(errorText: 'กรุณาป้อนอายุ'),
                                               RangeValidator(min: 6, max: 100, errorText: 'อายุเกินช่วง'),
                                             ]),
+                                            onSaved: (value) {
+                                              age = int.parse(value!);
+                                            },
                                             // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
                                             decoration: InputDecoration(
                                               border: border,
@@ -329,24 +339,36 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
                                   actions: <Widget>[
                                     IconButton(
                                       onPressed: () async { 
-                                        // ค่าที่แก้ไขใน dialog จะเก็บในตัวแปรนี้
-                                        var name = nameController.text;
-                                        var weight = double.parse(weightController.text);
-                                        var height = int.parse(heightController.text);
-                                        var age = int.parse(ageController.text);
-
-                                        // อัพเดตข้อมูลส่วนตัวบน firebase
-                                        // https://firebase.flutter.dev/docs/firestore/usage/
-                                        _userCollection.doc(user.currentUser!.uid).update({
-                                          'name':name,
-                                          'weight':weight,
-                                          'height':height,
-                                          'age':age,
-                                          'gender':gender
-                                        }).then((value) {
+                                        if(keyForm.currentState!.validate()){
+                                          // อัพเดตข้อมูลส่วนตัวบน firebase
+                                          // https://firebase.flutter.dev/docs/firestore/usage/
+                                          _userCollection.doc(user.currentUser!.uid).update({
+                                            'name':name,
+                                            'weight':weight,
+                                            'height':height,
+                                            'age':age,
+                                            'gender':gender
+                                          }).then((value) {
+                                              // ใช้ Fluttertoast ในการแสดงผลแทน showDialog
+                                              Fluttertoast.showToast(
+                                                msg: 'ข้อมูลอัพเดตแล้ว',
+                                                toastLength: Toast.LENGTH_LONG,
+                                                gravity: ToastGravity.CENTER,
+                                                timeInSecForIosWeb: 1,
+                                                backgroundColor: Colors.red,
+                                                textColor: Colors.white,
+                                                fontSize: 16.0
+                                              );
+                                              Navigator.pushAndRemoveUntil(
+                                                context,
+                                                MaterialPageRoute(builder: (context) => const MainScreen(Text("แคลลอรี่"), ShowCalScreen(), 1)), // this mainpage is your page to refresh
+                                                (Route<dynamic> route) => false,
+                                              );
+                                            }
+                                          ).catchError((error) {
                                             // ใช้ Fluttertoast ในการแสดงผลแทน showDialog
                                             Fluttertoast.showToast(
-                                              msg: 'ข้อมูลอัพเดตแล้ว',
+                                              msg: error,
                                               toastLength: Toast.LENGTH_LONG,
                                               gravity: ToastGravity.CENTER,
                                               timeInSecForIosWeb: 1,
@@ -354,24 +376,8 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
                                               textColor: Colors.white,
                                               fontSize: 16.0
                                             );
-                                            Navigator.pushAndRemoveUntil(
-                                              context,
-                                              MaterialPageRoute(builder: (context) => const MainScreen(Text("แคลลอรี่"), ShowCalScreen(), 1)), // this mainpage is your page to refresh
-                                              (Route<dynamic> route) => false,
-                                            );
-                                          }
-                                        ).catchError((error) {
-                                          // ใช้ Fluttertoast ในการแสดงผลแทน showDialog
-                                          Fluttertoast.showToast(
-                                            msg: error,
-                                            toastLength: Toast.LENGTH_LONG,
-                                            gravity: ToastGravity.CENTER,
-                                            timeInSecForIosWeb: 1,
-                                            backgroundColor: Colors.red,
-                                            textColor: Colors.white,
-                                            fontSize: 16.0
-                                          );
-                                        });
+                                          });
+                                        }
                                       },
                                       icon: const Icon(Icons.check),
                                     ),

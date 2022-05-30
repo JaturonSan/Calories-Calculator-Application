@@ -1,5 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:form_field_validator/form_field_validator.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:mini_project/model/food.dart';
 import 'package:mini_project/providers/food_provider.dart';
 import 'package:mini_project/screen/mainscreen.dart';
@@ -16,6 +21,71 @@ class _ShowFoodScreenState extends State<ShowFoodScreen> {
   final keyForm = GlobalKey<FormState>();
   OutlineInputBorder border = const OutlineInputBorder();
   SizedBox box = const SizedBox(height: 20,);
+  String picLocation = ""; // ที่อยู่รูปอาหาร
+  File? image; // รูปภาพอาหารที่มาจากการถ่ายรูปหรือเลือกจากคลังรูปภาพ
+  late TextEditingController picController = TextEditingController();
+  String name = ""; // ชื่ออาหาร
+  int cal = 0; // แคลลอรี่
+  double pro = 0; // โปรตีน
+  int amount = 0; // จำนวนจานอาหาร
+  int gram = 0; // จำนวนกรัม
+  String pic = "";
+
+  // ฟังก์ชั่นเลือกรูปภาพจากคลังรูปภาพ
+  Future pickImageGallery() async {
+    try {
+      // ใช้ image_picker -- https://pub.dev/packages/image_picker
+      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+      
+      // ถ้ารูปเป็น null จะ return ออกไปจากฟังก์ชั่นเลย
+      if(image==null) return;
+      final imageTemporary = File(image.path);
+      setState(() {
+        this.image = imageTemporary;
+        picLocation = image.path;
+        picController = TextEditingController(text: picLocation);
+      });
+    } on PlatformException catch (e) {
+      // ใช้ Fluttertoast ในการแสดงผลแทน showDialog
+      Fluttertoast.showToast(
+        msg: e.message.toString(),
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0
+      );
+    }
+  }
+
+  // ฟังก์ชั่นถ่ายรูปจากกล้อง
+  Future pickImageCamera() async {
+    try {
+      // ใช้ image_picker -- https://pub.dev/packages/image_picker
+      final image = await ImagePicker().pickImage(source: ImageSource.camera);
+      
+      // ถ้ารูปเป็น null จะ return ออกไปจากฟังก์ชั่นเลย
+      if(image==null) return;
+      final imageTemporary = File(image.path);
+      setState(() {
+        this.image = imageTemporary;
+        picLocation = image.path;
+        picController = TextEditingController(text: picLocation);
+      });
+    } on PlatformException catch (e) {
+      // ใช้ Fluttertoast ในการแสดงผลแทน showDialog
+      Fluttertoast.showToast(
+        msg: e.message.toString(),
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0
+      );
+    }
+  }
 
   // initSate เป็นฟังก์ชั่นในการเริ่มฟังก์ชั่นต่างๆก่อนสร้างหน้าขึ้น เพื่อเตียมข้อมูลที่จะแสดงผลไว้ก่อน เพื่อไม่ให้เกิดค่าว่าง หรือหน้าไม่ยอมโหลด
   @override
@@ -86,12 +156,14 @@ class _ShowFoodScreenState extends State<ShowFoodScreen> {
                                     child: SingleChildScrollView(
                                       child: Column(
                                         children: [
+                                          box,
                                           TextFormField(
                                             keyboardType: TextInputType.name,
                                             controller: nameController,
-                                            validator: MultiValidator([
-                                              RequiredValidator(errorText: 'กรุณาป้อนชื่ออาหาร'),
-                                            ]),
+                                            validator: RequiredValidator(errorText: 'กรุณาป้อนชื่ออาหาร'),
+                                            onSaved: (value){
+                                              name = value!;
+                                            },
                                             // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
                                             decoration: InputDecoration(
                                               border: border,
@@ -101,9 +173,10 @@ class _ShowFoodScreenState extends State<ShowFoodScreen> {
                                           box,
                                           TextFormField(
                                             controller: calController,
-                                            validator: MultiValidator([
-                                              RequiredValidator(errorText: 'กรุณาป้อนจำนวนแคลอรี่'),
-                                            ]),
+                                            validator: RequiredValidator(errorText: 'กรุณาป้อนจำนวนแคลอรี่'),
+                                            onSaved: (value){
+                                              cal = int.parse(value!);                                           
+                                            },
                                             // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
                                             decoration: InputDecoration(
                                               border: border,
@@ -113,9 +186,10 @@ class _ShowFoodScreenState extends State<ShowFoodScreen> {
                                           box,
                                           TextFormField(
                                             controller: proController,
-                                            validator: MultiValidator([
-                                              RequiredValidator(errorText: 'กรุณาป้อนจำนวนโปรตีน'),
-                                            ]),
+                                            validator: RequiredValidator(errorText: 'กรุณาป้อนจำนวนโปรตีน'),
+                                            onSaved: (value){
+                                              pro = double.parse(value!);
+                                            },
                                             // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
                                             decoration: InputDecoration(
                                               border: border,
@@ -126,10 +200,10 @@ class _ShowFoodScreenState extends State<ShowFoodScreen> {
                                           TextFormField(
                                             keyboardType: TextInputType.visiblePassword,
                                             controller: amountController,
-                                            validator: MultiValidator([
-                                              RequiredValidator(errorText: 'กรุณาใส่จำนวนอาหาร'),
-                                              MinLengthValidator(1, errorText: 'จำนวนอาหารต้องมีอย่างน้อย 1 จาน'),
-                                            ]),
+                                            validator: RequiredValidator(errorText: 'กรุณาใส่จำนวนอาหาร'),
+                                            onSaved: (value){
+                                              amount = int.parse(value!);
+                                            },
                                             // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
                                             decoration: InputDecoration(
                                               border: border,
@@ -140,10 +214,10 @@ class _ShowFoodScreenState extends State<ShowFoodScreen> {
                                           TextFormField(
                                             keyboardType: TextInputType.visiblePassword,
                                             controller: gramController,
-                                            validator: MultiValidator([
-                                              RequiredValidator(errorText: 'กรุณาใส่น้ำหนักอาหาร'),
-                                              MinLengthValidator(1, errorText: 'น้ำหนักอาหารต้องมีอย่างน้อย 100 กรัม'),
-                                            ]),
+                                            validator: RequiredValidator(errorText: 'กรุณาใส่น้ำหนักอาหาร'),
+                                            onSaved: (value){
+                                              gram = int.parse(value!);
+                                            },
                                             // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
                                             decoration: InputDecoration(
                                               border: border,
@@ -151,18 +225,44 @@ class _ShowFoodScreenState extends State<ShowFoodScreen> {
                                             ),
                                           ),
                                           box,
-                                          TextFormField( // แก้ไขที่อยู่ของรูปภาพได้นะ
-                                            keyboardType: TextInputType.name,
+                                          TextFormField( // เพิ่มฟิวเอาไว้ใส่รูป ในอนาคตจะมีการโหลดรูปจากเครื่องได้
+                                            readOnly: true,
+                                            showCursor: false,
+                                            enableInteractiveSelection: false,
                                             controller: picController,
-                                            validator: MultiValidator([
-                                              RequiredValidator(errorText: 'กรุณาใส่รูปอาหาร'),
-                                            ]),
+                                            // validator: MultiValidator([
+                                            //   RequiredValidator(errorText: 'กรุณาใส่รูป'),
+                                            // ]),
+                                            onSaved: (value) {
+                                              pic = value!;
+                                            },
                                             // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
                                             decoration: InputDecoration(
-                                              border: border,
-                                              labelText: 'จำนวน',
+                                              border: const OutlineInputBorder(),
+                                              labelText: 'รูปอาหาร',
+                                              suffixIcon: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween, // เพิ่มบรรทัดเพื่อแก้ไขปัญหาข้อมความถูกไอคอนบัง
+                                                mainAxisSize: MainAxisSize.min, // เพิ่มบรรทัดเพื่อแก้ไขปัญหาข้อมความถูกไอคอนบัง
+                                                children: <Widget>[
+                                                  // ปุ่มใช้กล้องในการถ่ายรูปเข้าแอป
+                                                  IconButton(
+                                                    onPressed: (){
+                                                      pickImageCamera();
+                                                    }, 
+                                                    icon: const Icon(Icons.camera)
+                                                  ),
+                                                  // ปุ่มเลือกรูปภาพจากคลังรูปภาพ
+                                                  IconButton(
+                                                    onPressed: (){
+                                                      pickImageGallery();
+                                                    }, 
+                                                    icon: const Icon(Icons.image_rounded)
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           ),
+                                          image == null ? const SizedBox(height: 120,width: 120, child: Text('กรุณาเลือกรูปภาพ', style: TextStyle(fontSize: 15),)) : Image.file(image!, height: 120, width: 120,),
                                         ],
                                       ),
                                     ),
@@ -170,24 +270,20 @@ class _ShowFoodScreenState extends State<ShowFoodScreen> {
                                   actions: <Widget>[
                                     IconButton(
                                       onPressed: () async { 
-                                        // ค่าที่แก้ไขใน dialog จะเก็บในตัวแปรนี้
-                                        var name = nameController.text;
-                                        var cal = int.parse(calController.text);
-                                        var pro = double.parse(proController.text);
-                                        var amout = int.parse(amountController.text);
-                                        var gram = int.parse(gramController.text);
-                                        var pic = picController.text;
-                                        Foods foods = Foods(name: name,calories: cal,protein: pro,amount: amout,gram: gram,pic: pic);
+                                        if(keyForm.currentState!.validate()){
+                                          // ค่าที่แก้ไขใน dialog จะเก็บในตัวแปรนี้
+                                          Foods foods = Foods(name: name,calories: cal,protein: pro,amount: amount,gram: gram,pic: pic);
 
-                                        // แก้ไขข้อมูลในฐานข้อมูล
-                                        var provider = Provider.of<FoodProvider>(context, listen: false);
-                                        //provider.editData(data, foods, "foods.db"); // แก้ไขฐานข้อมูลของอาหารในฐานข้อมูลเรา
-                                        provider.editData(data, foods, "user_foods.db"); // แก้ไขฐานข้อมูลของ user
-                                        Navigator.pushAndRemoveUntil(
-                                          context,
-                                          MaterialPageRoute(builder: (context) => const MainScreen(Text("อาหาร"), ShowFoodScreen(), 2)), // this mainpage is your page to refresh
-                                          (Route<dynamic> route) => false,
-                                        );
+                                          // แก้ไขข้อมูลในฐานข้อมูล
+                                          var provider = Provider.of<FoodProvider>(context, listen: false);
+                                          //provider.editData(data, foods, "foods.db"); // แก้ไขฐานข้อมูลของอาหารในฐานข้อมูลเรา
+                                          provider.editData(data, foods, "user_foods.db"); // แก้ไขฐานข้อมูลของ user
+                                          Navigator.pushAndRemoveUntil(
+                                            context,
+                                            MaterialPageRoute(builder: (context) => const MainScreen(Text("อาหาร"), ShowFoodScreen(), 2)), // this mainpage is your page to refresh
+                                            (Route<dynamic> route) => false,
+                                          );
+                                        }
                                       },
                                       icon: const Icon(Icons.check),
                                     ),

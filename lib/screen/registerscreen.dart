@@ -30,10 +30,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
   CircleBorder circleBorder = const CircleBorder(side: BorderSide(color: Colors.blue,width: 2,)); // ขอบของ ChoiceChip
   TextStyle whiteTxt = const TextStyle(color: Colors.white,fontSize: 15,fontWeight: FontWeight.bold); // ตัวหนังสือบน ChoiceChip
   TextStyle blueTxt = const TextStyle(color: Colors.blue,fontSize: 15,fontWeight: FontWeight.bold); // ตัวหนังสือบน ChoiceChip
+  String email = ""; // email ผู้ใช้
+  String name = ""; // ชื่อผู้ใช้
+  String pass = ""; // รหัสผ่าน
+  String matchPass = ""; // รหัสผ่านอีกครั้ง
+  double weight = 0; // น้ำหนักผู้ใช้
+  int height = 0; // ส่วนสูง
+  int age = 0; // อายุ
   String gendertxt = ""; // เก็บเพศของผู้ใช้
   SizedBox box = const SizedBox(height: 20,width: 20,);
-  String pass = "";
-  String matchPass = "";
 
   Future<dynamic> addUser(String email,String name,double weight,int height,int age,String gender) async {
     return 
@@ -79,6 +84,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           RequiredValidator(errorText: 'กรุณาป้อนอีเมล'),
                           EmailValidator(errorText: 'รูปแบบอีเมลไม่ถูกต้อง'),
                         ]),
+                        onSaved: (value) {
+                          email = value!;
+                        },
                         // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
                         decoration: InputDecoration(
                           border: border,
@@ -90,9 +98,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         autocorrect: true,
                         keyboardType: TextInputType.name,
                         controller: nameController,
-                        validator: MultiValidator([
-                          RequiredValidator(errorText: 'กรุณาป้อนชื่อ'),
-                        ]),
+                        validator: RequiredValidator(errorText: 'กรุณาป้อนชื่อ'),
+                        onSaved: (value) {
+                          name = value!;
+                        },
                         // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
                         decoration: InputDecoration(
                           border: border,
@@ -109,6 +118,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           MinLengthValidator(6, errorText: 'รหัสผ่านต้องมีอย่างน้อย 6 ตัว'),  
                           PatternValidator(r'(?=.*?[#?!@$%^&*-])', errorText: 'รหัสผ่านต้องประกอบด้วยตัวอักษรพอเศษอย่างน้อย 2 ตัว'),
                         ]),
+                        onSaved: (value) {
+                          pass = value!;
+                        },
                         // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
                         decoration: InputDecoration(
                           border: border,
@@ -120,11 +132,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         keyboardType: TextInputType.visiblePassword,
                         obscureText: true,
                         controller: passwordchkController,
-                        validator: MultiValidator([
-                          RequiredValidator(errorText: 'กรุณาป้อนรหัสผ่าน'),
-                          MinLengthValidator(6, errorText: 'รหัสผ่านต้องมีอย่างน้อย 6 ตัว'),  
-                          PatternValidator(r'(?=.*?[#?!@$%^&*-])', errorText: 'รหัสผ่านต้องประกอบด้วยตัวอักษรพอเศษอย่างน้อย 2 ตัว'),
-                        ]),
+                        validator: (val) => MatchValidator(errorText: 'รหัสผ่านไม่ตรงกัน').validateMatch(val!, pass),
+                        onSaved: (value) {
+                          matchPass = value!;
+                        },
                         // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
                         decoration: InputDecoration(
                           border: border,
@@ -139,6 +150,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           RequiredValidator(errorText: 'กรุณาป้อนน้ำหนัก'),
                           RangeValidator(min: 20, max: 1000, errorText: 'น้ำหนักเกินช่วง'),
                         ]),
+                        onSaved: (value) {
+                          weight = double.parse(value!);
+                        },
                         // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
                         decoration: InputDecoration(
                           border: border,
@@ -153,6 +167,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           RequiredValidator(errorText: 'กรุณาป้อนความสูง'),
                           RangeValidator(min: 59, max: 300, errorText: 'ความสูงเกินช่วง'),
                         ]),
+                        onSaved: (value) {
+                          height = int.parse(value!);
+                        },
                         // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
                         decoration: InputDecoration(
                           border: border,
@@ -167,6 +184,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           RequiredValidator(errorText: 'กรุณาป้อนอายุ'),
                           RangeValidator(min: 6, max: 100, errorText: 'อายุเกินช่วง'),
                         ]),
+                        onSaved: (value) {
+                          age = int.parse(value!);
+                        },
                         // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
                         decoration: InputDecoration(
                           border: border,
@@ -214,17 +234,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: () {
-                            var email = emailController.text;
-                            var password = passwordController.text; 
-                            var passchk = passwordchkController.text;
-                            var name = nameController.text;
-                            var weight = double.parse(weightController.text);
-                            var height = int.parse(heightController.text); 
-                            var age = int.parse(ageController.text);
-
-                            if(password==passchk && gendertxt!="") {
+                            if(formKey.currentState!.validate() && gendertxt!=""){
                               try {
-                                FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password).then((value) {
+                                FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: pass).then((value) {
                                     addUser(email,name,weight,height,age,gendertxt);
                                     
                                     // ใช้ Fluttertoast ในการแสดงผลแทน showDialog
@@ -252,17 +264,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   fontSize: 16.0
                                 );
                               }
-                            } else {
-                              // ใช้ Fluttertoast ในการแสดงผลแทน showDialog
-                              Fluttertoast.showToast(
-                                msg: "กรุณาแก้ไขรหัสผ่านให้ตรงกัน",
-                                toastLength: Toast.LENGTH_SHORT,
-                                gravity: ToastGravity.CENTER,
-                                timeInSecForIosWeb: 1,
-                                backgroundColor: Colors.red,
-                                textColor: Colors.white,
-                                fontSize: 16.0
-                              );
                             }
                           }, 
                           child: const Text('ลงทะเบียน')

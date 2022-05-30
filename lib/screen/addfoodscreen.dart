@@ -31,6 +31,12 @@ class _AddFoodState extends State<AddFood> {
   final gramController = TextEditingController();
   late TextEditingController picController = TextEditingController();
   FoodProvider foddProvider = FoodProvider();
+  late var name;
+  late var cal;
+  late var pro;
+  late var amout;
+  late var gram;
+  late var pic;
 
   // ฟังก์ชั่นเลือกรูปภาพจากคลังรูปภาพ
   Future pickImageGallery() async {
@@ -107,9 +113,10 @@ class _AddFoodState extends State<AddFood> {
                 TextFormField(
                   keyboardType: TextInputType.name,
                   controller: nameController,
-                  validator: MultiValidator([
-                    RequiredValidator(errorText: 'กรุณาป้อนชื่ออาหาร'),
-                  ]),
+                  validator: RequiredValidator(errorText: 'กรุณาป้อนชื่ออาหาร'),
+                  onSaved: (value) {
+                    name = value!;
+                  },
                   // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
@@ -119,9 +126,10 @@ class _AddFoodState extends State<AddFood> {
                 const SizedBox(height: 20,),
                 TextFormField(
                   controller: calController,
-                  validator: MultiValidator([
-                    RequiredValidator(errorText: 'กรุณาป้อนจำนวนแคลอรี่'),
-                  ]),
+                  validator: RequiredValidator(errorText: 'กรุณาป้อนจำนวนแคลอรี่'),
+                  onSaved: (value) {
+                    cal = value!;
+                  },
                   // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
@@ -131,9 +139,10 @@ class _AddFoodState extends State<AddFood> {
                 const SizedBox(height: 20,),
                 TextFormField(
                   controller: proController,
-                  validator: MultiValidator([
-                    RequiredValidator(errorText: 'กรุณาป้อนจำนวนโปรตีน'),
-                  ]),
+                  validator: RequiredValidator(errorText: 'กรุณาป้อนจำนวนโปรตีน'),
+                  onSaved: (value) {
+                    pro = value!;
+                  },
                   // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
@@ -144,10 +153,10 @@ class _AddFoodState extends State<AddFood> {
                 TextFormField(
                   keyboardType: TextInputType.visiblePassword,
                   controller: amountController,
-                  validator: MultiValidator([
-                    RequiredValidator(errorText: 'กรุณาจำนวนอาหาร'),
-                    MinLengthValidator(1, errorText: 'จำนวนอาหารต้องมีอย่างน้อย 1 จาน'),
-                  ]),
+                  validator: RequiredValidator(errorText: 'กรุณาจำนวนอาหาร'),
+                  onSaved: (value) {
+                    pro = value!;
+                  },
                   // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
@@ -158,10 +167,10 @@ class _AddFoodState extends State<AddFood> {
                 TextFormField(
                   keyboardType: TextInputType.visiblePassword,
                   controller: gramController,
-                  validator: MultiValidator([
-                    RequiredValidator(errorText: 'กรุณาน้ำหนักอาหาร'),
-                    MinLengthValidator(1, errorText: 'น้ำหนักอาหารต้องมีอย่างน้อย 100 กรัม'),
-                  ]),
+                  validator: RequiredValidator(errorText: 'กรุณาป้อนน้ำหนักอาหาร'),
+                  onSaved: (value) {
+                    gram = value!;
+                  },
                   // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
@@ -174,9 +183,12 @@ class _AddFoodState extends State<AddFood> {
                   showCursor: false,
                   enableInteractiveSelection: false,
                   controller: picController,
-                  validator: MultiValidator([
-                    RequiredValidator(errorText: 'กรุณาใส่รูป'),
-                  ]),
+                  // validator: MultiValidator([
+                  //   RequiredValidator(errorText: 'กรุณาใส่รูป'),
+                  // ]),
+                  onSaved: (value) {
+                    pic = value!;
+                  },
                   // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
                   decoration: InputDecoration(
                     border: const OutlineInputBorder(),
@@ -211,21 +223,17 @@ class _AddFoodState extends State<AddFood> {
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(primary: Colors.cyan[900]),
                     onPressed: () {
-                      var name = nameController.text;
-                      var cal = int.parse(calController.text);
-                      var pro = double.parse(proController.text);
-                      var amout = int.parse(amountController.text);
-                      var gram = int.parse(gramController.text);
-                      var pic = picController.text;
-                      Foods foods = Foods(name: name,calories: cal,protein: pro,amount: amout,gram: gram,pic: pic);
-                      var provider = Provider.of<FoodProvider>(context, listen: false);
-                      provider.addFood(foods, "user_foods.db"); // เพิ่มฐานข้อมูลอาหารของ user 
-                      //provider.addFood(foods, "foods.db"); // เพิ่มฐานข้อมูลอาหารของแอป ไว้ตอนเพิ่มอาหารแบบค้นหาได้เลย ไม่ต้องมานั่งพิมพ์
+                      if(keyForm.currentState!.validate()){
+                        Foods foods = Foods(name: name,calories: cal,protein: pro,amount: amout,gram: gram,pic: pic);
+                        var provider = Provider.of<FoodProvider>(context, listen: false);
+                        provider.addFood(foods, "user_foods.db"); // เพิ่มฐานข้อมูลอาหารของ user 
+                        //provider.addFood(foods, "foods.db"); // เพิ่มฐานข้อมูลอาหารของแอป ไว้ตอนเพิ่มอาหารแบบค้นหาได้เลย ไม่ต้องมานั่งพิมพ์
 
-                      Navigator.pushReplacement(
-                        context, 
-                        MaterialPageRoute(builder: (context) => const MainScreen(Text("อาหาร"), ShowFoodScreen(), 2)),
-                      );
+                        Navigator.pushReplacement(
+                          context, 
+                          MaterialPageRoute(builder: (context) => const MainScreen(Text("อาหาร"), ShowFoodScreen(), 2)),
+                        );
+                      }
                     }, 
                     child: const Text('ลงทะเบียน'),
                   ),
