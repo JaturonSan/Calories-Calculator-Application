@@ -24,12 +24,6 @@ class _ShowFoodScreenState extends State<ShowFoodScreen> {
   String picLocation = ""; // ที่อยู่รูปอาหาร
   File? image; // รูปภาพอาหารที่มาจากการถ่ายรูปหรือเลือกจากคลังรูปภาพ
   late TextEditingController picController = TextEditingController();
-  String name = ""; // ชื่ออาหาร
-  int cal = 0; // แคลลอรี่
-  double pro = 0; // โปรตีน
-  int amount = 0; // จำนวนจานอาหาร
-  int gram = 0; // จำนวนกรัม
-  String pic = "";
 
   // ฟังก์ชั่นเลือกรูปภาพจากคลังรูปภาพ
   Future pickImageGallery() async {
@@ -161,9 +155,6 @@ class _ShowFoodScreenState extends State<ShowFoodScreen> {
                                             keyboardType: TextInputType.name,
                                             controller: nameController,
                                             validator: RequiredValidator(errorText: 'กรุณาป้อนชื่ออาหาร'),
-                                            onSaved: (value){
-                                              name = value!;
-                                            },
                                             // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
                                             decoration: InputDecoration(
                                               border: border,
@@ -174,9 +165,6 @@ class _ShowFoodScreenState extends State<ShowFoodScreen> {
                                           TextFormField(
                                             controller: calController,
                                             validator: RequiredValidator(errorText: 'กรุณาป้อนจำนวนแคลอรี่'),
-                                            onSaved: (value){
-                                              cal = int.parse(value!);                                           
-                                            },
                                             // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
                                             decoration: InputDecoration(
                                               border: border,
@@ -187,9 +175,6 @@ class _ShowFoodScreenState extends State<ShowFoodScreen> {
                                           TextFormField(
                                             controller: proController,
                                             validator: RequiredValidator(errorText: 'กรุณาป้อนจำนวนโปรตีน'),
-                                            onSaved: (value){
-                                              pro = double.parse(value!);
-                                            },
                                             // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
                                             decoration: InputDecoration(
                                               border: border,
@@ -201,9 +186,6 @@ class _ShowFoodScreenState extends State<ShowFoodScreen> {
                                             keyboardType: TextInputType.visiblePassword,
                                             controller: amountController,
                                             validator: RequiredValidator(errorText: 'กรุณาใส่จำนวนอาหาร'),
-                                            onSaved: (value){
-                                              amount = int.parse(value!);
-                                            },
                                             // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
                                             decoration: InputDecoration(
                                               border: border,
@@ -215,9 +197,6 @@ class _ShowFoodScreenState extends State<ShowFoodScreen> {
                                             keyboardType: TextInputType.visiblePassword,
                                             controller: gramController,
                                             validator: RequiredValidator(errorText: 'กรุณาใส่น้ำหนักอาหาร'),
-                                            onSaved: (value){
-                                              gram = int.parse(value!);
-                                            },
                                             // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
                                             decoration: InputDecoration(
                                               border: border,
@@ -233,9 +212,6 @@ class _ShowFoodScreenState extends State<ShowFoodScreen> {
                                             // validator: MultiValidator([
                                             //   RequiredValidator(errorText: 'กรุณาใส่รูป'),
                                             // ]),
-                                            onSaved: (value) {
-                                              pic = value!;
-                                            },
                                             // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
                                             decoration: InputDecoration(
                                               border: const OutlineInputBorder(),
@@ -272,7 +248,7 @@ class _ShowFoodScreenState extends State<ShowFoodScreen> {
                                       onPressed: () async { 
                                         if(keyForm.currentState!.validate()){
                                           // ค่าที่แก้ไขใน dialog จะเก็บในตัวแปรนี้
-                                          Foods foods = Foods(name: name,calories: cal,protein: pro,amount: amount,gram: gram,pic: pic);
+                                          Foods foods = Foods(name: nameController.text,calories: int.parse(calController.text),protein: double.parse(proController.text),amount: int.parse(amountController.text),gram: int.parse(gramController.text),pic: picController.text);
 
                                           // แก้ไขข้อมูลในฐานข้อมูล
                                           var provider = Provider.of<FoodProvider>(context, listen: false);

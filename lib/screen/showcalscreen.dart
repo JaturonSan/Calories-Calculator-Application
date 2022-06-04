@@ -248,9 +248,6 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
                                                   keyboardType: TextInputType.name,
                                                   controller: nameController,
                                                   validator: RequiredValidator(errorText: 'กรุณาป้อนชื่อ'),
-                                                  onSaved: (value) {
-                                                    name = value!;
-                                                  },
                                                   // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
                                                   decoration: InputDecoration(
                                                     border: border,
@@ -265,9 +262,6 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
                                                     RequiredValidator(errorText: 'กรุณาป้อนน้ำหนัก'),
                                                     RangeValidator(min: 20, max: 1000, errorText: 'น้ำหนักเกินช่วง'),
                                                   ]),
-                                                  onSaved: (value) {
-                                                    weight = double.parse(value!);
-                                                  },
                                                   // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
                                                   decoration: InputDecoration(
                                                     border: border,
@@ -282,9 +276,6 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
                                                     RequiredValidator(errorText: 'กรุณาป้อนความสูง'),
                                                     RangeValidator(min: 59, max: 300, errorText: 'ความสูงเกินช่วง'),
                                                   ]),
-                                                  onSaved: (value) {
-                                                    height = int.parse(value!);
-                                                  },
                                                   // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
                                                   decoration: InputDecoration(
                                                     border: border,
@@ -299,9 +290,6 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
                                                     RequiredValidator(errorText: 'กรุณาป้อนอายุ'),
                                                     RangeValidator(min: 6, max: 100, errorText: 'อายุเกินช่วง'),
                                                   ]),
-                                                  onSaved: (value) {
-                                                    age = int.parse(value!);
-                                                  },
                                                   // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
                                                   decoration: InputDecoration(
                                                     border: border,
@@ -359,10 +347,10 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
                                             // อัพเดตข้อมูลส่วนตัวบน firebase
                                             // https://firebase.flutter.dev/docs/firestore/usage/
                                             _userCollection.doc(user.currentUser!.uid).update({
-                                              'name':name,
-                                              'weight':weight,
-                                              'height':height,
-                                              'age':age,
+                                              'name':nameController.text,
+                                              'weight':weightController.text,
+                                              'height':heightController.text,
+                                              'age':ageController.text,
                                               'gender':gender
                                             }).then((value) {
                                                 // ใช้ Fluttertoast ในการแสดงผลแทน showDialog
