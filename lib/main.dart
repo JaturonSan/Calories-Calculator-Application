@@ -6,7 +6,9 @@ import 'package:form_field_validator/form_field_validator.dart';
 import 'package:mini_project/providers/food_provider.dart';
 import 'package:mini_project/screen/mainscreen.dart';
 import 'package:mini_project/screen/registerscreen.dart';
+import 'package:mini_project/screen/splash.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,7 +30,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(primaryColor: Colors.blue),
-        home: const LoginScreen(),
+        home: const SlashScreen(),
       ),
     );
   }
@@ -123,9 +125,11 @@ class _LoginScreenState extends State<LoginScreen> {
                           onPressed: () async {
                             var email = emailController.text;
                             var password = passwordController.text;
+                            final SharedPreferences sharedpreferences = await SharedPreferences.getInstance();
                             
                             try {
                               // การเข้าล็อคอินใช้ FirebaseAuth ล็อคอินแบบใช้อีเมลและรหัสผ่าน
+                              // เมื่อเข้าสู่ระบบสำเร็จจะแสดงข้อความ "เข้าสู่ระบบสำเร็จ" ผ่าน Fluttertoast แล้วเข้าสู่หน้าหลัก MainPage
                               await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password).then((value) {
                               Fluttertoast.showToast(
                                 msg: "เข้าสู่ระบบสำเร็จ",
@@ -136,7 +140,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 textColor: Colors.white,
                                 fontSize: 16.0
                               );
-                              // เมื่อเข้าสู่ระบบสำเร็จจะแสดงข้อความ "เข้าสู่ระบบสำเร็จ" ผ่าน Fluttertoast แล้วเข้าสู่หน้าหลัก MainPage
+                              sharedpreferences.setString('email', email);
+                              sharedpreferences.setBool('isLogin', true);
                               Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
                                     return MainScreen(const Text("หน้าหลัก"), MainPage(), 0);
                                   },

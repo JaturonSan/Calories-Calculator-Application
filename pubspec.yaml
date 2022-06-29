@@ -48,7 +48,12 @@ dependencies:
   firebase_core: ^1.15.0
   cloud_firestore: ^3.1.13
   firebase_auth: ^3.3.15
+  
+  # จัดการเกี่ยวกับหน้าต่างแจ้งรายละเอียดต่างๆ
   fluttertoast: ^8.0.9
+
+  # เอาไว้จัดการการเข้าหน้าแอปไม่ให้ต้องมานั่งล็อกอินทุกครั้งที่เข้า
+  shared_preferences: ^2.0.15
 
 # ตัวนี้เป็นการกำหนดไอคอนของแอป ชื่อแพ็คเก็ต flutter_launcher_icons
 flutter_icons: 
@@ -91,6 +96,7 @@ flutter:
     - assets/children.png
     - assets/fastfood.png
     - assets/vegetable.jpg
+    - assets/splash_screen_pic.jpg
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
