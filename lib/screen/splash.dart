@@ -5,7 +5,6 @@
 import 'package:flutter/material.dart';
 import 'package:mini_project/main.dart';
 import 'package:mini_project/screen/mainscreen.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SlashScreen extends StatefulWidget {
@@ -49,8 +48,6 @@ class _SlashScreenState extends State<SlashScreen> {
         obtainedEmail = obtainedEmail;
       }
     });
-    print(finalEmail);
-    print(isLogin);
   }
 
   @override

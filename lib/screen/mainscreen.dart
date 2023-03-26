@@ -27,14 +27,14 @@ class _MainScreenState extends State<MainScreen> {
   _MainScreenState({required this.title,required this.page, required this.index}); // การส่งค่าระหว่าง StatefulWidget
   int _selectedBottomNavigationIndex = 0; // ตัวแปรไว้เก็บว่าตอนนี้ผู้ใช้เลือกตัวไหนของบาร์ด้านล่างอยู่
   Color? backgroundcolor = Colors.cyan[900]; // ตัวแปรเก็บสีพื้นหลังของแอป
-  final Widget _page1 = MainPage(); // ตัวแปรเก็บหน้าที่ 1 (หน้าหลัก) ไว้ใชใน BottomNavigationBar
+  final Widget _page1 = MainPage(); // ตัวแปรเก็บหน้าที่ 1 (หน้าหลัก) ไว้ใช้ใน BottomNavigationBar
   final Widget _page2 = const ShowCalScreen(); // ตัวแปรเก็บหน้าที่ 2 (หน้าแสดงแคลลอรี่) ไว้ใชใน BottomNavigationBar
-  final Widget _page3 = const ShowFoodScreen(); // ตัวแปรเก็บหน้าที่ 3 (หน้าแสดงรายการอาหาร) ไว้ใชใน BottomNavigationBar
-  final Widget _page4 = const AddFood(); // ตัวแปรเก็บหน้าที่ 4 (หน้าเพิ่มรายการอาหาร) ไว้ใชใน BottomNavigationBar
+  final Widget _page3 = const ShowFoodScreen2(); // ตัวแปรเก็บหน้าที่ 3 (หน้าแสดงรายการอาหาร) ไว้ใชใน BottomNavigationBar
+  final Widget _page4 = const AddFoodScreen(); // ตัวแปรเก็บหน้าที่ 4 (หน้าเพิ่มรายการอาหาร) ไว้ใชใน BottomNavigationBar
   late Widget _currentPage; // ตัวแปรไว้เก็บว่าหน้าปัจจุบันตอนนี้คือหน้าไหน
   late Widget _currentTitle; // ตัวแปรไว้เก็บว่า title ของ Scaffold ปัจจุบันตอนนี้คืออะไร
   late List<Widget> _pages; // ตัวแปรไว้เก็บ List<Widget> ของหน้าทั้งหมดที่จะมีใน BottomNavigationBar
-  static const List<Widget> _titlePage = <Widget>[Text("หน้าหลัก"), Text("แคลลอรี่"), Text("อาหาร"), Text("เพิ่มอาหาร")]; // ตัวแปรไว้เก็บว่า title ของ Scaffold ทั้งหมดที่จะมีใน BottomNavigationBar
+  static const List<Widget> _titlePage = <Widget>[Text("หน้าหลัก"), Text("แคลลอรี่"), Text("อาหาร"), Text("เพิ่มอาหาร")]; // ตัวแปรไว้เก็บหัวข้อของ Scaffold ทั้งหมดที่จะมีใน BottomNavigationBar
 
   // ฟังก์ชั่นตอนที่เรากดเปลี่ยน BottomNavigationBar แล้วจะเปลี่ยนค่าต่างๆ
   void _onItemTapped(int index) {
@@ -89,9 +89,8 @@ class _MainScreenState extends State<MainScreen> {
                         //provider.deleteAllData("foods.db"); // ฐานข้อมูลอาหารในแอป ไว้ตอนค้นหาอาหารเข้ารายการอาหาร
 
                         // ใช้ refresh หน้านี้
-                        Navigator.pop(context);
                         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
-                              return const MainScreen(Text("อาหาร"), ShowFoodScreen(), 2);
+                              return const MainScreen(Text("อาหาร"), ShowFoodScreen2(), 2);
                             },
                           )
                         );
@@ -171,7 +170,7 @@ class MainPage extends StatelessWidget {
                 onTap: () {
                   Navigator.pushReplacement(
                     context, 
-                    MaterialPageRoute(builder: (context) => const MainScreen(Text("เพิ่มอาหาร"), AddFood(), 3)),
+                    MaterialPageRoute(builder: (context) => const MainScreen(Text("เพิ่มอาหาร"), AddFoodScreen(), 3)),
                   ); 
                 },
               ),
@@ -192,7 +191,7 @@ class MainPage extends StatelessWidget {
                 onTap: () {
                   Navigator.pushReplacement(
                     context, 
-                    MaterialPageRoute(builder: (context) => const MainScreen(Text("อาหาร"), ShowFoodScreen(), 2)),
+                    MaterialPageRoute(builder: (context) => const MainScreen(Text("อาหาร"), ShowFoodScreen2(), 2)),
                   ); 
                 },
               ),
