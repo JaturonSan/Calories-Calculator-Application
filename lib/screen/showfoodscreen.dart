@@ -9,6 +9,7 @@ import 'package:mini_project/model/food.dart';
 import 'package:mini_project/providers/food_provider.dart';
 import 'package:mini_project/screen/mainscreen.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ShowFoodScreen extends StatefulWidget {
   const ShowFoodScreen({Key? key}) : super(key: key);
@@ -24,6 +25,7 @@ class _ShowFoodScreenState extends State<ShowFoodScreen> {
   String picLocation = ""; // ที่อยู่รูปอาหาร
   File? image; // รูปภาพอาหารที่มาจากการถ่ายรูปหรือเลือกจากคลังรูปภาพ
   late TextEditingController picController = TextEditingController();
+  late Color backgroundColor;
 
   // ฟังก์ชั่นเลือกรูปภาพจากคลังรูปภาพ
   Future pickImageGallery() async {
@@ -79,6 +81,12 @@ class _ShowFoodScreenState extends State<ShowFoodScreen> {
         fontSize: 16.0
       );
     }
+  }
+
+  // เรียกสีแอปหลักจาก SharedPreferences
+  void getAppBackgroundColor() async {
+    final SharedPreferences sharedpreferences = await SharedPreferences.getInstance();
+    backgroundColor = Color(int.parse(sharedpreferences.getString('AppBackgroundColor')!, radix: 16,));
   }
 
   // initSate เป็นฟังก์ชั่นในการเริ่มฟังก์ชั่นต่างๆก่อนสร้างหน้าขึ้น เพื่อเตียมข้อมูลที่จะแสดงผลไว้ก่อน เพื่อไม่ให้เกิดค่าว่าง หรือหน้าไม่ยอมโหลด
@@ -250,13 +258,15 @@ class _ShowFoodScreenState extends State<ShowFoodScreen> {
                                           // ค่าที่แก้ไขใน dialog จะเก็บในตัวแปรนี้
                                           Foods foods = Foods(name: nameController.text,calories: int.parse(calController.text),protein: double.parse(proController.text),amount: int.parse(amountController.text),gram: int.parse(gramController.text),pic: picController.text);
 
+                                          getAppBackgroundColor();
+
                                           // แก้ไขข้อมูลในฐานข้อมูล
                                           var provider = Provider.of<FoodProvider>(context, listen: false);
                                           //provider.editData(data, foods, "foods.db"); // แก้ไขฐานข้อมูลของอาหารในฐานข้อมูลเรา
                                           provider.editData(data, foods, "user_foods.db"); // แก้ไขฐานข้อมูลของ user
                                           Navigator.pushAndRemoveUntil(
                                             context,
-                                            MaterialPageRoute(builder: (context) => const MainScreen(Text("อาหาร"), ShowFoodScreen(), 2)), // this mainpage is your page to refresh
+                                            MaterialPageRoute(builder: (context) => MainScreen(const Text("อาหาร"), const ShowFoodScreen(), 2, backgroundColor)),
                                             (Route<dynamic> route) => false,
                                           );
                                         }
@@ -277,11 +287,14 @@ class _ShowFoodScreenState extends State<ShowFoodScreen> {
                             onPressed: () async {
                               // ลบข้อมูลในฐานข้อมูลโดย เรียกฟังก์ชั่น DeleteFood ใน FoodDB แล้วใส่ข้อมูลตัวที่จะลบลงไป
                               var provider = Provider.of<FoodProvider>(context, listen: false);
+
+                                getAppBackgroundColor();
+
                               //provider.deleteFood(data, "foods.db"); // ลบอาหารในฐานข้อมูลของเรา
                               provider.deleteFood(data, "user_foods.db"); // ลบอาหารในฐานข้อมูลของ user
                               Navigator.pushAndRemoveUntil(
                                 context,
-                                MaterialPageRoute(builder: (context) => const MainScreen(Text("อาหาร"), ShowFoodScreen(), 2)), // this mainpage is your page to refresh
+                                MaterialPageRoute(builder: (context) => MainScreen(const Text("อาหาร"), const ShowFoodScreen(), 2, backgroundColor)), // this mainpage is your page to refresh
                                 (Route<dynamic> route) => false,
                               );
                             }, 

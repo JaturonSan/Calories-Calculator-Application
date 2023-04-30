@@ -11,6 +11,7 @@ import 'package:mini_project/providers/food_provider.dart';
 import 'package:mini_project/screen/mainscreen.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ShowCalScreen extends StatefulWidget {
   const ShowCalScreen({Key? key}) : super(key: key);
@@ -57,6 +58,7 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
   CircleBorder circleBorder = const CircleBorder(side: BorderSide(color: Colors.blue,width: 2,)); // ขอบของ ChoiceChip
   TextStyle whiteTxt = const TextStyle(color: Colors.white,fontSize: 15,fontWeight: FontWeight.bold); // ตัวหนังสือบน ChoiceChip
   TextStyle blueTxt = const TextStyle(color: Colors.blue,fontSize: 15,fontWeight: FontWeight.bold); // ตัวหนังสือบน ChoiceChip
+  late Color backgroundColor;
 
   // ตัวแปรสำหรับตัวเลือกติ้กวงกลม
   late SingingCharacter? _character = SingingCharacter.t1;
@@ -155,6 +157,12 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
         getCals(0, 0, 0, "");
       });
     }
+  }
+
+  // เรียกสีแอปหลักจาก SharedPreferences
+  void getAppBackgroundColor() async {
+    final SharedPreferences sharedpreferences = await SharedPreferences.getInstance();
+    backgroundColor = Color(int.parse(sharedpreferences.getString('AppBackgroundColor')!, radix: 16,));
   }
 
   // initSate เป็นฟังก์ชั่นในการเริ่มฟังก์ชั่นต่างๆก่อนสร้างหน้าขึ้น เพื่อเตียมข้อมูลที่จะแสดงผลไว้ก่อน เพื่อไม่ให้เกิดค่าว่าง หรือหน้าไม่ยอมโหลด
@@ -353,6 +361,7 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
                                               'age':ageController.text,
                                               'gender':gender
                                             }).then((value) {
+                                              getAppBackgroundColor();
                                                 // ใช้ Fluttertoast ในการแสดงผลแทน showDialog
                                                 Fluttertoast.showToast(
                                                   msg: 'ข้อมูลอัพเดตแล้ว',
@@ -365,7 +374,9 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
                                                 );
                                                 Navigator.pushAndRemoveUntil(
                                                   context,
-                                                  MaterialPageRoute(builder: (context) => const MainScreen(Text("แคลลอรี่"), ShowCalScreen(), 1)), // this mainpage is your page to refresh
+                                                  MaterialPageRoute(
+                                                    builder: (context) => MainScreen(const Text("แคลลอรี่"), const ShowCalScreen(), 1, backgroundColor)
+                                                  ), // this mainpage is your page to refresh
                                                   (Route<dynamic> route) => false,
                                                 );
                                               }

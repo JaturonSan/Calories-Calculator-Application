@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mini_project/screen/mainscreen.dart';
 import 'package:mini_project/screen/showfoodscreen_2.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../model/food.dart';
 import '../providers/food_provider.dart';
@@ -30,6 +31,7 @@ class _EditFoodScreenState extends State<EditFoodScreen> {
   File? image; // รูปภาพอาหารที่มาจากการถ่ายรูปหรือเลือกจากคลังรูปภาพ
   String picLocation = ""; // ที่อยู่รูปอาหาร
   late TextEditingController picController = TextEditingController();
+  Color backgroundColor = Colors.cyan[900]!;
 
   // ฟังก์ชั่นเลือกรูปภาพจากคลังรูปภาพ
   Future pickImageGallery() async {
@@ -87,9 +89,18 @@ class _EditFoodScreenState extends State<EditFoodScreen> {
     }
   }
 
+  // เรียกสีแอปหลักจาก SharedPreferences
+  void getAppBackgroundColor() async {
+    final SharedPreferences sharedpreferences = await SharedPreferences.getInstance();
+    setState(() {
+      backgroundColor = Color(int.parse(sharedpreferences.getString('AppBackgroundColor')!, radix: 16,));
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+    getAppBackgroundColor();
     picController = TextEditingController(text: picLocation);
     image = File(data.pic.toString());
   }
@@ -106,7 +117,7 @@ class _EditFoodScreenState extends State<EditFoodScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('แก้ไขข้อมูล'),
-        backgroundColor: Colors.cyan[900], 
+        backgroundColor: backgroundColor, 
         actions: [
           IconButton(
             onPressed: () async {
@@ -123,7 +134,8 @@ class _EditFoodScreenState extends State<EditFoodScreen> {
                         provider.deleteFood(data, "user_foods.db"); // ลบอาหารในฐานข้อมูลของ user
                       
                         // ใช้ refresh หน้านี้
-                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
+                        Navigator.pushReplacement(context, MaterialPageRoute(
+                          builder: (context) {
                               return const ShowFoodScreen2();
                             },
                           )
@@ -247,11 +259,13 @@ class _EditFoodScreenState extends State<EditFoodScreen> {
                   height: 40,
                   width: double.infinity,
                   child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(primary: Colors.cyan[900]),
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.cyan[900]),
                     onPressed: () {
                       if(keyForm.currentState!.validate()){
                         // ค่าที่แก้ไขใน dialog จะเก็บในตัวแปรนี้
                         Foods foods = Foods(name: nameController.text,calories: int.parse(calController.text),protein: double.parse(proController.text),amount: int.parse(amountController.text),gram: int.parse(gramController.text),pic: picController.text);
+
+                        getAppBackgroundColor();
 
                         // แก้ไขข้อมูลในฐานข้อมูล
                         var provider = Provider.of<FoodProvider>(context, listen: false);
@@ -259,7 +273,9 @@ class _EditFoodScreenState extends State<EditFoodScreen> {
                         provider.editData(data, foods, "user_foods.db"); // แก้ไขฐานข้อมูลของ user
                         Navigator.pushAndRemoveUntil(
                           context,
-                          MaterialPageRoute(builder: (context) =>const MainScreen(Text("อาหาร"), ShowFoodScreen2(), 2)), // this mainpage is your page to refresh
+                          MaterialPageRoute(
+                            builder: (context) =>MainScreen(const Text("อาหาร"), const ShowFoodScreen2(), 2, backgroundColor)
+                          ), // this mainpage is your page to refresh
                           (Route<dynamic> route) => false,
                         );
                       }

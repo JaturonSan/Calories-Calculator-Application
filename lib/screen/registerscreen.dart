@@ -4,7 +4,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:form_field_validator/form_field_validator.dart';
-import 'package:mini_project/main.dart';
+import 'package:mini_project/screen/loginscreen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({ Key? key }) : super(key: key);
@@ -33,6 +34,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String gendertxt = ""; // เก็บเพศของผู้ใช้
   String pass = "";
   SizedBox box = const SizedBox(height: 20,width: 20,);
+  Color backgroundColor = Colors.cyan[900]!;
 
   Future<dynamic> addUser(String email,String name,double weight,int height,int age,String gender) async {
     return 
@@ -44,6 +46,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
       "height": height,
       "age": age,
       "gender": gender 
+    });
+  }
+
+  @override
+  void initState(){
+    super.initState();
+    getAppBackgroundColor();
+  }
+
+  // เรียกสีแอปหลักจาก SharedPreferences
+  void getAppBackgroundColor() async {
+    final SharedPreferences sharedpreferences = await SharedPreferences.getInstance();
+    setState(() {
+      backgroundColor = Color(int.parse(sharedpreferences.getString('AppBackgroundColor')!, radix: 16,));
     });
   }
 
@@ -62,7 +78,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         }
         if(snapshot.connectionState == ConnectionState.done){
           return Scaffold(
-            appBar: AppBar(title: const Text('หน้าสมัครบัญชี'), backgroundColor: Colors.cyan[900],),
+            appBar: AppBar(title: const Text('หน้าสมัครบัญชี'), backgroundColor: backgroundColor,),
             body: SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
@@ -106,11 +122,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           MinLengthValidator(6, errorText: 'รหัสผ่านต้องมีอย่างน้อย 6 ตัว'),  
                           PatternValidator(r'(?=.*?[#?!@$%^&*-])', errorText: 'รหัสผ่านต้องประกอบด้วยตัวอักษรพอเศษอย่างน้อย 2 ตัว'),
                         ]),
-                        onSaved: (value) {
+                        onChanged: (value) {
                           setState(() {
-                            pass = value!;
+                            pass = value;
                           });
                         },
+                        // onSaved: (value) {
+                        //   setState(() {
+                        //     pass = value!;
+                        //   });
+                        // },
                         // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
                         decoration: InputDecoration(
                           border: border,
@@ -213,6 +234,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         child: ElevatedButton(
                           onPressed: () {
                             if(formKey.currentState!.validate() && gendertxt!=""){
+
+                              // ขึ้นหน้าโหลดง่ายๆ
+                              showDialog(
+                                context: context, 
+                                // ป้องกันผู้ใช้กดออกจากหน้าโหลดโดยคลิ้กข้างๆ showdialog
+                                barrierDismissible: false,
+                                builder: (context) {
+                                  return const Center(child: CircularProgressIndicator(),);
+                                }
+                              );
+
                               try {
                                 FirebaseAuth.instance.createUserWithEmailAndPassword(email: emailController.text, password: pass).then((value) {
                                     addUser(emailController.text,nameController.text,double.parse(weightController.text),int.parse(heightController.text),int.parse(ageController.text),gendertxt);
@@ -227,9 +259,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       textColor: Colors.white,
                                       fontSize: 16.0
                                     );
-                                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
+                                    Navigator.pushReplacement(context, MaterialPageRoute(
+                                      builder: (context) => const LoginScreen()
+                                    ));
                                   }
                                 );
+                                // เอาหน้าโหลดออก
+                                Navigator.of(context).pop();
                               } on FirebaseAuthException catch(e) {
                                 // ใช้ Fluttertoast ในการแสดงผลแทน showDialog
                                 Fluttertoast.showToast(

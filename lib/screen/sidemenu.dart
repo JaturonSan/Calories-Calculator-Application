@@ -1,22 +1,42 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:mini_project/main.dart';
+import 'package:mini_project/screen/loginscreen.dart';
 import 'package:mini_project/screen/mainscreen.dart';
+import 'package:mini_project/screen/settingscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
 // การทำ sidemenu -- https://maffan.medium.com/how-to-create-a-side-menu-in-flutter-a2df7833fdfb
 // เอาหน้านี้ไปใส่ไว้ใน drawer ของ Scaffold 
-class SideMenu extends StatelessWidget {
-  SideMenu({ Key? key }) : super(key: key);
+class SideMenu extends StatefulWidget {
+  const SideMenu({Key? key}) : super(key: key);
 
+  @override
+  State<SideMenu> createState() => _SideMenuState();
+}
+
+class _SideMenuState extends State<SideMenu> {
   final user = FirebaseAuth.instance;
+  Color backgroundColor = Colors.cyan[900]!;
+
+  // เรียกสีแอปหลักจาก SharedPreferences
+  void getAppBackgroundColor() async {
+    final SharedPreferences sharedpreferences = await SharedPreferences.getInstance();
+    backgroundColor = Color(int.parse(sharedpreferences.getString('AppBackgroundColor')!, radix: 16,));
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getAppBackgroundColor();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Drawer(
       child: Container(
-        color: Colors.cyan[900],
+        color: backgroundColor,
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
@@ -35,11 +55,14 @@ class SideMenu extends StatelessWidget {
               child: ListTile(
                 leading: const Icon(Icons.home, color: Colors.black,),
                 title: const Text('หน้าหลัก', style: TextStyle(color: Colors.black,),),
-                onTap: () => {
+                onTap: () {
+                  getAppBackgroundColor();
                   Navigator.pushReplacement(
                     context, 
-                    MaterialPageRoute(builder: (context) => MainScreen(const Text("หน้าหลัก"), MainPage(), 0)),
-                  ),
+                    MaterialPageRoute(
+                      builder: (context) => MainScreen(const Text("หน้าหลัก"), MainPage(backgroundColor), 0, backgroundColor)
+                    ),
+                  );
                 },
               ),
             ),
@@ -58,6 +81,19 @@ class SideMenu extends StatelessWidget {
                       MaterialPageRoute(builder: (BuildContext context) => const LoginScreen()),
                     );
                   });
+                },
+              ),
+            ),
+            Card(
+              color: Colors.white54,
+              child: ListTile(
+                leading: const Icon(Icons.settings, color: Colors.black),
+                title: const Text('การตั้งค่าแอป', style: TextStyle(color: Colors.black,),),
+                onTap: () {
+                  // การทำงานของหน้าการตั้งค่าแอป เราสามารถเปลี่ยนสีแอปได้ เปลี่ยนรูปแบบการแสดงผลได้
+                  Navigator.of(context).push( 
+                    MaterialPageRoute(builder: (BuildContext context) => const SettingScreen()),
+                  );
                 },
               ),
             ),

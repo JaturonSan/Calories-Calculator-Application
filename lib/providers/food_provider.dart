@@ -22,7 +22,7 @@ class FoodProvider with ChangeNotifier {
     foods = await db.loadAllData();
 
     // เตือน Consumer
-    notifyListeners();
+    //notifyListeners();
   }
 
   // ฟังก์ชั่นในการโหลดข้อมูลขึ้นมาก่อนแสดงหน้าแอป

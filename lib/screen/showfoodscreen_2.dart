@@ -60,7 +60,8 @@ class _ShowFoodScreen2State extends State<ShowFoodScreen2> {
                         return GestureDetector(
                           onTap: (){
                             Navigator.push(
-                              context, MaterialPageRoute(builder: (context) {
+                              context, MaterialPageRoute(
+                                builder: (context) {
                                 return EditFoodScreen(data);
                               }),
                             );

@@ -3,7 +3,7 @@
 -- https://stackoverflow.com/questions/67770628/how-keep-user-logged-in-flutter
 */
 import 'package:flutter/material.dart';
-import 'package:mini_project/main.dart';
+import 'package:mini_project/screen/loginscreen.dart';
 import 'package:mini_project/screen/mainscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -16,7 +16,8 @@ class SlashScreen extends StatefulWidget {
 
 class _SlashScreenState extends State<SlashScreen> {
   String finalEmail = "";
-  bool isLogin = false; 
+  bool isLogin = false;
+  late Color appBackgroundColor; 
   
   @override
   void initState() {
@@ -25,20 +26,23 @@ class _SlashScreenState extends State<SlashScreen> {
   }
 
   _navigatetohome() async {
-    getValidationData().whenComplete(() async {
+    isStayLogin().whenComplete(() async {
       await Future.delayed(const Duration(milliseconds: 1500), () {});
       if(isLogin==true) {
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainScreen(const Text("หน้าหลัก"), MainPage(), 0)));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainScreen(const Text("หน้าหลัก"), MainPage(appBackgroundColor), 0, appBackgroundColor)
+        ));
       } else {
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginScreen()
+        ));
       }
     });
   }
 
-  Future getValidationData() async {
+  Future isStayLogin() async {
     final SharedPreferences sharedpreferences = await SharedPreferences.getInstance();
     var obtainedEmail = sharedpreferences.getString('email');
     bool? login = sharedpreferences.getBool('isLogin');
+    appBackgroundColor = Color(int.parse(sharedpreferences.getString('AppBackgroundColor')!, radix: 16));
     setState(() {
       if(login==null && obtainedEmail==null){
         isLogin = false;

@@ -6,10 +6,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mini_project/model/food.dart';
-import 'package:mini_project/screen/mainscreen.dart';
-import 'package:mini_project/screen/showfoodscreen.dart';
-import 'package:mini_project/screen/showfoodscreen_2.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../providers/food_provider.dart';
 
@@ -71,6 +69,12 @@ class _AddUserFoodState extends State<AddUserFood> {
   SizedBox box = const SizedBox(width: 10, height: 10,);
   final keyForm = GlobalKey<FormState>();
   OutlineInputBorder border = const OutlineInputBorder();
+  Color backgroundColor = Colors.cyan[900]!;
+
+  void getAppBackgroundColor() async {
+    final SharedPreferences sharedpreferences = await SharedPreferences.getInstance();
+    backgroundColor = Color(int.parse(sharedpreferences.getString('AppBackgroundColor')!, radix: 16,));
+  }
 
   @override
   void initState() {
@@ -123,7 +127,18 @@ class _AddUserFoodState extends State<AddUserFood> {
                           onTap: (){
                             TextEditingController amountController = TextEditingController(text: data.amount.toString());
                             TextEditingController gramController = TextEditingController(text: data.gram.toString());
-                            
+                            Foods foods = Foods(name: data.name,calories: int.parse(data.calories.toString()),protein: double.parse(data.protein.toString()),amount: int.parse(amountController.text),gram: int.parse(gramController.text),pic: data.pic);
+                            var provider = Provider.of<FoodProvider>(context, listen: false);
+                            provider.addFood(foods, "user_foods.db"); // เพิ่มฐานข้อมูลอาหารของ user
+                            Fluttertoast.showToast(
+                              msg: "เพิ่ม ${data.name} สำเร็จ",
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.CENTER,
+                              timeInSecForIosWeb: 1,
+                              backgroundColor: Colors.red,
+                              textColor: Colors.white,
+                              fontSize: 16.0
+                            );
                           },
                           child: Container(
                             height: 20,
@@ -152,7 +167,6 @@ class _AddUserFoodState extends State<AddUserFood> {
                                 Text(data.calories.toString()+" แคล", style: const TextStyle(fontSize: 10)),
                               ],
                             ),
-                            
                           ),
                         );
                       }),
@@ -331,7 +345,7 @@ class _AddDBFoodState extends State<AddDBFood> {
                 height: 40,
                 width: double.infinity,
                 child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(primary: Colors.cyan[900]),
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.cyan[900]),
                   onPressed: () {
                     if(keyForm.currentState!.validate()){
                       Foods foods = Foods(name: nameController.text,calories: int.parse(calController.text),protein: double.parse(proController.text),amount: 1,gram: 100,pic: picController.text);
@@ -341,7 +355,9 @@ class _AddDBFoodState extends State<AddDBFood> {
                     
                       Navigator.pushReplacement(
                         context, 
-                        MaterialPageRoute(builder: (context) => const AddFoodScreen()),
+                        MaterialPageRoute(
+                          builder: (context) => const AddFoodScreen()
+                        ),
                       ); 
                     }
                   }, 
