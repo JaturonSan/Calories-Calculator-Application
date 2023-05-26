@@ -1,8 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:mini_project/providers/food_provider.dart';
+import 'package:mini_project/screen/addfoodscreen.dart';
 import 'package:mini_project/screen/loginscreen.dart';
 import 'package:mini_project/screen/mainscreen.dart';
 import 'package:mini_project/screen/settingscreen.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
@@ -93,6 +97,54 @@ class _SideMenuState extends State<SideMenu> {
                   // การทำงานของหน้าการตั้งค่าแอป เราสามารถเปลี่ยนสีแอปได้ เปลี่ยนรูปแบบการแสดงผลได้
                   Navigator.of(context).push( 
                     MaterialPageRoute(builder: (BuildContext context) => const SettingScreen()),
+                  );
+                },
+              ),
+            ),
+            Card(
+              color: Colors.white54,
+              child: ListTile(
+                leading: const Icon(Icons.delete_sweep_rounded, color: Colors.black),
+                title: const Text('ลบรายการอาหารที่สร้างไว้', style: TextStyle(color: Colors.black,),),
+                onTap: () async {
+                  // แจ้งเตือนผู้ใช้ว่าจะลบข้อมูลอาหารหรือไม่
+                  await showDialog<String>(
+                    context: context,
+                    // ป้องกันผู้ใช้กดออกจากหน้าโหลดโดยคลิ้กข้างๆ showdialog
+                    barrierDismissible: false,
+                    builder: (BuildContext context) => AlertDialog(
+                      title: const Text('จะลบข้อมูลอาหารในระบบหรือไม่'),
+                      content: const Text("ถ้าดำเนินการต่อไปจะเป็นการลบข้อมูลอาหารในระบบ"),
+                      actions: <Widget>[
+                        IconButton(
+                          onPressed: () {
+                            var provider = Provider.of<FoodProvider>(context, listen: false);
+                            provider.deleteAllData("foods.db"); // ลบอาหารในฐานข้อมูลของระบบ
+
+                            // ใช้ Fluttertoast ในการแสดงผลแทน showDialog
+                            Fluttertoast.showToast(
+                              msg: 'ลบข้อมูลอาหารในระบบสำเร็จ',
+                              toastLength: Toast.LENGTH_LONG,
+                              gravity: ToastGravity.CENTER,
+                              timeInSecForIosWeb: 1,
+                              backgroundColor: Colors.red,
+                              textColor: Colors.white,
+                              fontSize: 16.0
+                            );
+                            Navigator.pop(context);
+                            Navigator.pushReplacement(
+                              context, 
+                              MaterialPageRoute(builder: (context) => MainScreen(const Text("เพิ่มอาหาร"), const AddFoodScreen(), 3, backgroundColor)),
+                            ); 
+                          },
+                          icon: const Icon(Icons.check),
+                        ),
+                        IconButton(
+                          onPressed: () => Navigator.pop(context, 'ยกเลิก'),
+                          icon: const Icon(Icons.close),
+                        ),
+                      ],
+                    ),
                   );
                 },
               ),

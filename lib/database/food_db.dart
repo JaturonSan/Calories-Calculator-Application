@@ -43,8 +43,11 @@ class FoodDB{
       "name": statement.name,
       "calories": statement.calories,
       "protien": statement.protein,
+      "fat": statement.fat,
+      "carb": statement.carb,
       "amount": statement.amount,
       "gram": statement.gram,
+      "type": statement.type,
       "pic": statement.pic
     });
     db.close();
@@ -63,8 +66,11 @@ class FoodDB{
           name: record["name"].toString(),
           calories: int.parse(record["calories"].toString()),
           protein: double.parse(record["protien"].toString()),
+          fat: int.parse(record["fat"].toString()),
+          carb: int.parse(record["carb"].toString()),
           amount: int.parse(record["amount"].toString()),
           gram: int.parse(record["gram"].toString()),
+          type: record["type"].toString(),
           pic: record["pic"].toString()
         )
       );
@@ -79,13 +85,50 @@ class FoodDB{
     // การใส่ finder หมายถึงการเรียงข้อมูล จากน้อยไปมากและมากไปน้อย
     var snapshot = await store.find(db, finder: Finder(sortOrders: [SortOrder(Field.key, true)]));
     double pros = 0;
+    int carbs = 0;
+    int fats = 0;
     int cals = 0;
     for(var record in snapshot){
       // โหลดข้อมูล calories มาคูณกับจำนวนที่ใส่ในฐานข้อมูล 
       cals+=((int.parse(record["gram"].toString())*(int.parse(record["calories"].toString())/100))*int.parse(record["amount"].toString())).round();
       pros+=(int.parse(record["gram"].toString())*double.parse(record["protien"].toString())/100)*int.parse(record["amount"].toString());
+      carbs+=((int.parse(record["gram"].toString())*double.parse(record["carb"].toString())/100)*int.parse(record["amount"].toString())).round();
+      fats+=((int.parse(record["gram"].toString())*double.parse(record["fat"].toString())/100)*int.parse(record["amount"].toString())).round();
     }
-    return [cals,pros];
+    return [cals,pros,carbs,fats];
+  }
+
+  // ฟังก์ชั่นในการหารายการอาหารตามแท็ก เช่น ต้องการหาอาหารที่เป็นเครื่องดื่มเท่านั้น
+  Future<List<Foods>> searchData(String foodType) async {
+    var db = await openDatabase();
+    var store = intMapStoreFactory.store();
+    // การใส่ finder หมายถึงการเรียงข้อมูล จากน้อยไปมากและมากไปน้อย
+    var snapshot = await store.find(
+      db, 
+      finder: Finder(
+        sortOrders: [SortOrder(Field.key, true)],
+        filter: Filter.and([
+          Filter.equals("type", foodType),
+        ]),
+      ),
+    );
+    List<Foods> foodList = [];
+    for(var record in snapshot){
+      foodList.add(
+        Foods(
+          name: record["name"].toString(),
+          calories: int.parse(record["calories"].toString()),
+          protein: double.parse(record["protien"].toString()),
+          amount: int.parse(record["amount"].toString()),
+          carb: int.parse(record["carb"].toString()),
+          fat: int.parse(record["carb"].toString()),
+          gram: int.parse(record["gram"].toString()),
+          type: record["type"].toString(),
+          pic: record["pic"].toString()
+        )
+      );
+    }
+    return foodList;
   }
 
   Future deleteFood(Foods statement) async {
@@ -100,6 +143,9 @@ class FoodDB{
           Filter.equals("calories", statement.calories),
           Filter.equals("protien", statement.protein),
           Filter.equals("amount", statement.amount),
+          Filter.equals("carb", statement.carb),
+          Filter.equals("fat", statement.fat),
+          Filter.equals("type", statement.type),
           Filter.equals("gram", statement.gram),
         ]),
       )
@@ -134,8 +180,11 @@ class FoodDB{
         "name": newData.name,
         "calories": newData.calories,
         "protien": newData.protein,
+        "carb": newData.carb,
+        "fat": newData.fat,
         "amount": newData.amount,
         "gram": newData.gram,
+        "type": newData.type,
         "pic": newData.pic
       },
     );

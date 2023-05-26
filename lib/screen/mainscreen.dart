@@ -39,7 +39,7 @@ class _MainScreenState extends State<MainScreen> {
   static const List<Widget> _titlePage = <Widget>[Text("หน้าหลัก"), Text("แคลลอรี่"), Text("อาหาร"), Text("เพิ่มอาหาร")]; // ตัวแปรไว้เก็บหัวข้อของ Scaffold ทั้งหมดที่จะมีใน BottomNavigationBar
 
   // เรียกสีแอปหลักจาก SharedPreferences
-  void getAppBackgroundColor() async {
+  void getAppColor() async {
     final SharedPreferences sharedpreferences = await SharedPreferences.getInstance();
     setState(() {
       backgroundColor = Color(int.parse(sharedpreferences.getString('AppBackgroundColor')!, radix: 16,));
@@ -89,9 +89,11 @@ class _MainScreenState extends State<MainScreen> {
               // แจ้งเตือนผู้ใช้ว่าจะลบข้อมูลอาหารหรือไม่
               await showDialog<String>(
                 context: context,
+                // ป้องกันผู้ใช้กดออกจากหน้าโหลดโดยคลิ้กข้างๆ showdialog
+                barrierDismissible: false,
                 builder: (BuildContext context) => AlertDialog(
-                  title: const Text('จะลบข้อมูลอาหารหรือไม่'),
-                  content: const Text("ถ้าดำเนินการต่อไปจะเป็นการลบข้อมูลอาหาร"),
+                  title: const Text('จะลบข้อมูลอาหารของคุณหรือไม่'),
+                  content: const Text("ถ้าดำเนินการต่อไปจะเป็นการลบข้อมูลอาหารของคุณ"),
                   actions: <Widget>[
                     IconButton(
                       onPressed: () {
@@ -124,7 +126,7 @@ class _MainScreenState extends State<MainScreen> {
       ),
       drawer: const SideMenu(),
       onDrawerChanged: (val) {
-        getAppBackgroundColor();
+        getAppColor();
       },
       body: _currentPage,
       bottomNavigationBar: BottomNavigationBar(

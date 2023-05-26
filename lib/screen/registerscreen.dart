@@ -35,6 +35,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String pass = "";
   SizedBox box = const SizedBox(height: 20,width: 20,);
   Color backgroundColor = Colors.cyan[900]!;
+  Color buttonColor = Colors.red;
+  Color buttonTextColor = Colors.black;
 
   Future<dynamic> addUser(String email,String name,double weight,int height,int age,String gender) async {
     return 
@@ -52,14 +54,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   void initState(){
     super.initState();
-    getAppBackgroundColor();
+    getAppColor();
   }
 
   // เรียกสีแอปหลักจาก SharedPreferences
-  void getAppBackgroundColor() async {
+  void getAppColor() async {
     final SharedPreferences sharedpreferences = await SharedPreferences.getInstance();
     setState(() {
       backgroundColor = Color(int.parse(sharedpreferences.getString('AppBackgroundColor')!, radix: 16,));
+      buttonColor = Color(int.parse(sharedpreferences.getString('AppButtonColor')!, radix: 16,));
+      buttonTextColor = Color(int.parse(sharedpreferences.getString('AppButtonTextColor')!, radix: 16,));
     });
   }
 
@@ -232,6 +236,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         height: 30,
                         width: double.infinity,
                         child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(backgroundColor: buttonColor),
                           onPressed: () {
                             if(formKey.currentState!.validate() && gendertxt!=""){
 
@@ -280,7 +285,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               }
                             }
                           }, 
-                          child: const Text('ลงทะเบียน')
+                          child: Text('ลงทะเบียน', style: TextStyle(color: buttonTextColor),)
                         ),
                       ),
                     ],

@@ -18,11 +18,36 @@ class _SlashScreenState extends State<SlashScreen> {
   String finalEmail = "";
   bool isLogin = false;
   late Color appBackgroundColor; 
+  late Color buttonColor; 
+  late Color buttonTextColor; 
   
   @override
   void initState() {
     super.initState();
+    getAppColor();
     _navigatetohome();
+  }
+
+  void getAppColor() async {
+    final SharedPreferences sharedpreferences = await SharedPreferences.getInstance();
+    if(await checkSharedpreferences()) {
+      setState(() {
+        appBackgroundColor = Color(int.parse(sharedpreferences.getString('AppBackgroundColor')!, radix: 16,));
+        buttonColor = Color(int.parse(sharedpreferences.getString('AppButtonColor')!, radix: 16,));
+        buttonTextColor = Color(int.parse(sharedpreferences.getString('AppButtonTextColor')!, radix: 16,));
+      });
+    } else {
+      setState(() {
+        sharedpreferences.setString('AppBackgroundColor', 'ff9d6060');
+        sharedpreferences.setString('AppButtonColor', 'ff9d6060');
+        sharedpreferences.setString('AppButtonTextColor', 'ffffffff');
+      });
+    }
+  }
+
+  Future<bool> checkSharedpreferences() async {
+    final SharedPreferences sharedpreferences = await SharedPreferences.getInstance();
+    return sharedpreferences.containsKey('AppBackgroundColor');
   }
 
   _navigatetohome() async {
@@ -42,7 +67,6 @@ class _SlashScreenState extends State<SlashScreen> {
     final SharedPreferences sharedpreferences = await SharedPreferences.getInstance();
     var obtainedEmail = sharedpreferences.getString('email');
     bool? login = sharedpreferences.getBool('isLogin');
-    appBackgroundColor = Color(int.parse(sharedpreferences.getString('AppBackgroundColor')!, radix: 16));
     setState(() {
       if(login==null && obtainedEmail==null){
         isLogin = false;

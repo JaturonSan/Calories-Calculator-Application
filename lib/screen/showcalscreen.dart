@@ -13,6 +13,8 @@ import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../model/calplan.dart';
+
 class ShowCalScreen extends StatefulWidget {
   const ShowCalScreen({Key? key}) : super(key: key);
 
@@ -20,9 +22,8 @@ class ShowCalScreen extends StatefulWidget {
   State<ShowCalScreen> createState() => _ShowCalScreenState();
 }
 
-// ตัวแปรสำหรับตัวเลือกติ้กวงกลม
+// ตัวแปรสำหรับตัวเลือกติ้กวงกลมของเคลลอรี่
 enum SingingCharacter { t1, t2, t3, t4, t5 }
-
 class _ShowCalScreenState extends State<ShowCalScreen> {
   String name = ""; // ชื่อผู้ใช้
   double weight = 0; // น้ำหนัก
@@ -41,6 +42,8 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
   int carb = 0; // คาร์โบไฮเดรตที่ usr ต้องการในแต่ละวัน
   int pro = 0; // โปรตีนที่ usr ต้องการในแต่ละวัน
   double userPro = 0; // ตัวแปรโปรตีนที่ user ใส่เข้ามาในหน้าเพิ่มอาหาร
+  int userCarb = 0; // ตัวแปรคาร์โบไฮเดรตที่ user ใส่เข้ามาในหน้าเพิ่มอาหาร
+  int userFat = 0; // ตัวแปรไขมันที่ user ใส่เข้ามาในหน้าเพิ่มอาหาร
   int fat = 0; // ไขมันที่ usr ต้องการในแต่ละวัน
   double circlePercent = 0;
   SizedBox box = const SizedBox(width: 10, height: 10,);
@@ -59,9 +62,19 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
   TextStyle whiteTxt = const TextStyle(color: Colors.white,fontSize: 15,fontWeight: FontWeight.bold); // ตัวหนังสือบน ChoiceChip
   TextStyle blueTxt = const TextStyle(color: Colors.blue,fontSize: 15,fontWeight: FontWeight.bold); // ตัวหนังสือบน ChoiceChip
   late Color backgroundColor;
+  List calSelectPlan = [['ไม่ลดหรือเพิ่มน้ำหนัก',CalSelectPlan.normal.value],['ลดน้ำหนักระดับ 1',CalSelectPlan.lossWeightLV1.value],['ลดน้ำหนักระดับ 2',CalSelectPlan.lossWeightLV2.value],['เพิ่มน้ำหนักระดับ 1',CalSelectPlan.gainWeightLV1.value],['เพิ่มน้ำหนักระดับ 2',CalSelectPlan.gainWeightLV2.value],['เพิ่มน้ำหนักระดับ 3',CalSelectPlan.gainWeightLV3.value]];
+  List<Widget> calSelectPlanButton = [];
+  // ตัวแปรเก็บค่าแผนการเพิ่มหรือลดน้ำหนัก
+  double calSelectPlanValue = 1.0;
+  // สีของปุ่ม
+  Color buttonColor = Colors.red;
+  Color buttonTextColor = Colors.black;
+  double buttonFontSize = 13.0;
+  
 
-  // ตัวแปรสำหรับตัวเลือกติ้กวงกลม
+  // ตัวแปรสำหรับตัวเลือกติ้กวงกลมแคลลอรี่
   late SingingCharacter? _character = SingingCharacter.t1;
+
 
   void calRemain(int calnow, int calnone) {
     /* คำนนวณเป็นเปอร์เซ็นง่ายๆ สมมุติ Kcalปัจจุบันคือ 800 ถ้าเลือกไม่ออกกำลังกายเลย Kcalจะเท่ากับ 1792
@@ -79,6 +92,7 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
     }
   }
 
+  // ฟังก์ชั่นคำนวณแคลลอรี่จากข้อมูลส่วนตัวในตอนแรกที่เข้าสู่หน้านี้
   void getCals(double wei, int hei, int age,String gender) {
     // https://www.lokehoon.com/app.php?q_id=calculate_bmr_tdee
     // https://www.calculator.net/bmr-calculator.html
@@ -95,18 +109,13 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
     
     setState(() {
       cals = cal;
+      selecCals = cal; // ใช้ selecCals มาแทน cals เพราะจะได้แทนตัวแปรที่เลือกตอนติ้กถูก แทนแคลลอรี่ที่เลือก ณ ขณะนี้
       calNone = (cals * 1.2).round(); // ไม่ออกกำกายเลย
       cal_1to3day = (cals * 1.375).round(); // ออก 1-3 วัน
       cal_4to5day = (cals * 1.55).round(); // ออก 4-5 วัน
       cal_6to7day = (cals * 1.7).round(); // ออก 6-7 วัน
       cal_2perday = (cals * 1.9).round(); // ออก 2 ครั้งต่อวัน
-      selecCals = calNone; // ใช้ selecCals มาแทน cals เพราะจะได้แทนตัวแปรที่เลือกตอนติ้กถูก แทนแคลลอรี่ที่เลือก ณ ขณะนี้
-
-      // https://www.womenshealthmag.com/uk/food/weight-loss/a706111/counting-calculate-macros/#:~:text=To%20work%20out%20how%20many%20grams%20of%20each%20you%20need,grams%20of%20each%20to%20eat.
-      // ส่วนคำนวณโปรตีน คาร์โบไฮเดรต ไขมันที่ผู้ใช้ต้องการต่อวัน
-      carb = ((cals * 0.3) / 4).round(); // คำนวณคาร์โบไฮเดตรโดยคิดเป็น 30% ในวันนี้
-      pro = ((cals * 0.4) / 4).round(); // คำนวณโปรตีนโดยคิดเป็น 40% ในวันนี้
-      fat = ((cals * 0.3) / 9).round(); // คำนวณไขมันโดยคิดเป็น 30% ในวันนี้
+      getCarbProFat(calNone, calSelectPlanValue);
     });
   }
 
@@ -121,7 +130,9 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
     setState(() {
       calsNow = values[0]; // แคลลอรี่ตอนนี้ในฐานข้อมูล "user_foods.db"
       userPro = values[1]; // โปรตีนตอนนี้ในฐานข้อมูล "user_foods.db"
-      calRemain(calsNow, selecCals);
+      userCarb = values[2]; // โปรตีนตอนนี้ในฐานข้อมูล "user_foods.db"
+      userFat = values[3]; // โปรตีนตอนนี้ในฐานข้อมูล "user_foods.db"
+      calRemain(calsNow, cals);
     });
   }
 
@@ -160,16 +171,55 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
   }
 
   // เรียกสีแอปหลักจาก SharedPreferences
-  void getAppBackgroundColor() async {
+  void getAppColor() async {
     final SharedPreferences sharedpreferences = await SharedPreferences.getInstance();
-    backgroundColor = Color(int.parse(sharedpreferences.getString('AppBackgroundColor')!, radix: 16,));
+    setState(() {
+      backgroundColor = Color(int.parse(sharedpreferences.getString('AppBackgroundColor')!, radix: 16,));
+      buttonColor = Color(int.parse(sharedpreferences.getString('AppButtonColor')!, radix: 16,));
+      buttonTextColor = Color(int.parse(sharedpreferences.getString('AppButtonTextColor')!, radix: 16,));
+    });
+    getSelectPlan();
+  }
+
+  void getSelectPlan() {
+    calSelectPlan.forEach((values) {
+      calSelectPlanButton.add(
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: buttonColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+          ),
+          onPressed: () {
+            setState(() {
+              calSelectPlanValue = double.parse(values[1].toString());
+              calRemain(calsNow, (cals * calSelectPlanValue).round());
+              getCarbProFat(cals, calSelectPlanValue);
+            });
+          }, 
+          child: Text(values[0], style: TextStyle(fontSize: buttonFontSize, color: buttonTextColor),),
+        ),
+      );
+      calSelectPlanButton.add(const SizedBox(width: 10,));
+    });
+  }
+
+  void getCarbProFat(int cal, double planCal) {
+    // https://www.womenshealthmag.com/uk/food/weight-loss/a706111/counting-calculate-macros/#:~:text=To%20work%20out%20how%20many%20grams%20of%20each%20you%20need,grams%20of%20each%20to%20eat.
+    // ส่วนคำนวณโปรตีน คาร์โบไฮเดรต ไขมันที่ผู้ใช้ต้องการต่อวัน
+    setState(() {
+      carb = (((cal * planCal).round() * 0.3) / 4).round(); // คำนวณคาร์โบไฮเดตรโดยคิดเป็น 30% ในวันนี้
+      pro = (((cal * planCal).round() * 0.4) / 4).round(); // คำนวณโปรตีนโดยคิดเป็น 40% ในวันนี้
+      fat = (((cal * planCal).round() * 0.3) / 9).round(); // คำนวณไขมันโดยคิดเป็น 30% ในวันนี้
+    });
   }
 
   // initSate เป็นฟังก์ชั่นในการเริ่มฟังก์ชั่นต่างๆก่อนสร้างหน้าขึ้น เพื่อเตียมข้อมูลที่จะแสดงผลไว้ก่อน เพื่อไม่ให้เกิดค่าว่าง หรือหน้าไม่ยอมโหลด
   @override
   void initState() {
     super.initState(); // ใช้คำสั่ง super.initState(); เพื่อเตรียมฟังก์ชั่น init แล้วเรียกฟังก์ชั่นที่ต้องการ
-
+    getAppColor();
     _getUserDetails();
   }
 
@@ -217,12 +267,12 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
                       ),
                       const SizedBox(width: 100,),
                       Ink(
-                        decoration: const ShapeDecoration(
-                          color: Colors.indigoAccent,
-                          shape: CircleBorder(),
+                        decoration: ShapeDecoration(
+                          color: buttonColor,
+                          shape: const CircleBorder(),
                         ),
                         child: IconButton(
-                          icon: const Icon(Icons.create_rounded),
+                          icon: Icon(Icons.create_rounded, color: buttonTextColor,),
                           onPressed: () async {
                               // pop-up ที่แสดงขึ้นมาให้แก้ไขข้อมูลได้ โดยใช้ showDialog
                               /* ในปัญหาของการที่ TextFormField แก้ไขพร้อมกันไม่ได้กับมีข้อความแสดงแต่แรก เราต้อง
@@ -361,7 +411,7 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
                                               'age':ageController.text,
                                               'gender':gender
                                             }).then((value) {
-                                              getAppBackgroundColor();
+                                              getAppColor();
                                                 // ใช้ Fluttertoast ในการแสดงผลแทน showDialog
                                                 Fluttertoast.showToast(
                                                   msg: 'ข้อมูลอัพเดตแล้ว',
@@ -422,7 +472,7 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
                         style: h2,
                       ),
                       Text(
-                        (selecCals).toString() + ' Kcal',
+                        '${(selecCals * calSelectPlanValue).round()} Kcal',
                         style: h1,
                       ),
                       box, // ตัวแปร SizedBox ที่ตั้งไว้
@@ -431,7 +481,7 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
                         style: h2,
                       ),
                       Text(
-                        (calsNow).toString() + ' Kcal',
+                        '$calsNow Kcal',
                         style: h1,
                       ),
                     ],
@@ -450,7 +500,7 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          (selecCals - calsNow < 0 ? 0 : selecCals - calsNow).toString(),
+                          '${selecCals * calSelectPlanValue - calsNow < 0 ? 0 : (selecCals * calSelectPlanValue - calsNow).round()}',
                           style: const TextStyle(fontSize: 30, color: Colors.black,),
                         ),
                         Text('เหลืออีก Kcal', style: h2,),
@@ -461,11 +511,18 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
               ),
               box, // ตัวแปร SizedBox ที่ตั้งไว้
 
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: calSelectPlanButton,
+                ),
+              ),
+
               // ใช้ ListTile ในการแสดงผลแบบรายชื่อแล้วใส่ใน leading เป็น Radio<SingingCharacter>
               // เพื่อทำตัวเลือกแบบติ้กถูกแล้วอัพเดตค่าแคลลอรี่ที่แสดงผลบนจอ
               ListTile(
                 title: Text(
-                  'ไม่ออกกำลังกาย ' + (calNone).toString() + ' Kcal',
+                  'ไม่ออกกำลังกาย ${(calNone * calSelectPlanValue).round()} Kcal',
                   style: content1,
                 ),
                 leading: Radio<SingingCharacter>(
@@ -474,7 +531,7 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
                   onChanged: (SingingCharacter? value) {
                     setState(() {
                       _character = value;
-                      selecCals = calNone;
+                      selecCals = cals;
                       calRemain(calsNow, selecCals);
                     });
                   },
@@ -482,7 +539,7 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
               ),
               ListTile(
                 title: Text(
-                  'ออกกำลังกาย 1-3 วัน ' + (cal_1to3day).toString() + ' Kcal',
+                  'ออกกำลังกาย 1-3 วัน ${(cal_1to3day * calSelectPlanValue).round()} Kcal',
                   style: content1,
                 ),
                 leading: Radio<SingingCharacter>(
@@ -499,7 +556,7 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
               ),
               ListTile(
                 title: Text(
-                  'ออกกำลังกาย 4-5 วัน ' + (cal_4to5day).toString() + ' Kcal',
+                  'ออกกำลังกาย 4-5 วัน ${(cal_4to5day * calSelectPlanValue).round()} Kcal',
                   style: content1,
                 ),
                 leading: Radio<SingingCharacter>(
@@ -516,7 +573,7 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
               ),
               ListTile(
                 title: Text(
-                  'ออกกำลังกาย 6-7 วัน ' + (cal_6to7day).toString() + ' Kcal',
+                  'ออกกำลังกาย 6-7 วัน ${(cal_6to7day * calSelectPlanValue).round()} Kcal',
                   style: content1,
                 ),
                 leading: Radio<SingingCharacter>(
@@ -533,7 +590,7 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
               ),
               ListTile(
                 title: Text(
-                  'ออกกำลังกาย 2 ครั้งต่อวัน ' + (cal_2perday).toString() + ' Kcal',
+                  'ออกกำลังกาย 2 ครั้งต่อวัน ${(cal_2perday * calSelectPlanValue).round()} Kcal',
                   style: content1,
                 ),
                 leading: Radio<SingingCharacter>(
@@ -562,7 +619,7 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
                           ),
                           radius: 40,
                         ),
-                        Text('ไขมัน: ' + fat.toString() + ' กรัม ', style: content2,),
+                        Text('ไขมัน: ${userFat.toString()}/$fat กรัม ', style: content2,),
                       ],
                     ),
                     box, // ตัวแปร SizedBox ที่ตั้งไว้
@@ -575,7 +632,7 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
                           ),
                           radius: 40,
                         ),
-                        Text('โปรตีน: ' + userPro.toString() + '/' + pro.toString() + ' กรัม ',style: content2),
+                        Text('โปรตีน: ${userPro.toString()}/$pro กรัม',style: content2),
                       ],
                     ),
                     box, // ตัวแปร SizedBox ที่ตั้งไว้
@@ -588,7 +645,7 @@ class _ShowCalScreenState extends State<ShowCalScreen> {
                           ),
                           radius: 40,
                         ),
-                        Text('คาร์โบไฮเดตร: ' + carb.toString() + ' กรัม ', style: content2),
+                        Text('คาร์โบไฮเดตร: ${userCarb.toString()}/$carb กรัม', style: content2),
                       ],
                     ),
                   ],

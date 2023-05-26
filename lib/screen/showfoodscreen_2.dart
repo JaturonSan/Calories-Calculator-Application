@@ -16,6 +16,8 @@ class ShowFoodScreen2 extends StatefulWidget {
 
 class _ShowFoodScreen2State extends State<ShowFoodScreen2> {
   SizedBox box = const SizedBox(height: 20,);
+  // ขนาดตัวหนังสือในรายการอาหาร
+  double fontSize = 12.0;
 
   @override
   void initState() {
@@ -69,7 +71,7 @@ class _ShowFoodScreen2State extends State<ShowFoodScreen2> {
                           child: Container(
                             height: 20,
                             width: MediaQuery.of(context).size.width / 2 - 32, // minus 32 due to the margin
-                            margin: const EdgeInsets.all(12.0),
+                            margin: const EdgeInsets.all(8.0),
                             padding: const EdgeInsets.all(2.0),
                             decoration: BoxDecoration(
                               color: Colors.yellow[100], // background color of the cards
@@ -77,10 +79,10 @@ class _ShowFoodScreen2State extends State<ShowFoodScreen2> {
                               boxShadow: const [
                                 // this is the shadow of the card
                                 BoxShadow(
-                                  color: Colors.black,
-                                  spreadRadius: 0.5,
+                                  color: Colors.grey,
+                                  spreadRadius: 0.2,
                                   offset: Offset(2.0, 2.0),
-                                  blurRadius: 5.0,
+                                  blurRadius: 2.0,
                                 ),
                               ],
                             ),
@@ -88,9 +90,10 @@ class _ShowFoodScreen2State extends State<ShowFoodScreen2> {
                               mainAxisAlignment: MainAxisAlignment.center, // posion the everything to the bottom
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Image.file(File(data.pic.toString()), height: 80,width: 80,),
-                                Text(data.name.toString(), style: const TextStyle(fontSize: 10),),
-                                Text(data.calories.toString()+" แคล", style: const TextStyle(fontSize: 10),),
+                                data.pic.toString()==''? Image.asset('assets/icons/no-image.png', height: 110,width: 110,) : Image.file(File(data.pic.toString()), height: 110,width: 110,),
+                                const SizedBox(height: 10,),
+                                Text(data.name.toString(), style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold,),),
+                                Text(data.calories.toString()+" แคล", style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold,),),
                               ],
                             ),
                           ),

@@ -98,6 +98,7 @@ flutter:
     - assets/fastfood.png
     - assets/vegetable.jpg
     - assets/splash_screen_pic.jpg
+    - assets/icons/no-image.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

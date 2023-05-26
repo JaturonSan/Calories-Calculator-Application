@@ -32,6 +32,24 @@ class _EditFoodScreenState extends State<EditFoodScreen> {
   String picLocation = ""; // ที่อยู่รูปอาหาร
   late TextEditingController picController = TextEditingController();
   Color backgroundColor = Colors.cyan[900]!;
+  Color buttonColor = Colors.red;
+  Color buttonTextColor = Colors.black;
+  BoxDecoration dropdownStyle = BoxDecoration(
+    color: const Color.fromRGBO(21, 96, 189, 1.0),
+    borderRadius: BorderRadius.circular(15),
+  );
+  // style ของ dropdown
+  TextStyle dropdownText = const TextStyle(
+    fontSize: 17,
+    color: Colors.white,
+  );
+  // ข้อมูลประเภทอาหารที่จะขึ้นบน dropdownButton
+  List<String> foodType = ['ทั้งหมด','อาหารคาว','ของหวาน','ของว่าง','อาหารกระป๋อง','เครื่องดื่ม'];
+  String? _foodTypeButton = 'อาหารคาว';
+  // dropdownColor 
+  Color dropdownColor = const Color.fromRGBO(47, 186, 199, 1.0);
+  // dropdown border
+  BorderRadius dropdownborder = const BorderRadius.all(Radius.circular(20));
 
   // ฟังก์ชั่นเลือกรูปภาพจากคลังรูปภาพ
   Future pickImageGallery() async {
@@ -90,19 +108,23 @@ class _EditFoodScreenState extends State<EditFoodScreen> {
   }
 
   // เรียกสีแอปหลักจาก SharedPreferences
-  void getAppBackgroundColor() async {
+  void getAppColor() async {
     final SharedPreferences sharedpreferences = await SharedPreferences.getInstance();
     setState(() {
       backgroundColor = Color(int.parse(sharedpreferences.getString('AppBackgroundColor')!, radix: 16,));
+      buttonColor = Color(int.parse(sharedpreferences.getString('AppButtonColor')!, radix: 16,));
+      buttonTextColor = Color(int.parse(sharedpreferences.getString('AppButtonTextColor')!, radix: 16,));
     });
   }
 
   @override
   void initState() {
     super.initState();
-    getAppBackgroundColor();
-    picController = TextEditingController(text: picLocation);
-    image = File(data.pic.toString());
+    getAppColor();
+    if(data.pic.toString() != '') {
+      picController = TextEditingController(text: picLocation);
+      image = File(data.pic.toString());
+    }
   }
 
   @override
@@ -110,6 +132,8 @@ class _EditFoodScreenState extends State<EditFoodScreen> {
     TextEditingController nameController = TextEditingController(text: data.name.toString());
     TextEditingController calController = TextEditingController(text: data.calories.toString());
     TextEditingController proController = TextEditingController(text: data.protein.toString());
+    TextEditingController carbController = TextEditingController(text: data.carb.toString());
+    TextEditingController fatController = TextEditingController(text: data.fat.toString());
     TextEditingController amountController = TextEditingController(text: data.amount.toString());
     TextEditingController gramController = TextEditingController(text: data.gram.toString());
     TextEditingController picController = TextEditingController(text: data.pic);
@@ -199,12 +223,69 @@ class _EditFoodScreenState extends State<EditFoodScreen> {
                   box,
                   TextFormField(
                     keyboardType: TextInputType.number,
+                    controller: carbController,
+                    validator: RequiredValidator(errorText: 'กรุณาใส่คาร์โบไฮเดรต'),
+                    // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
+                    decoration: InputDecoration(
+                      border: border,
+                      labelText: 'คาร์โบไฮเดรต',
+                    ),
+                  ),
+                  box,
+                  box,
+                  TextFormField(
+                    keyboardType: TextInputType.number,
+                    controller: fatController,
+                    validator: RequiredValidator(errorText: 'กรุณาใส่ไขมัน'),
+                    // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
+                    decoration: InputDecoration(
+                      border: border,
+                      labelText: 'ไขมัน',
+                    ),
+                  ),
+                  box,
+                  TextFormField(
+                    keyboardType: TextInputType.number,
                     controller: amountController,
                     validator: RequiredValidator(errorText: 'กรุณาใส่จำนวนอาหาร'),
                     // แก้ไขการแสดงผลนิดหน่อยให้มีกรอบ border แล้วมี text อยู่ข้างใน
                     decoration: InputDecoration(
                       border: border,
                       labelText: 'จำนวน',
+                    ),
+                  ),
+                  box,
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 5),
+                    decoration: dropdownStyle,
+                    child: DropdownButton(
+                      style: dropdownText,
+                      items: foodType.map((item) {
+                        return DropdownMenuItem(
+                          value: item,
+                          child: Text(item),
+                          onTap: () {
+                            // if(item["RepairedTypeName"] != "กรุณาเลือก") {
+                            //   setState(() {
+                            //     repairedTypeID = int.parse(item["RepairedTypeID"]);
+                            //     dropdownIndex = 2;
+                            //   });
+                            // }
+                          },
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          _foodTypeButton = value.toString();
+                        });
+                      },
+                      value: _foodTypeButton,
+                      isExpanded: true,
+                      autofocus: true,
+                      dropdownColor: dropdownColor,
+                      borderRadius: dropdownborder,
+                      hint: Text('กรุณาเลือก', style: dropdownText),
                     ),
                   ),
                   box,
@@ -253,19 +334,19 @@ class _EditFoodScreenState extends State<EditFoodScreen> {
                     ),
                   ),
                 ),
-                image == null ? const SizedBox(height: 120,width: 120, child: Text('กรุณาเลือกรูปภาพ')) : Image.file(image!, height: 120, width: 120,),
+                image == null ? const SizedBox(height: 120,width: 120, child: Text('ไม่ได้เลือกรูปภาพ')) : Image.file(image!, height: 120, width: 120,),
                 box,
                 SizedBox(
                   height: 40,
                   width: double.infinity,
                   child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.cyan[900]),
+                    style: ElevatedButton.styleFrom(backgroundColor: buttonColor),
                     onPressed: () {
                       if(keyForm.currentState!.validate()){
                         // ค่าที่แก้ไขใน dialog จะเก็บในตัวแปรนี้
-                        Foods foods = Foods(name: nameController.text,calories: int.parse(calController.text),protein: double.parse(proController.text),amount: int.parse(amountController.text),gram: int.parse(gramController.text),pic: picController.text);
+                        Foods foods = Foods(name: nameController.text,calories: int.parse(calController.text),protein: double.parse(proController.text),carb: int.parse(carbController.text),fat: int.parse(fatController.text),amount: int.parse(amountController.text),gram: int.parse(gramController.text),type: _foodTypeButton,pic: picController.text);
 
-                        getAppBackgroundColor();
+                        getAppColor();
 
                         // แก้ไขข้อมูลในฐานข้อมูล
                         var provider = Provider.of<FoodProvider>(context, listen: false);
@@ -280,7 +361,7 @@ class _EditFoodScreenState extends State<EditFoodScreen> {
                         );
                       }
                     },
-                    child: const Text('แก้ไข'),
+                    child: Text('แก้ไข', style: TextStyle(color: buttonTextColor),),
                   ),
                 ),
                 ],

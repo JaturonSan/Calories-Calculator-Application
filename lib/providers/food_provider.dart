@@ -33,6 +33,14 @@ class FoodProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  // ฟังก์ชั่นโหลดข้อมูลทั้งหมดของฐานข้อมูล
+  Future<List> loadAllData(String dbName) async {
+    var db = FoodDB(dbName: dbName); 
+    // ดึงข้อมูลมาแสดงผล (Select)
+    foods = await db.loadAllData();
+    return foods;
+  }
+
   // ฟังก์ชั่นในการดึงค่าแคลลอรี่ของอาหารจากฐานข้อมูลที่เพิ่มเข้ามา
   Future<List> loadCals(String dbName) async {
     var db = FoodDB(dbName: dbName); // ฐานข้อมูลของอาหารทั้งหมด ไม่ใช้อาหารของ users
@@ -66,6 +74,15 @@ class FoodProvider with ChangeNotifier {
   void editData(Foods statement, Foods newData, String dbName) async {
     var db =  FoodDB(dbName: dbName); // ฐานข้อมูลของอาหารทั้งหมด ไม่ใช้อาหารของ users
     await db.editData(statement, newData); // "foods.db"
+
+    // เตือน Consumer
+    notifyListeners();
+  }
+
+  // ฟังก์ชั่นในการค้นหาอาหาร
+  void searchFoods(String foodType, String dbName) async {
+    var db =  FoodDB(dbName: dbName);
+    foods = await db.searchData(foodType);
 
     // เตือน Consumer
     notifyListeners();

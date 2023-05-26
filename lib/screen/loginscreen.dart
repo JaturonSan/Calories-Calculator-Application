@@ -24,6 +24,10 @@ class _LoginScreenState extends State<LoginScreen> {
   OutlineInputBorder border = const OutlineInputBorder();
   final Future<FirebaseApp> firebase = Firebase.initializeApp();
   late Color backgroundColor;
+  // สีของปุ่ม
+  Color buttonColor = Colors.red;
+  // สีของตัวหนังสือในปุ่ม
+  Color buttonTextColor = Colors.black;
   // เช็คติ้กถูกการล็อคอิน
   bool _checkbox = false;
   // สีของตัวหนังสือในหน้านี้
@@ -41,13 +45,17 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState(){
     super.initState();
-    getAppBackgroundColor();
+    getAppColor();
     Provider.of<FoodProvider>(context, listen: false).initData("foods.db");
   }
 
-  void getAppBackgroundColor() async {
+  void getAppColor() async {
     final SharedPreferences sharedpreferences = await SharedPreferences.getInstance();
-    backgroundColor = Color(int.parse(sharedpreferences.getString('AppBackgroundColor')!, radix: 16,));
+    setState(() {
+      backgroundColor = Color(int.parse(sharedpreferences.getString('AppBackgroundColor')!, radix: 16,));
+      buttonColor = Color(int.parse(sharedpreferences.getString('AppButtonColor')!, radix: 16,));
+      buttonTextColor = Color(int.parse(sharedpreferences.getString('AppButtonTextColor')!, radix: 16,));
+    });
   }
   
   @override
@@ -187,13 +195,13 @@ class _LoginScreenState extends State<LoginScreen> {
                               }
                             }
                           }, 
-                          child: Text('เข้าสู่ระบบ', style: TextStyle(fontSize: textSize, color: textcolor,),),
+                          child: Text('เข้าสู่ระบบ', style: TextStyle(fontSize: textSize, color: buttonTextColor,),),
                         ),
                       ),
                       SizedBox(
                         width: double.infinity, 
                         child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(backgroundColor: backgroundColor),
+                          style: ElevatedButton.styleFrom(backgroundColor: buttonColor),
                           onPressed: () {
                             // ต้องแก้ส่วนนี้ตอนล็อกอินว่าจะต้องเช็คบัญชีผู้ใช้
                             Navigator.push(
@@ -204,7 +212,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               )
                             );
                           }, 
-                          child: Text('สร้างบัญชีใหม่', style: TextStyle(fontSize: textSize, color: textcolor,),),
+                          child: Text('สร้างบัญชีใหม่', style: TextStyle(fontSize: textSize, color: buttonTextColor,),),
                         ),
                       ), 
                     ],
